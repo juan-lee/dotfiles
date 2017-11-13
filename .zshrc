@@ -113,3 +113,5 @@ eval "$(pyenv virtualenv-init -)"
 # neovim
 alias vi="/usr/bin/vim"
 alias vim="nvim"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

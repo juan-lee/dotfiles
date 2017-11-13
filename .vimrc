@@ -26,6 +26,7 @@ if dein#load_state('~/.config/nvim')
   call dein#add('altercation/vim-colors-solarized')
   call dein#add('ctrlpvim/ctrlp.vim')
   call dein#add('fatih/vim-go')
+  call dein#add('fatih/molokai')
   call dein#add('HerringtonDarkholme/yats.vim')
   call dein#add('joshdick/onedark.vim')
   call dein#add('mhartington/nvim-typescript')
@@ -48,9 +49,10 @@ endif
 
 " Required:
 syntax enable
-filetype on           " Enable filetype detection
-filetype indent on    " Enable filetype-specific indenting
-filetype plugin on    " Enable filetype-specific plugins
+filetype on                 " Enable filetype detection
+filetype indent on          " Enable filetype-specific indenting
+filetype plugin on          " Enable filetype-specific plugins
+filetype plugin indent on   " Enable filetype-specific plugins
 
 " If you want to install not installed plugins on startup.
 if dein#check_install()
@@ -81,6 +83,7 @@ set dir=$HOME/.vim/temp
 set bdir=$HOME/.vim/backup
 set hlsearch
 set incsearch
+set spelllang=en_us
 
 map <leader>f :bn<CR>
 map <leader>d :bp<CR>
@@ -88,6 +91,9 @@ map <leader>d :bp<CR>
 " autochdir
 "autocmd BufEnter * silent! lcd %:p:h
 autocmd BufEnter * if expand('%:p') !~ '://' | :lchdir %:p:h | endif
+
+" netrw
+"let g:netrw_liststyle=3
 
 " dein
 "nnoremap <leader>du :call dein#update()<cr>
@@ -103,9 +109,21 @@ autocmd CompleteDone * silent! pclose! " close preview window after complete
 set splitbelow " preview window on the bottom
 
 " vim-airline
+let g:airline_theme='onedark'
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
-let g:airline_theme='onedark'
+let g:airline#extensions#tabline#buffer_idx_mode = 1
+nmap <leader>1 <Plug>AirlineSelectTab1
+nmap <leader>2 <Plug>AirlineSelectTab2
+nmap <leader>3 <Plug>AirlineSelectTab3
+nmap <leader>4 <Plug>AirlineSelectTab4
+nmap <leader>5 <Plug>AirlineSelectTab5
+nmap <leader>6 <Plug>AirlineSelectTab6
+nmap <leader>7 <Plug>AirlineSelectTab7
+nmap <leader>8 <Plug>AirlineSelectTab8
+nmap <leader>9 <Plug>AirlineSelectTab9
+nmap <leader>+ <Plug>AirlineSelectPrevTab
+nmap <leader>- <Plug>AirlineSelectNextTab
 
 " deopoete-go
 let g:deoplete#sources#go#gocode_binary = '$GOPATH/bin/gocode'
@@ -121,15 +139,25 @@ let g:deoplete#sources#go#gocode_binary = '$GOPATH/bin/gocode'
 " let g:syntastic_check_on_wq = 0
 
 " vim-go
+let $GINKGO_EDITOR_INTEGRATION = "true"
 let g:go_list_type = "quickfix""
+let g:go_highlight_array_whitespace_error = 1
+let g:go_highlight_chan_whitespace_error = 1
+let g:go_highlight_space_tab_error = 1
+let g:go_highlight_trailing_whitespace_error = 1
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_generate_tags = 1
+"let g:go_highlight_string_spellcheck = 1
+let g:go_highlight_format_strings = 1
 "let g:go_highlight_extra_types = 1
 let g:go_highlight_operators = 1
 let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_types = 1
-let g:go_highlight_fields = 1
-let g:go_highlight_variable_declarations = 1
-let g:go_highlight_variable_assignments = 1
+
+"let g:go_highlight_fields = 1
+"let g:go_highlight_variable_declarations = 1
+"let g:go_highlight_variable_assignments = 1
 "let g:go_auto_type_info = 1
 "let g:go_auto_sameids = 1
 
@@ -146,6 +174,7 @@ function! s:build_go_files()
   endif
 endfunction
 
+"autocmd FileType go setlocal spell
 autocmd FileType go nmap <Leader>a <Plug>(go-alternate-edit)
 autocmd FileType go nmap <Leader>c <Plug>(go-coverage-toggle)
 autocmd FileType go nmap <Leader>i <Plug>(go-info)
