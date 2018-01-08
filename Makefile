@@ -4,8 +4,8 @@ all:
 	[ -f ~/.tmux.conf ] || ln -s $(PWD)/tmux.conf ~/.tmux.conf
 
 clean:
-	[ -f ~/.vimrc ] && rm ~/.vimrc
-	[ -f ~/.zshrc ] && rm ~/.zshrc
-	[ -f ~/.tmux.conf ] && rm ~/.tmux.conf
+	[ -h ~/.vimrc ] && rm ~/.vimrc
+	[ -h ~/.zshrc ] && rm ~/.zshrc
+	[ -h ~/.tmux.conf ] && rm ~/.tmux.conf
 
 .PHONY: all

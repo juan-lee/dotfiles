@@ -1,5 +1,20 @@
-" vim-plug
-call plug#begin('~/.local/share/nvim/plugged')
+set nocompatible
+
+if has('nvim')
+  if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
+    silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
+          \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+  endif
+  call plug#begin('~/.local/share/nvim/plugged')
+else
+  if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+          \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+  endif
+  call plug#begin('~/.vim/plugged')
+endif
 
 Plug 'fatih/vim-go'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -9,25 +24,20 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'zchee/deoplete-go', { 'do': 'make'}
 
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-  Plug 'zchee/deoplete-go', { 'do': 'make'}
+else
+  Plug 'Shougo/deoplete.nvim'
+  Plug 'roxma/nvim-yarp'
+  Plug 'roxma/vim-hug-neovim-rpc'
 endif
 
 call plug#end()
 
-" vim
-set nocompatible
-syntax enable
-filetype on                 " Enable filetype detection
-filetype indent on          " Enable filetype-specific indenting
-filetype plugin on          " Enable filetype-specific plugins
-filetype plugin indent on   " Enable filetype-specific plugins
-
 colorscheme default
 set bg=dark
-
 set nowrap
 set noshowmode
 set ic
@@ -45,10 +55,6 @@ set spelllang=en_us
 
 map <leader>f :bn<CR>
 map <leader>d :bp<CR>
-
-" python
-let g:python_host_prog = $HOME . '/.pyenv/versions/pyneovim/bin/python'
-let g:python3_host_prog = $HOME . '/.pyenv/versions/py3neovim/bin/python'
 
 " autochdir
 "autocmd BufEnter * silent! lcd %:p:h
