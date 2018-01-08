@@ -1,79 +1,35 @@
-"dein Scripts-----------------------------
-if &compatible
-  set nocompatible               " Be iMproved
+" vim-plug
+call plug#begin('~/.local/share/nvim/plugged')
+
+Plug 'fatih/vim-go'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+Plug 'SirVer/ultisnips'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-fugitive'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
+if has('nvim')
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  Plug 'zchee/deoplete-go', { 'do': 'make'}
 endif
 
-" Required:
-set runtimepath+=~/.config/nvim/repos/github.com/Shougo/dein.vim
+call plug#end()
 
-" Required:
-if dein#load_state('~/.config/nvim')
-  call dein#begin('~/.config/nvim')
-
-  " Let dein manage dein
-  " Required:
-  call dein#add('~/.config/nvim/repos/github.com/Shougo/dein.vim')
-
-  " Add or remove your plugins here:
-  "call dein#add('Shougo/neosnippet.vim')
-  "call dein#add('Shougo/neosnippet-snippets')
-  " nvim only
-  if has('nvim')
-    call dein#add('Shougo/deoplete.nvim')
-    call dein#add('zchee/deoplete-jedi')
-    call dein#add('zchee/deoplete-go', {'build': 'make'})
-  endif
-  call dein#add('altercation/vim-colors-solarized')
-  call dein#add('ctrlpvim/ctrlp.vim')
-  call dein#add('fatih/vim-go')
-  call dein#add('fatih/molokai')
-  call dein#add('HerringtonDarkholme/yats.vim')
-  call dein#add('joshdick/onedark.vim')
-  call dein#add('mhartington/nvim-typescript')
-  call dein#add('mileszs/ack.vim')
-  call dein#add('sheerun/vim-polyglot')
-  call dein#add('SirVer/ultisnips')
-  call dein#add('tpope/vim-commentary')
-  call dein#add('tpope/vim-fugitive')
-  call dein#add('vim-airline/vim-airline')
-  call dein#add('vim-airline/vim-airline-themes')
-  call dein#add('vim-syntastic/syntastic')
-
-  " You can specify revision/branch/tag.
-  "call dein#add('Shougo/vimshell', { 'rev': '3787e5' })
-
-  " Required:
-  call dein#end()
-  call dein#save_state()
-endif
-
-" Required:
+" vim
+set nocompatible
 syntax enable
 filetype on                 " Enable filetype detection
 filetype indent on          " Enable filetype-specific indenting
 filetype plugin on          " Enable filetype-specific plugins
 filetype plugin indent on   " Enable filetype-specific plugins
 
-" If you want to install not installed plugins on startup.
-if dein#check_install()
-  call dein#install()
-endif
-
-" onedark.vim
-if (has("nvim"))
-  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-endif
-
-if (has("termguicolors"))
-  set termguicolors
-endif
-
-let g:onedark_terminal_italics=1
-
-colorscheme onedark
-set background=dark
+colorscheme default
+set bg=dark
 
 set nowrap
+set noshowmode
 set ic
 set smartcase
 set et
@@ -84,85 +40,57 @@ set bdir=$HOME/.vim/backup
 set hlsearch
 set incsearch
 set spelllang=en_us
+" set number
+" set relativenumber
 
 map <leader>f :bn<CR>
 map <leader>d :bp<CR>
-
-" autochdir
-"autocmd BufEnter * silent! lcd %:p:h
-autocmd BufEnter * if expand('%:p') !~ '://' | :lchdir %:p:h | endif
-
-" netrw
-"let g:netrw_liststyle=3
-
-" dein
-"nnoremap <leader>du :call dein#update()<cr>
 
 " python
 let g:python_host_prog = $HOME . '/.pyenv/versions/pyneovim/bin/python'
 let g:python3_host_prog = $HOME . '/.pyenv/versions/py3neovim/bin/python'
 
-" deoplete
+" autochdir
+"autocmd BufEnter * silent! lcd %:p:h
+autocmd BufEnter * if expand('%:p') !~ '://' | :lchdir %:p:h | endif
+
+" deoplete/deoplete-go
 let g:deoplete#enable_at_startup = 1
-"set completeopt-=preview " hide preview window
-autocmd CompleteDone * silent! pclose! " close preview window after complete
-set splitbelow " preview window on the bottom
+let g:deoplete#enable_smart_case = 1
+let g:deoplete#sources#go#gocode_binary = '$GOPATH/bin/gocode'
+set completeopt+=noinsert,noselect
 
 " vim-airline
-let g:airline_theme='onedark'
-let g:airline_powerline_fonts = 1
+let g:airline_theme='powerlineish'
 let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#buffer_idx_mode = 1
-nmap <leader>1 <Plug>AirlineSelectTab1
-nmap <leader>2 <Plug>AirlineSelectTab2
-nmap <leader>3 <Plug>AirlineSelectTab3
-nmap <leader>4 <Plug>AirlineSelectTab4
-nmap <leader>5 <Plug>AirlineSelectTab5
-nmap <leader>6 <Plug>AirlineSelectTab6
-nmap <leader>7 <Plug>AirlineSelectTab7
-nmap <leader>8 <Plug>AirlineSelectTab8
-nmap <leader>9 <Plug>AirlineSelectTab9
-nmap <leader>+ <Plug>AirlineSelectPrevTab
-nmap <leader>- <Plug>AirlineSelectNextTab
-
-" deopoete-go
-let g:deoplete#sources#go#gocode_binary = '$GOPATH/bin/gocode'
-
-" syntastic
-" set statusline+=%#warningmsg#
-" set statusline+=%{SyntasticStatuslineFlag()}
-" set statusline+=%*
-
-" let g:syntastic_always_populate_loc_list = 1
-" let g:syntastic_auto_loc_list = 1
-" let g:syntastic_check_on_open = 1
-" let g:syntastic_check_on_wq = 0
 
 " vim-go
-let $GINKGO_EDITOR_INTEGRATION = "true"
-let g:go_list_type = "quickfix""
-let g:go_highlight_array_whitespace_error = 1
-let g:go_highlight_chan_whitespace_error = 1
-let g:go_highlight_space_tab_error = 1
-let g:go_highlight_trailing_whitespace_error = 1
+let g:go_fmt_fail_silently = 0
+let g:go_fmt_command = "goimports"
+let g:go_list_type = "quickfix"
+let g:go_auto_type_info = 0
+let g:go_def_mode = "guru"
+let g:go_echo_command_info = 1
+let g:go_gocode_autobuild = 0
+let g:go_gocode_unimported_packages = 1
+
+let g:go_autodetect_gopath = 1
+let g:go_info_mode = "guru"
+
+" let g:go_metalinter_autosave = 1
+" let g:go_metalinter_autosave_enabled = ['vet', 'golint']
+
+let g:go_highlight_space_tab_error = 0
+let g:go_highlight_array_whitespace_error = 0
+let g:go_highlight_trailing_whitespace_error = 0
+let g:go_highlight_extra_types = 0
 let g:go_highlight_build_constraints = 1
-let g:go_highlight_generate_tags = 1
-"let g:go_highlight_string_spellcheck = 1
-let g:go_highlight_format_strings = 1
-"let g:go_highlight_extra_types = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1
-let g:go_highlight_types = 1
+let g:go_highlight_types = 0
 
-"let g:go_highlight_fields = 1
-"let g:go_highlight_variable_declarations = 1
-"let g:go_highlight_variable_assignments = 1
-"let g:go_auto_type_info = 1
-"let g:go_auto_sameids = 1
+let g:go_modifytags_transform = 'camelcase'
 
-set autowrite
-set updatetime=100
+nmap <C-g> :GoDecls<cr>
+imap <C-g> <esc>:<C-u>GoDecls<cr>
 
 " run :GoBuild or :GoTestCompile based on the go file
 function! s:build_go_files()
@@ -174,15 +102,64 @@ function! s:build_go_files()
   endif
 endfunction
 
-"autocmd FileType go setlocal spell
-autocmd FileType go nmap <Leader>a <Plug>(go-alternate-edit)
-autocmd FileType go nmap <Leader>c <Plug>(go-coverage-toggle)
-autocmd FileType go nmap <Leader>i <Plug>(go-info)
-autocmd FileType go nmap <leader>b :<C-u>call <SID>build_go_files()<CR>
-autocmd FileType go nmap <leader>r  <Plug>(go-run)
-autocmd FileType go nmap <leader>t  <Plug>(go-test)
-autocmd Filetype go command! -bang A call go#alternate#Switch(<bang>0, 'edit')
-autocmd Filetype go command! -bang AV call go#alternate#Switch(<bang>0, 'vsplit')
-autocmd Filetype go command! -bang AS call go#alternate#Switch(<bang>0, 'split')
-autocmd Filetype go command! -bang AT call go#alternate#Switch(<bang>0, 'tabe')
+augroup go
+  autocmd!
 
+  autocmd FileType go nmap <silent> <Leader>v <Plug>(go-def-vertical)
+  autocmd FileType go nmap <silent> <Leader>s <Plug>(go-def-split)
+
+  autocmd FileType go nmap <silent> <Leader>x <Plug>(go-doc-vertical)
+
+  autocmd FileType go nmap <silent> <Leader>i <Plug>(go-info)
+  autocmd FileType go nmap <silent> <Leader>l <Plug>(go-metalinter)
+
+  autocmd FileType go nmap <silent> <leader>b :<C-u>call <SID>build_go_files()<CR>
+  autocmd FileType go nmap <silent> <leader>t  <Plug>(go-test)
+  autocmd FileType go nmap <silent> <leader>r  <Plug>(go-run)
+  autocmd FileType go nmap <silent> <leader>e  <Plug>(go-install)
+
+  autocmd FileType go nmap <silent> <Leader>c <Plug>(go-coverage-toggle)
+
+  autocmd Filetype go command! -bang A call go#alternate#Switch(<bang>0, 'edit')
+  autocmd Filetype go command! -bang AV call go#alternate#Switch(<bang>0, 'vsplit')
+  autocmd Filetype go command! -bang AS call go#alternate#Switch(<bang>0, 'split')
+  autocmd Filetype go command! -bang AT call go#alternate#Switch(<bang>0, 'tabe')
+augroup END
+
+" ultisnips
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+
+" fzf
+let g:fzf_layout = { 'down': '~40%' }
+let g:fzf_buffers_jump = 1
+
+autocmd! FileType fzf
+autocmd  FileType fzf set laststatus=0 noshowmode noruler
+  \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
+
+command! -bang -nargs=* Ag
+  \ call fzf#vim#ag(<q-args>,
+  \                 <bang>0 ? fzf#vim#with_preview('up:60%')
+  \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \                 <bang>0)
+
+" Customize fzf colors to match your color scheme
+let g:fzf_colors =
+      \ { 'fg':      ['fg', 'Normal'],
+      \ 'bg':      ['bg', 'Normal'],
+      \ 'hl':      ['fg', 'Comment'],
+      \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+      \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+      \ 'hl+':     ['fg', 'Statement'],
+      \ 'info':    ['fg', 'PreProc'],
+      \ 'border':  ['fg', 'Ignore'],
+      \ 'prompt':  ['fg', 'Conditional'],
+      \ 'pointer': ['fg', 'Exception'],
+      \ 'marker':  ['fg', 'Keyword'],
+      \ 'spinner': ['fg', 'Label'],
+      \ 'header':  ['fg', 'Comment'] }
+
+
+" vim: sw=2 sw=2 et

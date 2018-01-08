@@ -47,19 +47,13 @@ ZSH_THEME="robbyrussell"
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
-# zsh tmux settings
-ZSH_TMUX_AUTOSTART='true'
-
-# powerline
-PATH=$PATH:$HOME/.pyenv/versions/3.6.3/envs/py3powerline/bin/
-POWERLINE_CONFIG_COMMAND=$HOME/.pyenv/versions/3.6.3/envs/py3powerline/bin/powerline-config
-
-
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git tmux vi-mode sudo)
+plugins=(git tmux vi-mode sudo nmap archlinux docker httpie)
+
+ZSH_TMUX_AUTOSTART="true"
 
 source $ZSH/oh-my-zsh.sh
 
@@ -92,26 +86,36 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# user bin
-export PATH=$PATH:$HOME/bin
+DEFAULT_USER="$(whoami)"
 
-# golang
-export GOPATH=$HOME/go
-export GOROOT=/usr/local/go
-export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-
-# dircolors
-#alias ls="ls -G --color"
-#eval $(dircolors ~/.dircolors/dircolors.256dark)
-
-# pyenv & virtualenv
+# pyenv
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
-# neovim
-alias vi="/usr/bin/vim"
-alias vim="nvim"
+# go
+export GOROOT=/usr/lib/go
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
+# user bin
+export PATH=$PATH:$HOME/bin
+
+# vim
+alias vim=/usr/bin/nvim
+alias vi=/usr/bin/vim
+
+# kubectl
+source <(kubectl completion zsh)
+
+# fzf
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# for vim clipboard
+export DISPLAY=:0
+
+# tmuxp
+export DISABLE_AUTO_TITLE='true'
+eval "$(_TMUXP_COMPLETE=source tmuxp)"
+
