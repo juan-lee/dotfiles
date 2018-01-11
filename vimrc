@@ -36,7 +36,7 @@ endif
 
 call plug#end()
 
-colorscheme default
+" colorscheme default
 set bg=dark
 set nowrap
 set noshowmode
