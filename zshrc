@@ -8,6 +8,7 @@ COMPLETION_WAITING_DOTS="true"
 plugins=(git tmux vi-mode sudo nmap docker httpie)
 
 ZSH_TMUX_AUTOSTART="true"
+ZSH_TMUX_AUTOQUIT="false"
 
 source $ZSH/oh-my-zsh.sh
 
@@ -33,3 +34,7 @@ fi
 [ -x "$(which kubectl)" ] && source <(kubectl completion zsh)
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+
+export PATH=$PATH:/home/jpang/bin
+
+source '/home/jpang/lib/azure-cli/az.completion'

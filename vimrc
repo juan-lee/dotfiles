@@ -16,9 +16,13 @@ else
   call plug#begin('~/.vim/plugged')
 endif
 
+Plug 'fatih/molokai'
 Plug 'fatih/vim-go'
+Plug 'hashivim/vim-terraform'
+Plug 'joshdick/onedark.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+Plug 'scrooloose/nerdtree'
 Plug 'SirVer/ultisnips'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
@@ -36,7 +40,17 @@ endif
 
 call plug#end()
 
-colorscheme default
+if (empty($TMUX))
+  if (has("nvim"))
+    let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+  endif
+  if (has("termguicolors"))
+    " set termguicolors
+  endif
+endif
+
+set t_Co=256
+colorscheme onedark
 set bg=dark
 set nowrap
 set noshowmode
@@ -50,7 +64,7 @@ set bdir=$HOME/.vim/backup
 set hlsearch
 set incsearch
 set spelllang=en_us
-" set number
+set number
 " set relativenumber
 
 map <leader>f :bn<CR>
@@ -66,9 +80,21 @@ let g:deoplete#enable_smart_case = 1
 let g:deoplete#sources#go#gocode_binary = '$GOPATH/bin/gocode'
 set completeopt+=noinsert,noselect
 
+let g:onedark_terminal_italics=1
+
 " vim-airline
-let g:airline_theme='powerlineish'
+let g:airline_theme='onedark'
 let g:airline#extensions#tabline#enabled = 1
+
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+
+" powerline symbols
+let g:airline_symbols.branch = ''
+let g:airline_symbols.readonly = ''
+let g:airline_symbols.linenr = '☰'
+let g:airline_symbols.maxlinenr = ' '
 
 " vim-go
 let g:go_fmt_fail_silently = 0
@@ -167,5 +193,12 @@ let g:fzf_colors =
       \ 'spinner': ['fg', 'Label'],
       \ 'header':  ['fg', 'Comment'] }
 
+" NERDTree
+let g:NERDTreeQuitOnOpen = 1
+let g:NERDTreeMinimalUI = 1
+let g:NERDTreeDirArrows = 1
+let g:NERDTreeAutoDeleteBuffer = 1
+noremap <Leader>t :NERDTreeToggle<Enter>
+noremap <Leader>w :NERDTreeFind<Enter>
 
 " vim: sw=2 sw=2 et
