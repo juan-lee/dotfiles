@@ -23,11 +23,9 @@ export DISPLAY=:0
 
 export PATH=$PATH:$HOME/bin
 
-if [[ -z "$GOPATH" ]]; then
-    export GOPATH=$HOME/go
-    export GOROOT=/usr/lib/go
-    export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-fi
+export GOPATH=$HOME/go
+export GOROOT=/usr/local/go
+export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
 [ -x "$(which vim)" ] && alias vi=$(which vim)
 [ -x "$(which nvim)" ] && alias vim=$(which nvim)
