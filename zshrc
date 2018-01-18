@@ -34,5 +34,6 @@ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
 
 export PATH=$PATH:/home/jpang/bin
+[ -f '~/lib/azure-cli/az.completion' ] && source '~/lib/azure-cli/az.completion'
 
-source '/home/jpang/lib/azure-cli/az.completion'
+source ~/.alias
