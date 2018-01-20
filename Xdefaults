@@ -43,9 +43,9 @@
 !*.colorIT:
 !*.colorUL:
 
-URxvt.font: xft:Hack:size=11:style=Regular
-URxvt.boldFont: xft:Hack:size=11:style=Bold
-URxvt.italicFont: xft:Hack:size=11:style=Italic
+URxvt.font: xft:Hack:size=13:style=Regular
+URxvt.boldFont: xft:Hack:size=13:style=Bold
+URxvt.italicFont: xft:Hack:size=13:style=Italic
 URxvt.geometry: 240x110
 URxvt.iso14755_52: false
 URxvt.iso14755: false

@@ -52,7 +52,7 @@ endif
 set t_Co=256
 colorscheme onedark
 set bg=dark
-set nowrap
+" set nowrap
 set noshowmode
 set ic
 set smartcase
