@@ -1,11 +1,12 @@
+source ~/.config/base16-shell/base16-shell.plugin.zsh
+
 export ZSH=~/.oh-my-zsh
 
 ZSH_THEME="robbyrussell"
 
-ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
 
-plugins=(git tmux vi-mode sudo nmap docker httpie)
+plugins=(git tmux vi-mode sudo nmap docker httpie archlinux)
 
 ZSH_TMUX_AUTOSTART="true"
 ZSH_TMUX_AUTOQUIT="false"
@@ -37,3 +38,4 @@ export PATH=$PATH:/home/jpang/bin
 [ -f '~/lib/azure-cli/az.completion' ] && source '~/lib/azure-cli/az.completion'
 
 source ~/.alias
+
