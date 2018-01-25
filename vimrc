@@ -16,16 +16,17 @@ else
   call plug#begin('~/.vim/plugged')
 endif
 
-Plug 'fatih/molokai'
+Plug 'chriskempson/base16-vim'
 Plug 'fatih/vim-go'
 Plug 'hashivim/vim-terraform'
-Plug 'joshdick/onedark.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'SirVer/ultisnips'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-vinegar'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'zchee/deoplete-go', { 'do': 'make'}
@@ -49,10 +50,12 @@ if (empty($TMUX))
   endif
 endif
 
-set t_Co=256
-colorscheme onedark
-set bg=dark
-" set nowrap
+if filereadable(expand("~/.vimrc_background"))
+  set t_Co=256
+  let base16colorspace=256
+  source ~/.vimrc_background
+endif
+
 set noshowmode
 set ic
 set smartcase
@@ -71,8 +74,8 @@ map <leader>f :bn<CR>
 map <leader>d :bp<CR>
 
 " autochdir
-"autocmd BufEnter * silent! lcd %:p:h
-autocmd BufEnter * if expand('%:p') !~ '://' | :lchdir %:p:h | endif
+" autocmd BufEnter * silent! lcd %:p:h
+" autocmd BufEnter * if expand('%:p') !~ '://' | :lchdir %:p:h | endif
 
 " deoplete/deoplete-go
 let g:deoplete#enable_at_startup = 1
@@ -83,7 +86,7 @@ set completeopt+=noinsert,noselect
 let g:onedark_terminal_italics=1
 
 " vim-airline
-let g:airline_theme='onedark'
+let g:airline_theme='base16'
 let g:airline#extensions#tabline#enabled = 1
 
 if !exists('g:airline_symbols')
@@ -198,6 +201,7 @@ let g:NERDTreeQuitOnOpen = 1
 let g:NERDTreeMinimalUI = 1
 let g:NERDTreeDirArrows = 1
 let g:NERDTreeAutoDeleteBuffer = 1
+let g:NERDTreeHijackNetrw = 0
 noremap <Leader>t :NERDTreeToggle<Enter>
 noremap <Leader>w :NERDTreeFind<Enter>
 
