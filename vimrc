@@ -17,16 +17,16 @@ else
 endif
 
 Plug 'chriskempson/base16-vim'
-" Plug 'fatih/molokai'
 Plug 'fatih/vim-go'
 Plug 'hashivim/vim-terraform'
-" Plug 'joshdick/onedark.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'scrooloose/nerdtree'
 Plug 'SirVer/ultisnips'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-vinegar'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'zchee/deoplete-go', { 'do': 'make'}
@@ -74,8 +74,8 @@ map <leader>f :bn<CR>
 map <leader>d :bp<CR>
 
 " autochdir
-"autocmd BufEnter * silent! lcd %:p:h
-autocmd BufEnter * if expand('%:p') !~ '://' | :lchdir %:p:h | endif
+" autocmd BufEnter * silent! lcd %:p:h
+" autocmd BufEnter * if expand('%:p') !~ '://' | :lchdir %:p:h | endif
 
 " deoplete/deoplete-go
 let g:deoplete#enable_at_startup = 1
@@ -201,6 +201,7 @@ let g:NERDTreeQuitOnOpen = 1
 let g:NERDTreeMinimalUI = 1
 let g:NERDTreeDirArrows = 1
 let g:NERDTreeAutoDeleteBuffer = 1
+let g:NERDTreeHijackNetrw = 0
 noremap <Leader>t :NERDTreeToggle<Enter>
 noremap <Leader>w :NERDTreeFind<Enter>
 
