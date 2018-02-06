@@ -25,8 +25,9 @@ export DISPLAY=:0
 export PATH=$PATH:$HOME/bin
 
 export GOPATH=$HOME/go
-export GOROOT=/usr/local/go
-export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+# export GOROOT=/usr/local/go
+# export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+export PATH=$PATH:$GOPATH/bin
 
 [ -x "$(which vim)" ] && alias vi=$(which vim)
 [ -x "$(which nvim)" ] && alias vim=$(which nvim)

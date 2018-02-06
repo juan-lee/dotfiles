@@ -72,6 +72,7 @@ set number
 
 map <leader>f :bn<CR>
 map <leader>d :bp<CR>
+map <leader>a :A<CR>
 
 " autochdir
 " autocmd BufEnter * silent! lcd %:p:h
@@ -103,9 +104,9 @@ let g:airline_symbols.maxlinenr = ' '
 let g:go_fmt_fail_silently = 0
 let g:go_fmt_command = "goimports"
 let g:go_list_type = "quickfix"
-let g:go_auto_type_info = 0
-let g:go_def_mode = "guru"
-let g:go_echo_command_info = 1
+" let g:go_auto_type_info = 0
+" let g:go_def_mode = "guru"
+" let g:go_echo_command_info = 0
 let g:go_gocode_autobuild = 0
 let g:go_gocode_unimported_packages = 1
 
