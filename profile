@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -o vi
+
 [[ -f ~/.aliases ]] && . ~/.aliases
 
 [[ -f ~/.exports ]] && . ~/.exports
