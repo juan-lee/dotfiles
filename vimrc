@@ -72,6 +72,7 @@ set number
 
 map <leader>f :bn<CR>
 map <leader>d :bp<CR>
+map <leader>a :A<CR>
 
 " autochdir
 " autocmd BufEnter * silent! lcd %:p:h
