@@ -77,12 +77,13 @@ map <leader>a :A<CR>
 " autochdir
 " autocmd BufEnter * silent! lcd %:p:h
 " autocmd BufEnter * if expand('%:p') !~ '://' | :lchdir %:p:h | endif
-
+let g:python3_host_prog = '/usr/local/bin/python3'
 " deoplete/deoplete-go
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
 let g:deoplete#sources#go#gocode_binary = '$GOPATH/bin/gocode'
 set completeopt+=noinsert,noselect
+set completeopt-=preview
 
 let g:onedark_terminal_italics=1
 
@@ -104,24 +105,41 @@ let g:airline_symbols.maxlinenr = ' '
 let g:go_fmt_fail_silently = 0
 let g:go_fmt_command = "goimports"
 let g:go_list_type = "quickfix"
-let g:go_auto_type_info = 0
+" let g:go_auto_type_info = 0
 let g:go_def_mode = "guru"
+let g:go_def_reuse_buffer = 1
 let g:go_echo_command_info = 1
 let g:go_gocode_autobuild = 0
 let g:go_gocode_unimported_packages = 1
 
 let g:go_autodetect_gopath = 1
-let g:go_info_mode = "guru"
+" let g:go_info_mode = "guru"
+let g:go_info_mode = "gocode"
+
+let g:go_term_enabled = 1
 
 " let g:go_metalinter_autosave = 1
 " let g:go_metalinter_autosave_enabled = ['vet', 'golint']
 
-let g:go_highlight_space_tab_error = 0
-let g:go_highlight_array_whitespace_error = 0
-let g:go_highlight_trailing_whitespace_error = 0
-let g:go_highlight_extra_types = 0
+let g:go_highlight_array_whitespace_error = 1
+let g:go_highlight_chan_whitespace_error = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_space_tab_error = 1
+let g:go_highlight_trailing_whitespace_error = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_arguments = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
 let g:go_highlight_build_constraints = 1
-let g:go_highlight_types = 0
+let g:go_highlight_generate_tags = 1
+let g:go_highlight_string_spellcheck = 1
+let g:go_highlight_format_strings = 1
+let g:go_highlight_variable_declarations = 1
+let g:go_highlight_variable_assignments = 1
+
 
 let g:go_modifytags_transform = 'camelcase'
 

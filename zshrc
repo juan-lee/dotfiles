@@ -6,7 +6,7 @@ ZSH_THEME="robbyrussell"
 
 COMPLETION_WAITING_DOTS="true"
 
-plugins=(git tmux vi-mode sudo nmap docker httpie archlinux)
+plugins=(git tmux vi-mode sudo nmap docker httpie colored-man-pages zsh-syntax-highlighting vault brew colorize golang kubectl helm kube-ps1)
 
 ZSH_TMUX_AUTOSTART="true"
 ZSH_TMUX_AUTOQUIT="false"
@@ -19,23 +19,12 @@ export SSH_KEY_PATH="~/.ssh/rsa_id"
 
 DEFAULT_USER="$(whoami)"
 
-# for vim clipboard
-export DISPLAY=:0
+[[ -f ~/.profile ]] && . ~/.profile
 
-export PATH=$PATH:$HOME/bin
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /usr/local/Cellar/terraform/0.11.3/bin/terraform terraform
 
-export GOPATH=$HOME/go
-export GOROOT=/usr/local/go
-export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
-[ -x "$(which vim)" ] && alias vi=$(which vim)
-[ -x "$(which nvim)" ] && alias vim=$(which nvim)
-[ -x "$(which kubectl)" ] && source <(kubectl completion zsh)
+
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-
-export PATH=$PATH:/home/jpang/bin
-[ -f '~/lib/azure-cli/az.completion' ] && source '~/lib/azure-cli/az.completion'
-
-source ~/.alias
-

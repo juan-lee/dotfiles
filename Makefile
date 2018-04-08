@@ -8,6 +8,7 @@ all:
 	[ -f ~/.exports ] || ln -s $(PWD)/exports ~/.exports
 	[ -f ~/.functions ] || ln -s $(PWD)/functions ~/.functions
 	[ -f ~/.path ] || ln -s $(PWD)/path ~/.path
+	[ -f ~/.completions ] || ln -s $(PWD)/completions ~/.completions
 	[ -f ~/.inputrc ] || ln -s $(PWD)/inputrc ~/.inputrc
 	[ -f ~/.bashrc ] || ln -s $(PWD)/bashrc ~/.bashrc
 	[ -f ~/.bash_profile ] || ln -s $(PWD)/bash_profile ~/.bash_profile

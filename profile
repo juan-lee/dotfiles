@@ -10,4 +10,9 @@ set -o vi
 
 [[ -f ~/.path ]] && . ~/.path
 
+[[ -f ~/.completions ]] && . ~/.completions
+
 [[ -f ~/.extra ]] && . ~/.extra
+
+[[ -f ~/.fzf.zsh ]] && . ~/.fzf.zsh
+

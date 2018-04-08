@@ -1,0 +1,4 @@
+#!/bin/bash
+
+[ -f '/usr/local/opt/azure-cli/libexec/bin/az.completion.sh' ] && source '/usr/local/opt/azure-cli/libexec/bin/az.completion.sh' > /dev/null
+[ -f '~/lib/azure-cli/az.completion' ] && source '~/lib/azure-cli/az.completion'
