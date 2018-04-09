@@ -2,4 +2,4 @@
 
 export HISTCONTROL=erasedups
 
-eval $(docker-machine env default)
+#[ -x "$(which docker-machine)" ] && eval $(docker-machine env default)

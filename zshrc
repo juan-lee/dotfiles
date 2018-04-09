@@ -1,6 +1,8 @@
-source ~/.config/base16-shell/base16-shell.plugin.zsh
+source $HOME/.config/base16-shell/base16-shell.plugin.zsh
 
 export ZSH=~/.oh-my-zsh
+export PATH=$PATH:$HOME/Library/Python/3.6/bin
+# source $HOME/Library/Python/3.6/lib/python/site-packages/powerline/bindings/zsh/powerline.zsh
 
 ZSH_THEME="robbyrussell"
 
@@ -25,6 +27,5 @@ autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/local/Cellar/terraform/0.11.3/bin/terraform terraform
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
