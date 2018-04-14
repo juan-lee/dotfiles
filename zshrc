@@ -1,12 +1,15 @@
-source $HOME/.config/base16-shell/base16-shell.plugin.zsh
+export XDG_DATA_HOME=$HOME/.local/share
+export XDG_CONFIG_HOME=$HOME/.config
+export XDG_DATA_DIRS=/usr/local/share/:/usr/share/
+export XDG_CONFIG_DIRS=/etc/xdg
+export XDG_CACHE_HOME=$HOME/.cache
+
+source "${XDG_CONFIG_HOME}/base16-shell/base16-shell.plugin.zsh"
 
 export ZSH=~/.oh-my-zsh
 export PATH=$PATH:$HOME/Library/Python/3.6/bin
-# source $HOME/Library/Python/3.6/lib/python/site-packages/powerline/bindings/zsh/powerline.zsh
 
 ZSH_THEME="robbyrussell"
-
-COMPLETION_WAITING_DOTS="true"
 
 plugins=(git tmux vi-mode sudo nmap docker httpie colored-man-pages zsh-syntax-highlighting vault brew colorize golang kubectl helm kube-ps1)
 

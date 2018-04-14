@@ -46,7 +46,7 @@ if (empty($TMUX))
     let $NVIM_TUI_ENABLE_TRUE_COLOR=1
   endif
   if (has("termguicolors"))
-    " set termguicolors
+    set termguicolors
   endif
 endif
 
@@ -57,7 +57,6 @@ if filereadable(expand("~/.vimrc_background"))
 endif
 
 set noshowmode
-set ic
 set smartcase
 set et
 set ts=4
@@ -74,10 +73,11 @@ map <leader>f :bn<CR>
 map <leader>d :bp<CR>
 map <leader>a :A<CR>
 
-" autochdir
-" autocmd BufEnter * silent! lcd %:p:h
-" autocmd BufEnter * if expand('%:p') !~ '://' | :lchdir %:p:h | endif
+" :terminal mappings
+:tnoremap <leader><Esc> <C-\><C-n>
+
 let g:python3_host_prog = '/usr/local/bin/python3'
+
 " deoplete/deoplete-go
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
@@ -90,6 +90,7 @@ let g:onedark_terminal_italics=1
 " vim-airline
 let g:airline_theme='base16'
 let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_nr_show = 1
 
 if !exists('g:airline_symbols')
   let g:airline_symbols = {}
@@ -143,9 +144,6 @@ let g:go_highlight_variable_assignments = 1
 
 let g:go_modifytags_transform = 'camelcase'
 
-nmap <C-g> :GoDecls<cr>
-imap <C-g> <esc>:<C-u>GoDecls<cr>
-
 " run :GoBuild or :GoTestCompile based on the go file
 function! s:build_go_files()
   let l:file = expand('%')
@@ -158,6 +156,9 @@ endfunction
 
 augroup go
   autocmd!
+
+  autocmd FileType go nmap <C-g> :GoDecls<cr>
+  autocmd FileType go imap <C-g> <esc>:<C-u>GoDecls<cr>
 
   autocmd FileType go nmap <silent> <Leader>v <Plug>(go-def-vertical)
   autocmd FileType go nmap <silent> <Leader>s <Plug>(go-def-split)
