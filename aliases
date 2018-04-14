@@ -1,11 +1,11 @@
-#!/bin/bash
-
-alias acsrp="cd $HOME/go/src/acsrp"
-alias mule="cd $HOME/go/src/juan-lee.visualstudio.com/mule"
-
-alias tf=terraform
+# terraform
+[ -x "$(which terraform)" ] && alias tf=terraform
 
 # vim
 [ -x "$(which vim)" ] && alias vi=$(which vim)
 [ -x "$(which nvim)" ] && alias vim=$(which nvim)
 [ -x "$(which nvim)" ] && alias v=$(which nvim)
+
+alias acsrp="cd $HOME/go/src/acsrp"
+alias mule="cd $HOME/go/src/juan-lee.visualstudio.com/mule"
+

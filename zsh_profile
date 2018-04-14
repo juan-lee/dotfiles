@@ -1,0 +1,20 @@
+# Add `~/bin` to the `$PATH`
+export PATH="$HOME/bin:$PATH"
+
+# Load the shell dotfiles, and then some:
+# * ~/.path can be used to extend `$PATH`.
+# * ~/.extra can be used for other settings you don’t want to commit.
+for file in ~/.{path,exports,aliases,functions,extra}; do
+	[ -r "$file" ] && [ -f "$file" ] && source "$file"
+done
+unset file
+
+# oh-my-zsh
+ZSH_THEME="robbyrussell"
+ZSH_TMUX_AUTOSTART="true"
+ZSH_TMUX_AUTOQUIT="false"
+DEFAULT_USER="$(whoami)"
+
+plugins=(git tmux vi-mode sudo nmap docker httpie colored-man-pages zsh-syntax-highlighting vault brew colorize golang kubectl helm kube-ps1)
+
+source $ZSH/oh-my-zsh.sh
