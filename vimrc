@@ -92,15 +92,15 @@ let g:airline_theme='base16'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#buffer_nr_show = 1
 
-if !exists('g:airline_symbols')
-  let g:airline_symbols = {}
-endif
+" if !exists('g:airline_symbols')
+"   let g:airline_symbols = {}
+" endif
 
 " powerline symbols
-let g:airline_symbols.branch = ''
-let g:airline_symbols.readonly = ''
-let g:airline_symbols.linenr = '☰'
-let g:airline_symbols.maxlinenr = ' '
+" let g:airline_symbols.branch = ''
+" let g:airline_symbols.readonly = ''
+" let g:airline_symbols.linenr = '☰'
+" let g:airline_symbols.maxlinenr = ' '
 
 " vim-go
 let g:go_fmt_fail_silently = 0
