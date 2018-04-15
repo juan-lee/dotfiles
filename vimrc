@@ -74,8 +74,9 @@ let mapleader = " "
 " leader mappings
 map <Leader>n :bn<CR>
 map <Leader>p :bp<CR>
-map <Leader>d :bd<CR>
+map <Leader>q :bd!<CR>
 map <Leader>a :A<CR>
+map <Leader>w <C-W>w
 
 " :terminal mappings
 :tnoremap <Leader><Esc> <C-\><C-n>
@@ -146,10 +147,10 @@ augroup go
   autocmd FileType go nmap <C-g> :GoDecls<cr>
   autocmd FileType go imap <C-g> <esc>:<C-u>GoDecls<cr>
 
-  autocmd FileType go nmap <silent> <Leader>v <Plug>(go-def-vertical)
-  autocmd FileType go nmap <silent> <Leader>s <Plug>(go-def-split)
+  " autocmd FileType go nmap <silent> <Leader>v <Plug>(go-def-vertical)
+  " autocmd FileType go nmap <silent> <Leader>s <Plug>(go-def-split)
 
-  autocmd FileType go nmap <silent> <Leader>x <Plug>(go-doc-vertical)
+  " autocmd FileType go nmap <silent> <Leader>x <Plug>(go-doc-vertical)
 
   autocmd FileType go nmap <silent> <Leader>i <Plug>(go-info)
   " autocmd FileType go nmap <silent> <Leader>l <Plug>(go-metalinter)
@@ -207,5 +208,9 @@ map <Leader>/ :BLines!<Space>
 map <Leader>g :Ag!<Space>
 map <Leader>l :BCommits!<CR>
 map <Leader>m :GFiles?<CR>
+
+" vim-fugitive
+map <Leader>d :Gdiff<CR>
+map <Leader>s :Gstatus<CR>
 
 " vim: ts=2 sw=2 et
