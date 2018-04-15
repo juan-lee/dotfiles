@@ -1,11 +1,4 @@
-export ZSH=~/.oh-my-zsh
-
 export EDITOR="vim"
 
 export HISTCONTROL=erasedups
 
-[ -f "${XDG_CONFIG_HOME}/base16-shell/base16-shell.plugin.zsh" ] &&  source "${XDG_CONFIG_HOME}/base16-shell/base16-shell.plugin.zsh"
-
-[ -f "${HOME}/.iterm2_shell_integration.zsh" ] && source "${HOME}/.iterm2_shell_integration.zsh"
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
