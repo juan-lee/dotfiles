@@ -68,6 +68,11 @@ set incsearch
 set spelllang=en_us
 set number
 
+augroup qf
+  autocmd!
+  autocmd FileType qf set nobuflisted
+augroup END
+
 " space leader
 let mapleader = " "
 
