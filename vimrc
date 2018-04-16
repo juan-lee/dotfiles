@@ -16,12 +16,13 @@ else
   call plug#begin('~/.vim/plugged')
 endif
 
+Plug 'SirVer/ultisnips'
 Plug 'chriskempson/base16-vim'
 Plug 'fatih/vim-go'
 Plug 'hashivim/vim-terraform'
+Plug 'honza/vim-snippets'
 Plug '/usr/local/opt/fzf'
 Plug 'junegunn/fzf.vim'
-Plug 'SirVer/ultisnips'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
