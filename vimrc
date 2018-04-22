@@ -25,7 +25,12 @@ Plug 'honza/vim-snippets'
 Plug '/usr/local/opt/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-markdown'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-sensible'
+Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-vinegar'
 Plug 'vim-airline/vim-airline'
@@ -42,7 +47,7 @@ endif
 
 call plug#end()
 
-" tmux configuration
+" tmux
 if (empty($TMUX))
   if (has("nvim"))
     let $NVIM_TUI_ENABLE_TRUE_COLOR=1
@@ -52,7 +57,7 @@ if (empty($TMUX))
   endif
 endif
 
-" base16 configuration
+" base16
 if filereadable(expand("~/.vimrc_background"))
   set t_Co=256
   let base16colorspace=256
@@ -60,15 +65,16 @@ if filereadable(expand("~/.vimrc_background"))
 endif
 
 set noshowmode
-set ic
+set ignorecase
 set smartcase
-set ts=4
-set sw=4
-set et
-set hlsearch
-set incsearch
-set spelllang=en_us
 set number
+
+" tabs
+set tabstop=4
+set shiftwidth=4
+set expandtab
+
+" vim-gitgutter
 set updatetime=100
 
 " Don't show quickfix in buffer lists
@@ -89,8 +95,6 @@ map <Leader>w <C-W>w
 
 " :terminal mappings
 :tnoremap <Leader><Esc> <C-\><C-n>
-
-let g:python3_host_prog = '/usr/local/bin/python3'
 
 " deoplete/deoplete-go
 let g:deoplete#enable_at_startup = 1
@@ -196,10 +200,8 @@ command! -bang -nargs=* Ag
       \                         : fzf#vim#with_preview('right:50%'),
       \                 <bang>0)
 
-" [[B]Commits] Customize the options used by 'git log':
 let g:fzf_commits_log_options = '--graph --color=always --format="%C(red)%h%C(reset) -%C(yellow)%d%C(reset) %s %C(green)(%cr) %C(bold blue)<%an>%C(reset)" --abbrev-commit'
 
-" Customize fzf colors to match your color scheme
 let g:fzf_colors =
       \ { 'fg':      ['fg', 'Normal'],
       \ 'bg':      ['bg', 'Normal'],
@@ -224,5 +226,13 @@ map <Leader>m :GFiles?<CR>
 " vim-fugitive
 map <Leader>d :Gdiff<CR>
 map <Leader>s :Gstatus<CR>
+
+" vim-commentary
+autocmd FileType terraform setlocal commentstring=#\ %s
+
+" vim-markdown
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+let g:markdown_fenced_languages = ['html', 'python', 'bash=sh', 'sh', 'go']
+let g:markdown_syntax_conceal = 0
 
 " vim: ts=2 sw=2 et
