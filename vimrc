@@ -17,6 +17,7 @@ else
 endif
 
 Plug 'SirVer/ultisnips'
+Plug 'airblade/vim-gitgutter'
 Plug 'chriskempson/base16-vim'
 Plug 'fatih/vim-go'
 Plug 'hashivim/vim-terraform'
@@ -68,7 +69,9 @@ set hlsearch
 set incsearch
 set spelllang=en_us
 set number
+set updatetime=100
 
+" Don't show quickfix in buffer lists
 augroup qf
   autocmd!
   autocmd FileType qf set nobuflisted
