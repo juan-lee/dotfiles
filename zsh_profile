@@ -20,7 +20,7 @@ ZSH_TMUX_AUTOQUIT="false"
 
 DEFAULT_USER="$(whoami)"
 
-plugins=(git tmux vi-mode sudo nmap docker httpie colored-man-pages zsh-syntax-highlighting vault brew colorize golang kubectl helm kube-ps1)
+plugins=(git tmux vi-mode sudo nmap docker httpie colored-man-pages zsh-syntax-highlighting vault colorize golang kubectl helm kube-ps1)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -38,4 +38,7 @@ else
 fi
 
 export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap --bind '?:toggle-preview'"
+
+# azure-cli
+[ -x "$(which brew)" ] && [ -f "$(brew --prefix az)/libexec/bin/az.completion.sh" ] && source "$(brew --prefix az)/libexec/bin/az.completion.sh" > /dev/null
 

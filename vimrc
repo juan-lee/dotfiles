@@ -4,7 +4,7 @@ if has('nvim')
   if empty(glob("$XDG_DATA_HOME/nvim/site/autoload/plug.vim"))
     silent !curl -fLo "$XDG_DATA_HOME/nvim/site/autoload/plug.vim" --create-dirs
           \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC | UpdateRemotePlugins
   endif
   call plug#begin("$XDG_DATA_HOME/nvim/plugged")
 else
@@ -22,7 +22,7 @@ Plug 'chriskempson/base16-vim'
 Plug 'fatih/vim-go'
 Plug 'hashivim/vim-terraform'
 Plug 'honza/vim-snippets'
-Plug '/usr/local/opt/fzf'
+Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-eunuch'
