@@ -1,7 +1,11 @@
-#!/bin/bash
+# terraform
+[ -x "$(which terraform)" ] && alias tf=terraform
 
 # vim
-alias vi=/usr/bin/vim
-alias vim=/usr/bin/nvim
+[ -x "$(which nvim)" ] && alias vi=$(which nvim)
+[ -x "$(which nvim)" ] && alias vim=$(which nvim)
+[ -x "$(which nvim)" ] && alias v=$(which nvim)
 
-alias acsrp="cd ~/go/src/acsrp"
+alias acsrp="cd $HOME/go/src/acsrp"
+alias mule="cd $HOME/go/src/juan-lee.visualstudio.com/mule"
+

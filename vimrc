@@ -1,12 +1,12 @@
 set nocompatible
 
 if has('nvim')
-  if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
-    silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
+  if empty(glob("$XDG_DATA_HOME/nvim/site/autoload/plug.vim"))
+    silent !curl -fLo "$XDG_DATA_HOME/nvim/site/autoload/plug.vim" --create-dirs
           \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC | UpdateRemotePlugins
   endif
-  call plug#begin('~/.local/share/nvim/plugged')
+  call plug#begin("$XDG_DATA_HOME/nvim/plugged")
 else
   if empty(glob('~/.vim/autoload/plug.vim'))
     silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
@@ -16,15 +16,21 @@ else
   call plug#begin('~/.vim/plugged')
 endif
 
+Plug 'SirVer/ultisnips'
+Plug 'airblade/vim-gitgutter'
 Plug 'chriskempson/base16-vim'
 Plug 'fatih/vim-go'
 Plug 'hashivim/vim-terraform'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'honza/vim-snippets'
+Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
-Plug 'scrooloose/nerdtree'
-Plug 'SirVer/ultisnips'
 Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-markdown'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-sensible'
+Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-vinegar'
 Plug 'vim-airline/vim-airline'
@@ -41,15 +47,17 @@ endif
 
 call plug#end()
 
+" tmux
 if (empty($TMUX))
   if (has("nvim"))
     let $NVIM_TUI_ENABLE_TRUE_COLOR=1
   endif
   if (has("termguicolors"))
-    " set termguicolors
+    set termguicolors
   endif
 endif
 
+" base16
 if filereadable(expand("~/.vimrc_background"))
   set t_Co=256
   let base16colorspace=256
@@ -57,76 +65,84 @@ if filereadable(expand("~/.vimrc_background"))
 endif
 
 set noshowmode
-set ic
+set ignorecase
 set smartcase
-set et
-set ts=4
-set sw=4
-set dir=$HOME/.vim/temp
-set bdir=$HOME/.vim/backup
-set hlsearch
-set incsearch
-set spelllang=en_us
 set number
-" set relativenumber
 
-map <leader>f :bn<CR>
-map <leader>d :bp<CR>
-map <leader>a :A<CR>
+" tabs
+set tabstop=4
+set shiftwidth=4
+set expandtab
 
-" autochdir
-" autocmd BufEnter * silent! lcd %:p:h
-" autocmd BufEnter * if expand('%:p') !~ '://' | :lchdir %:p:h | endif
+" vim-gitgutter
+set updatetime=100
+
+" Don't show quickfix in buffer lists
+augroup qf
+  autocmd!
+  autocmd FileType qf set nobuflisted
+augroup END
+
+" space leader
+let mapleader = " "
+
+" leader mappings
+map <Leader>n :bn<CR>
+map <Leader>p :bp<CR>
+map <Leader>q :bd!<CR>
+map <Leader>a :A<CR>
+map <Leader>w <C-W>w
+
+" :terminal mappings
+:tnoremap <Leader><Esc> <C-\><C-n>
 
 " deoplete/deoplete-go
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
 let g:deoplete#sources#go#gocode_binary = '$GOPATH/bin/gocode'
 set completeopt+=noinsert,noselect
-
-let g:onedark_terminal_italics=1
+set completeopt-=preview
 
 " vim-airline
 let g:airline_theme='base16'
 let g:airline#extensions#tabline#enabled = 1
-
-if !exists('g:airline_symbols')
-  let g:airline_symbols = {}
-endif
-
-" powerline symbols
-let g:airline_symbols.branch = ''
-let g:airline_symbols.readonly = ''
-let g:airline_symbols.linenr = '☰'
-let g:airline_symbols.maxlinenr = ' '
+let g:airline#extensions#tabline#buffer_nr_show = 1
 
 " vim-go
 let g:go_fmt_fail_silently = 0
 let g:go_fmt_command = "goimports"
 let g:go_list_type = "quickfix"
-let g:go_auto_type_info = 0
+" let g:go_auto_type_info = 0
 let g:go_def_mode = "guru"
+let g:go_def_reuse_buffer = 1
 let g:go_echo_command_info = 1
 let g:go_gocode_autobuild = 0
 let g:go_gocode_unimported_packages = 1
-
 let g:go_autodetect_gopath = 1
-let g:go_info_mode = "guru"
-
+" let g:go_info_mode = "guru"
+let g:go_info_mode = "gocode"
+let g:go_term_enabled = 1
 " let g:go_metalinter_autosave = 1
 " let g:go_metalinter_autosave_enabled = ['vet', 'golint']
-
-let g:go_highlight_space_tab_error = 0
-let g:go_highlight_array_whitespace_error = 0
-let g:go_highlight_trailing_whitespace_error = 0
-let g:go_highlight_extra_types = 0
+let g:go_highlight_array_whitespace_error = 1
+let g:go_highlight_chan_whitespace_error = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_space_tab_error = 1
+let g:go_highlight_trailing_whitespace_error = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_arguments = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
 let g:go_highlight_build_constraints = 1
-let g:go_highlight_types = 0
-
+let g:go_highlight_generate_tags = 1
+let g:go_highlight_string_spellcheck = 1
+let g:go_highlight_format_strings = 1
+let g:go_highlight_variable_declarations = 1
+let g:go_highlight_variable_assignments = 1
 let g:go_modifytags_transform = 'camelcase'
-
-nmap <C-g> :GoDecls<cr>
-imap <C-g> <esc>:<C-u>GoDecls<cr>
 
 " run :GoBuild or :GoTestCompile based on the go file
 function! s:build_go_files()
@@ -141,18 +157,21 @@ endfunction
 augroup go
   autocmd!
 
-  autocmd FileType go nmap <silent> <Leader>v <Plug>(go-def-vertical)
-  autocmd FileType go nmap <silent> <Leader>s <Plug>(go-def-split)
+  autocmd FileType go nmap <C-g> :GoDecls<cr>
+  autocmd FileType go imap <C-g> <esc>:<C-u>GoDecls<cr>
 
-  autocmd FileType go nmap <silent> <Leader>x <Plug>(go-doc-vertical)
+  " autocmd FileType go nmap <silent> <Leader>v <Plug>(go-def-vertical)
+  " autocmd FileType go nmap <silent> <Leader>s <Plug>(go-def-split)
+
+  " autocmd FileType go nmap <silent> <Leader>x <Plug>(go-doc-vertical)
 
   autocmd FileType go nmap <silent> <Leader>i <Plug>(go-info)
-  autocmd FileType go nmap <silent> <Leader>l <Plug>(go-metalinter)
+  " autocmd FileType go nmap <silent> <Leader>l <Plug>(go-metalinter)
 
-  autocmd FileType go nmap <silent> <leader>b :<C-u>call <SID>build_go_files()<CR>
-  autocmd FileType go nmap <silent> <leader>t  <Plug>(go-test)
-  autocmd FileType go nmap <silent> <leader>r  <Plug>(go-run)
-  autocmd FileType go nmap <silent> <leader>e  <Plug>(go-install)
+  autocmd FileType go nmap <silent> <Leader>b :<C-u>call <SID>build_go_files()<CR>
+  " autocmd FileType go nmap <silent> <Leader>t  <Plug>(go-test)
+  autocmd FileType go nmap <silent> <Leader>r  <Plug>(go-run)
+  autocmd FileType go nmap <silent> <Leader>e  <Plug>(go-install)
 
   autocmd FileType go nmap <silent> <Leader>c <Plug>(go-coverage-toggle)
 
@@ -168,20 +187,21 @@ let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
 " fzf
-let g:fzf_layout = { 'down': '~40%' }
+let g:fzf_layout = { 'down': '~50%' }
 let g:fzf_buffers_jump = 1
 
 autocmd! FileType fzf
 autocmd  FileType fzf set laststatus=0 noshowmode noruler
-  \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
+      \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
 
 command! -bang -nargs=* Ag
-  \ call fzf#vim#ag(<q-args>,
-  \                 <bang>0 ? fzf#vim#with_preview('up:60%')
-  \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
-  \                 <bang>0)
+      \ call fzf#vim#ag(<q-args>,
+      \                 <bang>0 ? fzf#vim#with_preview('right:50%')
+      \                         : fzf#vim#with_preview('right:50%'),
+      \                 <bang>0)
 
-" Customize fzf colors to match your color scheme
+let g:fzf_commits_log_options = '--graph --color=always --format="%C(red)%h%C(reset) -%C(yellow)%d%C(reset) %s %C(green)(%cr) %C(bold blue)<%an>%C(reset)" --abbrev-commit'
+
 let g:fzf_colors =
       \ { 'fg':      ['fg', 'Normal'],
       \ 'bg':      ['bg', 'Normal'],
@@ -197,13 +217,22 @@ let g:fzf_colors =
       \ 'spinner': ['fg', 'Label'],
       \ 'header':  ['fg', 'Comment'] }
 
-" NERDTree
-let g:NERDTreeQuitOnOpen = 1
-let g:NERDTreeMinimalUI = 1
-let g:NERDTreeDirArrows = 1
-let g:NERDTreeAutoDeleteBuffer = 1
-let g:NERDTreeHijackNetrw = 0
-noremap <Leader>t :NERDTreeToggle<Enter>
-noremap <Leader>w :NERDTreeFind<Enter>
+map <Leader>t :Files<CR>
+map <Leader>/ :BLines!<Space>
+map <Leader>g :Ag!<Space>
+map <Leader>l :BCommits!<CR>
+map <Leader>m :GFiles?<CR>
 
-" vim: sw=2 sw=2 et
+" vim-fugitive
+map <Leader>d :Gdiff<CR>
+map <Leader>s :Gstatus<CR>
+
+" vim-commentary
+autocmd FileType terraform setlocal commentstring=#\ %s
+
+" vim-markdown
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+let g:markdown_fenced_languages = ['html', 'python', 'bash=sh', 'sh', 'go']
+let g:markdown_syntax_conceal = 0
+
+" vim: ts=2 sw=2 et
