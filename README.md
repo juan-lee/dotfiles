@@ -2,5 +2,5 @@
 ```bash
 git clone https://github.com/juan-lee/dotfiles.git ~/dotfiles
 cd dotfiles
-./bootstrap
+sudo ./bootstrap
 ```
