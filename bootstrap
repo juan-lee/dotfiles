@@ -2,24 +2,55 @@
 
 set -euo pipefail
 
-apt-get update && \
-    apt-get install -y software-properties-common && \
-    add-apt-repository ppa:neovim-ppa/stable && \
-    apt-get update &&\
-    apt-get install -y \
-        build-essential \
-        curl \
-        git-core \
-        jq \
-        language-pack-en \
-        neovim \
-        python-dev \
-        python-pip \
-        python3-dev \
-        python3-pip \
-        silversearcher-ag \
-        tmux \
-        zsh
+AZCLI_VERSION=2.0.31
+GO_VERSION=1.10.1
+HELM_VERSION=v2.8.2
+KUBECTL_VERSION=v1.9.6
+
+if [ "$(uname)" == "Linux" ]; then
+    apt-get update && \
+        apt-get install -y software-properties-common && \
+        add-apt-repository ppa:neovim-ppa/stable && \
+        apt-get update &&\
+        apt-get install -y \
+            build-essential \
+            curl \
+            git-core \
+            jq \
+            language-pack-en \
+            neovim \
+            python-dev \
+            python-pip \
+            python3-dev \
+            python3-pip \
+            silversearcher-ag \
+            tmux \
+            zsh
+fi
+
+if [ "$(uname)" == "Darwin" ]; then
+    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    brew bundle install
+fi
+
+# Installed via Brewfile on Mac
+if [ "$(uname)" == "Linux" ]; then
+    mkdir -p $HOME/bin
+
+    # install az cli
+    pip install --upgrade --disable-pip-version-check --no-cache-dir azure-cli==${AZCLI_VERSION} shyaml
+
+    # install go
+    curl -L https://storage.googleapis.com/golang/go$GO_VERSION.linux-amd64.tar.gz | tar -C /usr/local -xz
+
+    # install helm
+    curl -sSL https://storage.googleapis.com/kubernetes-helm/helm-$HELM_VERSION-linux-amd64.tar.gz \
+        | tar -vxz -C $HOME/bin --strip=1
+
+    # install kubectl
+    curl -sSL https://storage.googleapis.com/kubernetes-release/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl \
+        -o $HOME/bin/kubectl && chmod +x $HOME/bin/kubectl
+fi
 
 # neovim python extensions
 pip install neovim --upgrade && pip3 install neovim --upgrade
