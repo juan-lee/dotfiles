@@ -8,4 +8,5 @@
 
 alias acsrp="cd $HOME/go/src/acsrp"
 alias mule="cd $HOME/go/src/juan-lee.visualstudio.com/mule"
+alias acsengine="cd $HOME/go/src/github.com/Azure/acs-engine"
 

@@ -66,6 +66,9 @@ set ignorecase
 set smartcase
 set number
 
+" search
+set inccommand=nosplit
+
 " tabs
 set tabstop=4
 set shiftwidth=4
