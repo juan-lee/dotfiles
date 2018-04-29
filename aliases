@@ -5,6 +5,7 @@
 [ -x "$(which nvim)" ] && alias vi=$(which nvim)
 [ -x "$(which nvim)" ] && alias vim=$(which nvim)
 [ -x "$(which nvim)" ] && alias v=$(which nvim)
+[ -x "$(which nvim)" ] && alias vt="$(which nvim) +terminal"
 
 alias acsrp="cd $HOME/go/src/acsrp"
 alias mule="cd $HOME/go/src/juan-lee.visualstudio.com/mule"

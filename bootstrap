@@ -55,6 +55,9 @@ fi
 # neovim python extensions
 pip install neovim --upgrade && pip3 install neovim --upgrade
 
+# pygmentize
+pip3 install pygmentize --upgrade
+
 # Oh my zsh
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
     curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh | bash

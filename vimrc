@@ -24,6 +24,7 @@ Plug 'hashivim/vim-terraform'
 Plug 'honza/vim-snippets'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
+Plug 'machakann/vim-highlightedyank'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-eunuch'
 Plug 'tpope/vim-fugitive'
@@ -95,6 +96,7 @@ map <Leader>w <C-W>w
 
 " :terminal mappings
 :tnoremap <Leader><Esc> <C-\><C-n>
+:tnoremap <Leader>w <C-\><C-n><C-W>w
 
 " deoplete/deoplete-go
 let g:deoplete#enable_at_startup = 1

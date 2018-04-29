@@ -2,14 +2,6 @@
 export PATH="$HOME/bin:$PATH"
 [ -f "${XDG_CONFIG_HOME}/base16-shell/base16-shell.plugin.zsh" ] && source "${XDG_CONFIG_HOME}/base16-shell/base16-shell.plugin.zsh"
 
-# Load the shell dotfiles, and then some:
-# * ~/.path can be used to extend `$PATH`.
-# * ~/.extra can be used for other settings you don’t want to commit.
-for file in ~/.{path,exports,aliases,functions,extra}; do
-    [ -r "$file" ] && [ -f "$file" ] && source "$file"
-done
-unset file
-
 # oh-my-zsh
 export ZSH=~/.oh-my-zsh
 
@@ -20,9 +12,17 @@ ZSH_TMUX_AUTOQUIT="false"
 
 DEFAULT_USER="$(whoami)"
 
-plugins=(git tmux vi-mode sudo nmap docker httpie colored-man-pages zsh-syntax-highlighting vault colorize golang kubectl helm kube-ps1)
+plugins=(git tmux vi-mode sudo nmap docker httpie colored-man-pages zsh-syntax-highlighting vault colorize golang kubectl helm)
 
 source $ZSH/oh-my-zsh.sh
+
+# Load the shell dotfiles, and then some:
+# * ~/.path can be used to extend `$PATH`.
+# * ~/.extra can be used for other settings you don’t want to commit.
+for file in ~/.{path,exports,aliases,functions,extra}; do
+    [ -r "$file" ] && [ -f "$file" ] && source "$file"
+done
+unset file
 
 # iTerm
 [ -f "${HOME}/.iterm2_shell_integration.zsh" ] && source "${HOME}/.iterm2_shell_integration.zsh"
@@ -42,3 +42,13 @@ export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap 
 # azure-cli
 [ -x "$(which brew)" ] && [ -f "$(brew --prefix az)/libexec/bin/az.completion.sh" ] && source "$(brew --prefix az)/libexec/bin/az.completion.sh" > /dev/null
 
+# kube-ps1
+if [ -x "$(which brew)" ] && [ -f "$(brew --prefix kube-ps1)/share/kube-ps1.sh" ]; then
+    source "$(brew --prefix kube-ps1)/share/kube-ps1.sh"
+    PROMPT='$(kube_ps1) '$PROMPT
+    KUBE_PS1_SYMBOL_USE_IMG=true
+    unset KUBE_PS1_PREFIX
+    unset KUBE_PS1_SUFFIX
+    unset KUBE_PS1_SEPARATOR
+    kubeoff
+fi
