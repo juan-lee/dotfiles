@@ -1,6 +1,5 @@
 # Add `~/bin` to the `$PATH`
 export PATH="$HOME/bin:$PATH"
-[ -f "${XDG_CONFIG_HOME}/base16-shell/base16-shell.plugin.zsh" ] && source "${XDG_CONFIG_HOME}/base16-shell/base16-shell.plugin.zsh"
 
 # oh-my-zsh
 export ZSH=~/.oh-my-zsh
@@ -24,6 +23,9 @@ for file in ~/.{path,exports,aliases,functions,extra}; do
 done
 unset file
 
+# base16
+[ -f "${XDG_CONFIG_HOME}/base16-shell/base16-shell.plugin.zsh" ] && source "${XDG_CONFIG_HOME}/base16-shell/base16-shell.plugin.zsh"
+
 # iTerm
 [ -f "${HOME}/.iterm2_shell_integration.zsh" ] && source "${HOME}/.iterm2_shell_integration.zsh"
 
@@ -45,10 +47,15 @@ export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap 
 # kube-ps1
 if [ -x "$(which brew)" ] && [ -f "$(brew --prefix kube-ps1)/share/kube-ps1.sh" ]; then
     source "$(brew --prefix kube-ps1)/share/kube-ps1.sh"
-    PROMPT='$(kube_ps1) '$PROMPT
-    KUBE_PS1_SYMBOL_USE_IMG=true
+    PROMPT='$(kube_ps1)'$PROMPT
     unset KUBE_PS1_PREFIX
     unset KUBE_PS1_SUFFIX
     unset KUBE_PS1_SEPARATOR
     kubeoff
+fi
+
+if [ -x "$(which brew)" ] && [ -d "$(brew --prefix coreutils)/libexec/gnubin" ]; then
+    export PATH="$(brew --prefix coreutils)/libexec/gnubin:/usr/local/bin:$PATH"
+    export MANPATH="$(brew --prefix coreutils)/libexec/gnuman:$MANPATH"
+    alias ls="ls --color=auto -G"
 fi

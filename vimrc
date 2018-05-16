@@ -22,6 +22,7 @@ Plug 'chriskempson/base16-vim'
 Plug 'fatih/vim-go'
 Plug 'hashivim/vim-terraform'
 Plug 'honza/vim-snippets'
+Plug 'juliosueiras/vim-terraform-completion'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'machakann/vim-highlightedyank'
@@ -236,5 +237,9 @@ autocmd FileType terraform setlocal commentstring=#\ %s
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:markdown_fenced_languages = ['html', 'python', 'bash=sh', 'sh', 'go']
 let g:markdown_syntax_conceal = 0
+
+" vim-terraform
+let g:terraform_fmt_on_save = 1
+let g:terraform_align = 1
 
 " vim: ts=2 sw=2 et
