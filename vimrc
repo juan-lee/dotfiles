@@ -34,6 +34,7 @@ Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
+Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-vinegar'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -49,11 +50,8 @@ endif
 
 call plug#end()
 
-if (has("nvim"))
+if has("nvim")
   let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-endif
-if (!has("mac") && has("termguicolors"))
-  set termguicolors
 endif
 
 " base16
@@ -78,6 +76,9 @@ set expandtab
 
 " vim-gitgutter
 set updatetime=100
+
+" undo
+set undofile
 
 " Don't show quickfix in buffer lists
 augroup qf
@@ -109,7 +110,7 @@ set completeopt-=preview
 " vim-airline
 let g:airline_theme='base16'
 let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#buffer_nr_show = 1
+" let g:airline#extensions#tabline#buffer_nr_show = 1
 
 " vim-go
 let g:go_fmt_fail_silently = 0

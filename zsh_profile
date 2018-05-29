@@ -47,12 +47,15 @@ export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap 
 # kube-ps1
 if [ -x "$(which brew)" ] && [ -f "$(brew --prefix kube-ps1)/share/kube-ps1.sh" ]; then
     source "$(brew --prefix kube-ps1)/share/kube-ps1.sh"
-    PROMPT='$(kube_ps1)'$PROMPT
-    unset KUBE_PS1_PREFIX
-    unset KUBE_PS1_SUFFIX
-    unset KUBE_PS1_SEPARATOR
-    kubeoff
+else
+    source "$HOME/bin/kube-ps1.sh"
 fi
+
+PROMPT='$(kube_ps1) '$PROMPT
+unset KUBE_PS1_PREFIX
+unset KUBE_PS1_SUFFIX
+unset KUBE_PS1_SEPARATOR
+kubeoff
 
 if [ -x "$(which brew)" ] && [ -d "$(brew --prefix coreutils)/libexec/gnubin" ]; then
     export PATH="$(brew --prefix coreutils)/libexec/gnubin:/usr/local/bin:$PATH"
