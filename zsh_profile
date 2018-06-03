@@ -42,14 +42,16 @@ fi
 export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap --bind '?:toggle-preview'"
 
 # azure-cli
-[ -x "$(which brew)" ] && [ -f "$(brew --prefix az)/libexec/bin/az.completion.sh" ] && source "$(brew --prefix az)/libexec/bin/az.completion.sh" > /dev/null
+[ -x "$(which brew)" ] && [ -f "/usr/local/opt/azure-cli/libexec/bin/az.completion.sh" ] && source "/usr/local/opt/azure-cli/libexec/bin/az.completion.sh" > /dev/null
 
 # kube-ps1
-if [ -x "$(which brew)" ] && [ -f "$(brew --prefix kube-ps1)/share/kube-ps1.sh" ]; then
-    source "$(brew --prefix kube-ps1)/share/kube-ps1.sh"
+if [ -x "$(which brew)" ] && [ -f "/usr/local/opt/kube-ps1/share/kube-ps1.sh" ]; then
+    source "/usr/local/opt/kube-ps1/share/kube-ps1.sh"
 else
     source "$HOME/bin/kube-ps1.sh"
 fi
+
+reload_kubeconfigs
 
 PROMPT='$(kube_ps1) '$PROMPT
 unset KUBE_PS1_PREFIX
@@ -57,8 +59,8 @@ unset KUBE_PS1_SUFFIX
 unset KUBE_PS1_SEPARATOR
 kubeoff
 
-if [ -x "$(which brew)" ] && [ -d "$(brew --prefix coreutils)/libexec/gnubin" ]; then
-    export PATH="$(brew --prefix coreutils)/libexec/gnubin:/usr/local/bin:$PATH"
-    export MANPATH="$(brew --prefix coreutils)/libexec/gnuman:$MANPATH"
+if [ -x "$(which brew)" ] && [ -d "/usr/local/opt/coreutils/libexec/gnubin" ]; then
+    export PATH="/usr/local/opt/coreutils/libexec/gnubin:/usr/local/bin:$PATH"
+    export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
     alias ls="ls --color=auto -G"
 fi

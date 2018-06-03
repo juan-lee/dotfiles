@@ -1,2 +1,11 @@
 #!/bin/bash
 
+function kubectl_all_namespaces {
+  kubectl $@ --all-namespaces
+}
+alias ka="kubectl_all_namespaces"
+
+function reload_kubeconfigs {
+  unset KUBECONFIG
+  for f in $(echo $HOME/.kube/config*); do export KUBECONFIG="$KUBECONFIG:$f"; done
+}
