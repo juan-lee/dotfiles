@@ -59,6 +59,11 @@ unset KUBE_PS1_SUFFIX
 unset KUBE_PS1_SEPARATOR
 kubeoff
 
+# kubectx/kubens
+[ -f "$HOME/Code/github.com/ahmetb/kubectx/completion/kubectx.bash" ] && source "$HOME/Code/github.com/ahmetb/kubectx/completion/kubectx.bash"
+[ -f "$HOME/Code/github.com/ahmetb/kubectx/completion/kubens.bash" ] && source "$HOME/Code/github.com/ahmetb/kubectx/completion/kubens.bash"
+
+# coreutils
 if [ -x "$(which brew)" ] && [ -d "/usr/local/opt/coreutils/libexec/gnubin" ]; then
     export PATH="/usr/local/opt/coreutils/libexec/gnubin:/usr/local/bin:$PATH"
     export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
