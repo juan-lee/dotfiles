@@ -2,3 +2,5 @@ export EDITOR=nvim
 
 export HISTCONTROL=erasedups
 
+export GOPATH=$HOME/go
+
