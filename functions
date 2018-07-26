@@ -9,3 +9,34 @@ function reload_kubeconfigs {
   unset KUBECONFIG
   for f in $(echo $HOME/.kube/config*); do export KUBECONFIG="$KUBECONFIG:$f"; done
 }
+
+function azrc {
+  resource_group=$1
+  vm_name=$2
+  shift 2
+  command="$@"
+  echo "Running [${command}] on ${vm_name} in ${resource_group}"
+  az vm run-command invoke -g ${resource_group} -n ${vm_name} --command-id RunShellScript --scripts "${command}" | jq -r '.output[0].message'
+}
+
+function azal {
+  accounts=$(az account list -o json) && \
+  account=$(echo $accounts | jq -r '.[].name' | fzf) && \
+  sub_id=$(echo $accounts | jq -c ".[] | select(.name == \"${account}\")" | jq -r '.id') && \
+  az account set -s $sub_id && \
+  echo "${account} (${sub_id})"
+}
+
+function az_hard_reboot {
+  resource_group=${1}
+  vm_name=${2}
+
+  [ -z "${resource_group}" ] && echo "az_hard_reboot <resource_group> <vm_name>" && return 1
+  [ -z "${vm_name}" ] && echo "az_hard_reboot <resource_group> <vm_name>" && return 1
+
+  echo "Stopping ${vm_name} in ${resource_group}"
+  az vm stop -g "${resource_group}" -n "${vm_name}"
+
+  echo "Starting ${vm_name} in ${resource_group}"
+  az vm start -g "${resource_group}" -n "${vm_name}"
+}
