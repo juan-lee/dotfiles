@@ -1,11 +1,10 @@
 #!/bin/bash
-
 set -euo pipefail
 
-AZCLI_VERSION=2.0.33
-GO_VERSION=1.10.1
-HELM_VERSION=v2.8.2
-KUBECTL_VERSION=v1.9.6
+AZCLI_VERSION=2.0.42
+GO_VERSION=1.10.3
+HELM_VERSION=v2.9.1
+KUBECTL_VERSION=v1.10.4
 
 if [ "$(uname)" == "Linux" ]; then
     apt-get update && \
@@ -36,6 +35,7 @@ fi
 # Installed via Brewfile on Mac
 if [ "$(uname)" == "Linux" ]; then
     mkdir -p $HOME/bin
+    mkdir -p $HOME/.kube
 
     # install az cli
     pip install --upgrade --disable-pip-version-check --no-cache-dir azure-cli==${AZCLI_VERSION} shyaml
@@ -50,13 +50,16 @@ if [ "$(uname)" == "Linux" ]; then
     # install kubectl
     curl -sSL https://storage.googleapis.com/kubernetes-release/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl \
         -o $HOME/bin/kubectl && chmod +x $HOME/bin/kubectl
+
+    curl -sSL https://raw.githubusercontent.com/jonmosco/kube-ps1/master/kube-ps1.sh \
+        -o $HOME/bin/kube-ps1.sh && chmod +x $HOME/bin/kube-ps1.sh
 fi
 
 # neovim python extensions
-pip install neovim --upgrade && pip3 install neovim --upgrade
+pip install neovim --upgrade --disable-pip-version-check --no-cache-dir && pip3 install neovim --upgrade --disable-pip-version-check --no-cache-dir
 
 # pygmentize
-pip3 install pygmentize --upgrade
+# pip3 install --upgrade --disable-pip-version-check --no-cache-dir pygmentize
 
 # Oh my zsh
 if [ ! -d "$HOME/.oh-my-zsh" ]; then

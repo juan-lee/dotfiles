@@ -1,4 +1,4 @@
-FROM ubuntu:17.10
+FROM ubuntu:18.04
 
 ENV HOME=/root \
          LC_ALL=en_US.UTF-8 \
