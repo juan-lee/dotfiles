@@ -2,9 +2,9 @@
 set -euo pipefail
 
 AZCLI_VERSION=2.0.42
-GO_VERSION=1.10.3
+GO_VERSION=1.11.2
 HELM_VERSION=v2.9.1
-KUBECTL_VERSION=v1.10.4
+KUBECTL_VERSION=v1.10.11
 
 if [ "$(uname)" == "Linux" ]; then
     apt-get update && \
@@ -36,6 +36,7 @@ fi
 if [ "$(uname)" == "Linux" ]; then
     mkdir -p $HOME/bin
     mkdir -p $HOME/.kube
+    mkdir -p $HOME/Code
 
     # install az cli
     pip install --upgrade --disable-pip-version-check --no-cache-dir azure-cli==${AZCLI_VERSION} shyaml
@@ -53,6 +54,9 @@ if [ "$(uname)" == "Linux" ]; then
 
     curl -sSL https://raw.githubusercontent.com/jonmosco/kube-ps1/master/kube-ps1.sh \
         -o $HOME/bin/kube-ps1.sh && chmod +x $HOME/bin/kube-ps1.sh
+
+    mkdir -p $HOME/Code/github.com/ahmetb
+    git clone https://github.com/ahmetb/kubectx.git $HOME/Code/github.com/ahmetb/kubectx
 fi
 
 # neovim python extensions

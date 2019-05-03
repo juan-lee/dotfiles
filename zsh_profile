@@ -45,6 +45,8 @@ export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap 
 [ -x "$(which brew)" ] && [ -f "/usr/local/opt/azure-cli/libexec/bin/az.completion.sh" ] && source "/usr/local/opt/azure-cli/libexec/bin/az.completion.sh" > /dev/null
 
 # kube-ps1
+#
+# workaround for KUBE_PS1_SYMBOL_DEFAULT missing quotes
 if [ -x "$(which brew)" ] && [ -f "/usr/local/opt/kube-ps1/share/kube-ps1.sh" ]; then
     source "/usr/local/opt/kube-ps1/share/kube-ps1.sh"
 else
@@ -53,7 +55,7 @@ fi
 
 reload_kubeconfigs
 
-PROMPT='$(kube_ps1) '$PROMPT
+PROMPT='$(kube_ps1)'$PROMPT
 unset KUBE_PS1_PREFIX
 unset KUBE_PS1_SUFFIX
 unset KUBE_PS1_SEPARATOR

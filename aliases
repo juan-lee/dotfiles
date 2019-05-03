@@ -7,7 +7,9 @@
 [ -x "$(which nvim)" ] && alias v=$(which nvim)
 [ -x "$(which nvim)" ] && alias vt="$(which nvim) +terminal"
 
-alias acsrp="cd $HOME/go/src/goms.io/acsrp"
-alias mule="cd $HOME/go/src/juan-lee.visualstudio.com/mule"
-alias acsengine="cd $HOME/go/src/github.com/Azure/acs-engine"
+alias acsrp="$HOME/go/src/goms.io/acsrp"
+alias akse="$HOME/go/src/github.com/Azure/aks-engine"
 alias k8s="$HOME/go/src/k8s.io/kubernetes"
+alias capz="$HOME/go/src/sigs.k8s.io/cluster-api-provider-azure"
+alias cap="$HOME/go/src/sigs.k8s.io/cluster-api"
+alias gsys="$HOME/go/src/github.com/Azure/genesys"

@@ -16,7 +16,7 @@ function azrc {
   shift 2
   command="$@"
   echo "Running [${command}] on ${vm_name} in ${resource_group}"
-  az vm run-command invoke -g ${resource_group} -n ${vm_name} --command-id RunShellScript --scripts "${command}" | jq -r '.output[0].message'
+  az vm run-command invoke -g ${resource_group} -n ${vm_name} --command-id RunShellScript --scripts "${command}" | jq -r '.value[0].message'
 }
 
 function azal {

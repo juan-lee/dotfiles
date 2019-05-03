@@ -97,10 +97,7 @@ map <Leader>p :bp<CR>
 map <Leader>q :bd!<CR>
 map <Leader>a :A<CR>
 map <Leader>w <C-W>w
-
-" :terminal mappings
-:tnoremap <Leader><Esc> <C-\><C-n>
-:tnoremap <Leader>w <C-\><C-n><C-W>w
+map <Leader>6 <C-^>
 
 " deoplete/deoplete-go
 let g:deoplete#enable_at_startup = 1
@@ -112,6 +109,7 @@ set completeopt-=preview
 " vim-airline
 let g:airline_theme='base16'
 let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#show_tabs = 0
 " let g:airline#extensions#tabline#buffer_nr_show = 1
 
 " vim-go
@@ -120,9 +118,12 @@ let g:go_fmt_command = "goimports"
 let g:go_list_type = "quickfix"
 " let g:go_auto_type_info = 0
 let g:go_def_mode = "guru"
+let g:go_info_mode = "guru"
 let g:go_def_reuse_buffer = 1
 let g:go_echo_command_info = 1
 let g:go_gocode_autobuild = 1
+let g:go_gocode_propose_builtins = 1
+let g:go_gocode_propose_source = 1
 let g:go_gocode_unimported_packages = 1
 let g:go_autodetect_gopath = 1
 let g:go_term_enabled = 0
@@ -172,9 +173,10 @@ augroup go
   " autocmd FileType go nmap <silent> <Leader>l <Plug>(go-metalinter)
 
   autocmd FileType go nmap <silent> <Leader>b :<C-u>call <SID>build_go_files()<CR>
-  " autocmd FileType go nmap <silent> <Leader>t  <Plug>(go-test)
-  autocmd FileType go nmap <silent> <Leader>r  <Plug>(go-run)
-  autocmd FileType go nmap <silent> <Leader>e  <Plug>(go-install)
+  autocmd FileType go nmap <silent> <Leader>x <Plug>(go-test)
+  autocmd FileType go nmap <silent> <Leader>r <Plug>(go-run)
+  autocmd FileType go nmap <silent> <Leader>e <Plug>(go-install)
+  autocmd FileType go nmap <silent> <Leader>d :GoDeclsDir<CR>
 
   autocmd FileType go nmap <silent> <Leader>c <Plug>(go-coverage-toggle)
 
@@ -221,14 +223,15 @@ let g:fzf_colors =
       \ 'header':  ['fg', 'Comment'] }
 
 map <Leader>t :Files<CR>
-map <Leader>/ :BLines!<Space>
-map <Leader>g :Ag!<Space>
-map <Leader>l :BCommits!<CR>
+map <Leader>T :GFiles<CR>
 map <Leader>m :GFiles?<CR>
+map <Leader>g :Rg!<Space>
+map <Leader>G :Rg!<Space><C-r><C-w><CR>
+map <Leader>u :Buffers<CR>
 
 " vim-fugitive
-map <Leader>d :Gdiff<CR>
 map <Leader>s :Gstatus<CR>
+" map <Leader>d :Gdiff<CR>
 
 " vim-commentary
 autocmd FileType terraform setlocal commentstring=#\ %s
@@ -241,5 +244,8 @@ let g:markdown_syntax_conceal = 0
 " vim-terraform
 let g:terraform_fmt_on_save = 1
 let g:terraform_align = 1
+
+" wildmenu visibility
+hi! link WildMenu airline_tabsel
 
 " vim: ts=2 sw=2 et
