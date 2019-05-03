@@ -16,6 +16,7 @@ else
   call plug#begin('~/.vim/plugged')
 endif
 
+Plug 'HerringtonDarkholme/yats.vim'
 Plug 'SirVer/ultisnips'
 Plug 'airblade/vim-gitgutter'
 Plug 'chriskempson/base16-vim'
@@ -26,6 +27,9 @@ Plug 'juliosueiras/vim-terraform-completion'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'machakann/vim-highlightedyank'
+Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
+Plug 'racer-rust/vim-racer'
+Plug 'rust-lang/rust.vim'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-dadbod'
 Plug 'tpope/vim-dispatch'
@@ -110,6 +114,7 @@ set completeopt-=preview
 let g:airline_theme='base16'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#show_tabs = 0
+let g:airline#extensions#bookmark#enabled = 0
 " let g:airline#extensions#tabline#buffer_nr_show = 1
 
 " vim-go
@@ -170,7 +175,7 @@ augroup go
   " autocmd FileType go nmap <silent> <Leader>x <Plug>(go-doc-vertical)
 
   autocmd FileType go nmap <silent> <Leader>i <Plug>(go-info)
-  " autocmd FileType go nmap <silent> <Leader>l <Plug>(go-metalinter)
+  autocmd FileType go nmap <silent> <Leader>l <Plug>(go-metalinter)
 
   autocmd FileType go nmap <silent> <Leader>b :<C-u>call <SID>build_go_files()<CR>
   autocmd FileType go nmap <silent> <Leader>x <Plug>(go-test)
@@ -192,7 +197,7 @@ let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
 " fzf
-let g:fzf_layout = { 'down': '~50%' }
+let g:fzf_layout = { 'down': '~30%' }
 let g:fzf_buffers_jump = 1
 
 autocmd! FileType fzf
@@ -201,8 +206,8 @@ autocmd  FileType fzf set laststatus=0 noshowmode noruler
 
 command! -bang -nargs=* Ag
       \ call fzf#vim#ag(<q-args>,
-      \                 <bang>0 ? fzf#vim#with_preview('right:50%')
-      \                         : fzf#vim#with_preview('right:50%'),
+      \                 <bang>0 ? fzf#vim#with_preview('up:70%')
+      \                         : fzf#vim#with_preview('up:70%:hidden', '?'),
       \                 <bang>0)
 
 let g:fzf_commits_log_options = '--graph --color=always --format="%C(red)%h%C(reset) -%C(yellow)%d%C(reset) %s %C(green)(%cr) %C(bold blue)<%an>%C(reset)" --abbrev-commit'

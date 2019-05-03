@@ -53,8 +53,6 @@ else
     source "$HOME/bin/kube-ps1.sh"
 fi
 
-reload_kubeconfigs
-
 PROMPT='$(kube_ps1)'$PROMPT
 unset KUBE_PS1_PREFIX
 unset KUBE_PS1_SUFFIX
