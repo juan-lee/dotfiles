@@ -30,6 +30,7 @@ Plug 'machakann/vim-highlightedyank'
 Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
 Plug 'racer-rust/vim-racer'
 Plug 'rust-lang/rust.vim'
+Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-dadbod'
 Plug 'tpope/vim-dispatch'
@@ -87,6 +88,9 @@ set updatetime=100
 
 " undo
 set undofile
+
+" never fold
+set nofoldenable
 
 " Don't show quickfix in buffer lists
 augroup qf
@@ -257,5 +261,11 @@ let g:terraform_align = 1
 
 " wildmenu visibility
 hi! link WildMenu airline_tabsel
+
+if &diff
+  set diffopt+=context:1000
+  au BufEnter,BufNew * if &diff | syntax off | endif
+  map <Leader>q :qa<CR>
+endif
 
 " vim: ts=2 sw=2 et
