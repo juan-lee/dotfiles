@@ -262,8 +262,11 @@ let g:terraform_align = 1
 " wildmenu visibility
 hi! link WildMenu airline_tabsel
 
+" diff
+set diffopt+=context:1000
+
+" starting in diff
 if &diff
-  set diffopt+=context:1000
   au BufEnter,BufNew * if &diff | syntax off | endif
   map <Leader>q :qa<CR>
 endif
