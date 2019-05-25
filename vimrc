@@ -264,6 +264,7 @@ hi! link WildMenu airline_tabsel
 
 if &diff
   set diffopt+=context:1000
+  set noswapfile
   au BufEnter,BufNew * if &diff | syntax off | endif
   map <Leader>q :qa<CR>
 endif
