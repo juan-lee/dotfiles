@@ -104,7 +104,7 @@ let mapleader = " "
 " leader mappings
 map <Leader>n :bn<CR>
 map <Leader>p :bp<CR>
-map <Leader>q :bd!<CR>
+map <Leader>q :bp \| bd #<CR>
 map <Leader>a :A<CR>
 map <Leader>w <C-W>w
 map <Leader>6 <C-^>
