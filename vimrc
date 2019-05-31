@@ -47,7 +47,6 @@ Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-vinegar'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'zchee/deoplete-go', { 'do': 'make'}
 
 if has('nvim')
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -112,7 +111,6 @@ map <Leader>6 <C-^>
 " deoplete/deoplete-go
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
-let g:deoplete#sources#go#gocode_binary = '$GOPATH/bin/gocode'
 set completeopt+=noinsert,noselect
 set completeopt-=preview
 
@@ -127,15 +125,10 @@ let g:airline#extensions#bookmark#enabled = 0
 let g:go_fmt_fail_silently = 0
 let g:go_fmt_command = "goimports"
 let g:go_list_type = "quickfix"
-" let g:go_auto_type_info = 0
-let g:go_def_mode = "guru"
-let g:go_info_mode = "guru"
+let g:go_def_mode = "gopls"
+let g:go_info_mode = "gopls"
 let g:go_def_reuse_buffer = 1
 let g:go_echo_command_info = 1
-let g:go_gocode_autobuild = 1
-let g:go_gocode_propose_builtins = 1
-let g:go_gocode_propose_source = 1
-let g:go_gocode_unimported_packages = 1
 let g:go_autodetect_gopath = 1
 let g:go_term_enabled = 0
 let g:go_highlight_array_whitespace_error = 1
@@ -161,6 +154,10 @@ let g:go_metalinter_command = 'golangci-lint run'
     \ 'gofmt': '-s -d -e -l',
     \ 'goimports': '-local github.com/Azure/genesys',
     \ }
+
+call deoplete#custom#option('omni_patterns', {
+\ 'go': '[^. *\t]\.\w*',
+\})
 
 " run :GoBuild or :GoTestCompile based on the go file
 function! s:build_go_files()
