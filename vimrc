@@ -28,6 +28,7 @@ Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'machakann/vim-highlightedyank'
 Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
+Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
 Plug 'racer-rust/vim-racer'
 Plug 'rust-lang/rust.vim'
 Plug 'tpope/vim-abolish'
@@ -47,14 +48,6 @@ Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-vinegar'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-
-if has('nvim')
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-  Plug 'Shougo/deoplete.nvim'
-  Plug 'roxma/nvim-yarp'
-  Plug 'roxma/vim-hug-neovim-rpc'
-endif
 
 call plug#end()
 
@@ -108,18 +101,11 @@ map <Leader>a :A<CR>
 map <Leader>w <C-W>w
 map <Leader>6 <C-^>
 
-" deoplete/deoplete-go
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#enable_smart_case = 1
-set completeopt+=noinsert,noselect
-set completeopt-=preview
-
 " vim-airline
 let g:airline_theme='base16'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#show_tabs = 0
 let g:airline#extensions#bookmark#enabled = 0
-" let g:airline#extensions#tabline#buffer_nr_show = 1
 
 " vim-go
 let g:go_fmt_fail_silently = 0
@@ -154,10 +140,6 @@ let g:go_metalinter_command = 'golangci-lint run'
     \ 'gofmt': '-s -d -e -l',
     \ 'goimports': '-local github.com/Azure/genesys',
     \ }
-
-call deoplete#custom#option('omni_patterns', {
-\ 'go': '[^. *\t]\.\w*',
-\})
 
 " run :GoBuild or :GoTestCompile based on the go file
 function! s:build_go_files()
