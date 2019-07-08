@@ -6,6 +6,7 @@ export XDG_CACHE_HOME=$HOME/.cache
 
 export PATH="/usr/local/sbin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
+export PATH="$HOME/.cargo/bin:$PATH"
 
 # for go on Linux
 export PATH="/usr/local/go/bin:$PATH"
