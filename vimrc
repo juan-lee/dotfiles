@@ -22,9 +22,8 @@ Plug 'airblade/vim-gitgutter'
 Plug 'chriskempson/base16-vim'
 Plug 'easymotion/vim-easymotion'
 Plug 'fatih/vim-go'
-Plug 'hashivim/vim-terraform'
 Plug 'honza/vim-snippets'
-Plug 'juliosueiras/vim-terraform-completion'
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'machakann/vim-highlightedyank'
@@ -268,5 +267,15 @@ nmap <silent> gr <Plug>(coc-references)
 
 " rust.vim
 let g:rustfmt_autosave = 1
+
+augroup rust
+  autocmd!
+
+  autocmd FileType rust nmap <silent> <Leader>b :Cbuild<CR>
+  autocmd FileType rust nmap <silent> <Leader>r :Crun<CR>
+  autocmd FileType rust nmap <silent> <Leader>x :Ctest<CR>
+augroup END
+
+autocmd FileType markdown setlocal textwidth=100
 
 " vim: ts=2 sw=2 et
