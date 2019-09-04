@@ -144,6 +144,7 @@ let g:go_metalinter_command = 'golangci-lint run'
     \ 'gofmt': '-s -d -e -l',
     \ 'goimports': '-local github.com/Azure/genesys',
     \ }
+let g:go_test_timeout = '30s'
 
 " run :GoBuild or :GoTestCompile based on the go file
 function! s:build_go_files()
