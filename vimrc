@@ -238,6 +238,9 @@ autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:markdown_fenced_languages = ['html', 'python', 'bash=sh', 'sh', 'go']
 let g:markdown_syntax_conceal = 0
 
+" markdown-preview
+let g:mkdp_browser = 'Google Chrome'
+
 " vim-terraform
 let g:terraform_fmt_on_save = 1
 let g:terraform_align = 1
