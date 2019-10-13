@@ -118,7 +118,6 @@ let g:go_def_mode = "gopls"
 let g:go_info_mode = "gopls"
 let g:go_def_reuse_buffer = 1
 let g:go_echo_command_info = 1
-let g:go_autodetect_gopath = 1
 let g:go_term_enabled = 0
 let g:go_highlight_array_whitespace_error = 1
 let g:go_highlight_chan_whitespace_error = 1
@@ -241,6 +240,10 @@ let g:markdown_syntax_conceal = 0
 " markdown-preview
 let g:mkdp_browser = 'Google Chrome'
 
+" filetype markdown
+autocmd FileType markdown setlocal textwidth=100
+autocmd FileType markdown setlocal spell spelllang=en_us
+
 " vim-terraform
 let g:terraform_fmt_on_save = 1
 let g:terraform_align = 1
@@ -279,6 +282,5 @@ augroup rust
   autocmd FileType rust nmap <silent> <Leader>x :Ctest<CR>
 augroup END
 
-autocmd FileType markdown setlocal textwidth=100
 
 " vim: ts=2 sw=2 et

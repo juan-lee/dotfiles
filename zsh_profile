@@ -11,7 +11,7 @@ ZSH_TMUX_AUTOQUIT="false"
 
 DEFAULT_USER="$(whoami)"
 
-plugins=(git tmux vi-mode sudo nmap docker httpie colored-man-pages zsh-syntax-highlighting vault colorize golang kubectl helm)
+plugins=(git tmux vi-mode sudo nmap docker httpie colored-man-pages zsh-syntax-highlighting vault colorize golang kubectl helm dotenv)
 
 source $ZSH/oh-my-zsh.sh
 

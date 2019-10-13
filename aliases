@@ -1,15 +1,13 @@
-# terraform
-[ -x "$(which terraform)" ] && alias tf=terraform
-
 # vim
 [ -x "$(which nvim)" ] && alias vi=$(which nvim)
 [ -x "$(which nvim)" ] && alias vim=$(which nvim)
 [ -x "$(which nvim)" ] && alias v=$(which nvim)
 [ -x "$(which nvim)" ] && alias vt="$(which nvim) +terminal"
 
-alias acsrp="$HOME/go/src/goms.io/acsrp"
-alias akse="$HOME/go/src/github.com/Azure/aks-engine"
-alias k8s="$HOME/go/src/k8s.io/kubernetes"
-alias capz="$HOME/go/src/sigs.k8s.io/cluster-api-provider-azure"
-alias cap="$HOME/go/src/sigs.k8s.io/cluster-api"
+alias akse="$HOME/Code/github.com/Azure/aks-engine"
+alias k8s="$HOME/Code/k8s.io/kubernetes"
+alias capz="$HOME/Code/sigs.k8s.io/cluster-api-provider-azure"
+alias capi="$HOME/Code/sigs.k8s.io/cluster-api"
 alias gsys="$HOME/Code/github.com/Azure/genesys"
+alias capj="$HOME/Code/github.com/juan-lee/capz"
+alias cabpk="$HOME/Code/sigs.k8s.io/cluster-api-bootstrap-provider-kubeadm"
