@@ -1,30 +1,58 @@
 #!/bin/bash
+
 set -euo pipefail
 
-AZCLI_VERSION=2.0.42
-GO_VERSION=1.11.2
-HELM_VERSION=v2.9.1
-KUBECTL_VERSION=v1.10.11
+GO_VERSION=1.13.1
+KUBECTL_VERSION=v1.16.0
 
 if [ "$(uname)" == "Linux" ]; then
     apt-get update && \
-        apt-get install -y software-properties-common && \
-        add-apt-repository ppa:neovim-ppa/stable && \
-        apt-get update &&\
-        apt-get install -y \
+        apt-get install -y software-properties-common \
+            ca-certificates \
+            curl \
+            apt-transport-https \
+            lsb-release \
+            gnupg \
             build-essential \
             curl \
             git-core \
             jq \
             language-pack-en \
-            neovim \
             python-dev \
             python-pip \
             python3-dev \
             python3-pip \
             silversearcher-ag \
             tmux \
+            nodejs \
+            npm \
+            yarn \
+            highlight \
             zsh
+
+    if [ ! -f "/etc/apt/sources.list.d/kubernetes.list" ]; then
+        curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+        echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+    fi
+
+    if [ ! -f "/etc/apt/trusted.gpg.d/microsoft.asc.gpg" ]; then
+        curl -sL https://packages.microsoft.com/keys/microsoft.asc | 
+            gpg --dearmor | 
+            sudo tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
+    fi
+
+    if [ ! -f "/etc/apt/sources.list.d/azure-cli.list" ]; then
+        AZ_REPO=$(lsb_release -cs)
+        echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | 
+            sudo tee /etc/apt/sources.list.d/azure-cli.list
+    fi
+
+    add-apt-repository ppa:neovim-ppa/stable && \
+        apt-get update && \
+        apt-get install -y \
+            neovim \
+            kubectl \
+            azure-cli
 fi
 
 if [ "$(uname)" == "Darwin" ]; then
@@ -38,29 +66,18 @@ if [ "$(uname)" == "Linux" ]; then
     mkdir -p $HOME/.kube
     mkdir -p $HOME/Code
 
-    # install az cli
-    pip install --upgrade --disable-pip-version-check --no-cache-dir azure-cli==${AZCLI_VERSION} shyaml
-
     # install go
     curl -L https://storage.googleapis.com/golang/go$GO_VERSION.linux-amd64.tar.gz | tar -C /usr/local -xz
 
-    # install helm
-    curl -sSL https://storage.googleapis.com/kubernetes-helm/helm-$HELM_VERSION-linux-amd64.tar.gz \
-        | tar -vxz -C $HOME/bin --strip=1
-
-    # install kubectl
-    curl -sSL https://storage.googleapis.com/kubernetes-release/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl \
-        -o $HOME/bin/kubectl && chmod +x $HOME/bin/kubectl
-
-    curl -sSL https://raw.githubusercontent.com/jonmosco/kube-ps1/master/kube-ps1.sh \
-        -o $HOME/bin/kube-ps1.sh && chmod +x $HOME/bin/kube-ps1.sh
+    mkdir -p $HOME/Code/github.com/jonmosco
+    git clone https://github.com/jonmosco/kube-ps1.git $HOME/Code/github.com/jonmosco/kube-ps1
 
     mkdir -p $HOME/Code/github.com/ahmetb
     git clone https://github.com/ahmetb/kubectx.git $HOME/Code/github.com/ahmetb/kubectx
 fi
 
 # neovim python extensions
-pip install neovim --upgrade --disable-pip-version-check --no-cache-dir && pip3 install neovim --upgrade --disable-pip-version-check --no-cache-dir
+pip install pynvim --upgrade --disable-pip-version-check --no-cache-dir && pip3 install pynvim --upgrade --disable-pip-version-check --no-cache-dir
 
 # pygmentize
 # pip3 install --upgrade --disable-pip-version-check --no-cache-dir pygmentize

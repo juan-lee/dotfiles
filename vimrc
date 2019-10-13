@@ -87,6 +87,8 @@ set undofile
 " never fold
 set nofoldenable
 
+set maxmempattern=5000
+
 " Don't show quickfix in buffer lists
 augroup qf
   autocmd!
