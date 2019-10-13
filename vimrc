@@ -263,7 +263,6 @@ if &diff
 endif
 
 " coc.nvim
-
 set shortmess+=c
 set signcolumn=yes
 
@@ -281,6 +280,5 @@ augroup rust
   autocmd FileType rust nmap <silent> <Leader>r :Crun<CR>
   autocmd FileType rust nmap <silent> <Leader>x :Ctest<CR>
 augroup END
-
 
 " vim: ts=2 sw=2 et
