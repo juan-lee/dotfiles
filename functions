@@ -19,6 +19,16 @@ function azrc {
   az vm run-command invoke -g ${resource_group} -n ${vm_name} --command-id RunShellScript --scripts "${command}" | jq -r '.value[0].message'
 }
 
+function vmrc {
+  resource_group=$1
+  vmss_name=$2
+  instance_id=$3
+  shift 3
+  command="$@"
+  echo "Running [${command}] on ${vmss_name} in ${resource_group}"
+  az vmss run-command invoke -g "${resource_group}" -n "${vmss_name}" --instance-id "${instance_id}" --command-id RunShellScript -o json --scripts "${command}" | jq -r '.value[].message'
+}
+
 function azal {
   accounts=$(az account list -o json) && \
   account=$(echo $accounts | jq -r '.[].name' | fzf) && \
