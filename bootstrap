@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-GO_VERSION=1.13.1
+GO_VERSION=1.13.3
 KUBECTL_VERSION=v1.16.0
 
 if [ "$(uname)" == "Linux" ]; then
