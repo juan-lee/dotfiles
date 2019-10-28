@@ -6,8 +6,8 @@ GO_VERSION=1.13.3
 KUBECTL_VERSION=v1.16.0
 
 if [ "$(uname)" == "Linux" ]; then
-    apt-get update && \
-        apt-get install -y software-properties-common \
+    sudo apt-get update && \
+        sudo apt-get install -y software-properties-common \
             ca-certificates \
             curl \
             apt-transport-https \
@@ -47,9 +47,9 @@ if [ "$(uname)" == "Linux" ]; then
             sudo tee /etc/apt/sources.list.d/azure-cli.list
     fi
 
-    add-apt-repository ppa:neovim-ppa/stable && \
-        apt-get update && \
-        apt-get install -y \
+    sudo add-apt-repository ppa:neovim-ppa/stable && \
+        sudo apt-get update && \
+        sudo apt-get install -y \
             neovim \
             kubectl \
             azure-cli
@@ -67,13 +67,17 @@ if [ "$(uname)" == "Linux" ]; then
     mkdir -p $HOME/Code
 
     # install go
-    curl -L https://storage.googleapis.com/golang/go$GO_VERSION.linux-amd64.tar.gz | tar -C /usr/local -xz
+    curl -L https://storage.googleapis.com/golang/go$GO_VERSION.linux-amd64.tar.gz | sudo tar -C /usr/local -xz
 
-    mkdir -p $HOME/Code/github.com/jonmosco
-    git clone https://github.com/jonmosco/kube-ps1.git $HOME/Code/github.com/jonmosco/kube-ps1
+    if [ ! -d "$HOME/Code/github.com/jonmosco" ]; then
+        mkdir -p $HOME/Code/github.com/jonmosco
+        git clone https://github.com/jonmosco/kube-ps1.git $HOME/Code/github.com/jonmosco/kube-ps1
+    fi
 
-    mkdir -p $HOME/Code/github.com/ahmetb
-    git clone https://github.com/ahmetb/kubectx.git $HOME/Code/github.com/ahmetb/kubectx
+    if [ ! -d "$HOME/Code/github.com/ahmetb" ]; then
+        mkdir -p $HOME/Code/github.com/ahmetb
+        git clone https://github.com/ahmetb/kubectx.git $HOME/Code/github.com/ahmetb/kubectx
+    fi
 fi
 
 # neovim python extensions
@@ -85,7 +89,7 @@ pip install pynvim --upgrade --disable-pip-version-check --no-cache-dir && pip3 
 # Oh my zsh
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
     curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh | bash
-    chsh -s /bin/zsh
+    sudo usermod -s /bin/zsh "${USER}}"
     rm "$HOME/.zshrc"
 fi
 
