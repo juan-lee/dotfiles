@@ -2,6 +2,7 @@ all:
 	[ -f ~/.aliases ] || ln -s $(PWD)/aliases ~/.aliases
 	[ -d ~/.config/nvim ] || mkdir -p ~/.config/nvim
 	[ -f ~/.config/nvim/init.vim ] || ln -s $(PWD)/init.vim ~/.config/nvim/init.vim
+	[ -f ~/.config/nvim/coc-settings.json ] || ln -s $(PWD)/coc-settings.json ~/.config/nvim/coc-settings.json
 	[ -f ~/.exports ] || ln -s $(PWD)/exports ~/.exports
 	[ -f ~/.functions ] || ln -s $(PWD)/functions ~/.functions
 	[ -f ~/.path ] || ln -s $(PWD)/path ~/.path
