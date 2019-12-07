@@ -17,7 +17,6 @@ if [ "$(uname)" == "Linux" ]; then
             curl \
             git-core \
             jq \
-            language-pack-en \
             python-dev \
             python-pip \
             python3-dev \
@@ -25,7 +24,6 @@ if [ "$(uname)" == "Linux" ]; then
             silversearcher-ag \
             tmux \
             nodejs \
-            npm \
             yarn \
             highlight \
             zsh
@@ -47,10 +45,8 @@ if [ "$(uname)" == "Linux" ]; then
             sudo tee /etc/apt/sources.list.d/azure-cli.list
     fi
 
-    sudo add-apt-repository ppa:neovim-ppa/stable && \
         sudo apt-get update && \
         sudo apt-get install -y \
-            neovim \
             kubectl \
             azure-cli
 fi
@@ -89,7 +85,7 @@ pip install pynvim --upgrade --disable-pip-version-check --no-cache-dir && pip3 
 # Oh my zsh
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
     curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh | bash
-    sudo usermod -s /bin/zsh "${USER}}"
+    sudo usermod -s /bin/zsh "${USER}"
     rm "$HOME/.zshrc"
 fi
 
