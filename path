@@ -11,5 +11,7 @@ export PATH="$HOME/.cargo/bin:$PATH"
 # for go on Linux
 export PATH="/usr/local/go/bin:$PATH"
 
-export PATH="/usr/local/kubebuilder/bin:$PATH"
-export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
+export PATH="$PATH:/usr/local/kubebuilder/bin"
+#export PATH="/Applications/Visual Studio Code.app/Contents/Resources/app/bin:$PATH"
+export PATH=$PATH:/home/jpang/.linkerd2/bin
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"

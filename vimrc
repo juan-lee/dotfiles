@@ -97,9 +97,8 @@ let mapleader = " "
 " leader mappings
 map <Leader>n :bn<CR>
 map <Leader>p :bp<CR>
-map <Leader>q :bp \| bd #<CR>
+map <Leader>w :bp \| bd #<CR>
 map <Leader>a :A<CR>
-map <Leader>w <C-W>w
 map <Leader>6 <C-^>
 
 " vim-airline
@@ -168,7 +167,7 @@ augroup go
 
   autocmd FileType go nmap <silent> <Leader>b :<C-u>call <SID>build_go_files()<CR>
   autocmd FileType go nmap <silent> <Leader>x <Plug>(go-test)
-  autocmd FileType go nmap <silent> <Leader>r <Plug>(go-run)
+  " autocmd FileType go nmap <silent> <Leader>r <Plug>(go-run)
   autocmd FileType go nmap <silent> <Leader>e <Plug>(go-install)
   autocmd FileType go nmap <silent> <Leader>d :GoDeclsDir<CR>
 
@@ -264,9 +263,46 @@ endif
 set shortmess+=c
 set signcolumn=yes
 
+" You will have bad experience for diagnostic messages when it's default 4000.
+set updatetime=300
+
+" Use `[g` and `]g` to navigate diagnostics
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" Remap keys for gotos
+nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" Use K to show documentation in preview window
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+" Remap for rename current word
+" nmap <leader>rn <Plug>(coc-rename)
+
+" Remap for do codeAction of current line
+" nmap <leader>ac  <Plug>(coc-codeaction)
+" Fix autofix problem of current line
+" nmap <leader>qf  <Plug>(coc-fix-current)
+
+" Create mappings for function text object, requires document symbols feature of languageserver.
+xmap if <Plug>(coc-funcobj-i)
+xmap af <Plug>(coc-funcobj-a)
+omap if <Plug>(coc-funcobj-i)
+omap af <Plug>(coc-funcobj-a)
 
 " rust.vim
 let g:rustfmt_autosave = 1
@@ -275,7 +311,7 @@ augroup rust
   autocmd!
 
   autocmd FileType rust nmap <silent> <Leader>b :Cbuild<CR>
-  autocmd FileType rust nmap <silent> <Leader>r :Crun<CR>
+  " autocmd FileType rust nmap <silent> <Leader>r :Crun<CR>
   autocmd FileType rust nmap <silent> <Leader>x :Ctest<CR>
 augroup END
 
