@@ -23,11 +23,10 @@ Plug 'chriskempson/base16-vim'
 Plug 'easymotion/vim-easymotion'
 Plug 'fatih/vim-go'
 Plug 'honza/vim-snippets'
-Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'machakann/vim-highlightedyank'
-Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
+Plug 'mmarchini/bpftrace.vim'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'rust-lang/rust.vim'
 Plug 'tpope/vim-abolish'
@@ -163,10 +162,11 @@ augroup go
   " autocmd FileType go nmap <silent> <Leader>x <Plug>(go-doc-vertical)
 
   autocmd FileType go nmap <silent> <Leader>i <Plug>(go-info)
-  autocmd FileType go nmap <silent> <Leader>l <Plug>(go-metalinter)
+  " autocmd FileType go nmap <silent> <Leader>l <Plug>(go-metalinter)
 
   autocmd FileType go nmap <silent> <Leader>b :<C-u>call <SID>build_go_files()<CR>
   autocmd FileType go nmap <silent> <Leader>x <Plug>(go-test)
+  autocmd FileType go nmap <silent> <Leader>X <Plug>(go-test-func)
   " autocmd FileType go nmap <silent> <Leader>r <Plug>(go-run)
   autocmd FileType go nmap <silent> <Leader>e <Plug>(go-install)
   autocmd FileType go nmap <silent> <Leader>d :GoDeclsDir<CR>
@@ -314,5 +314,10 @@ augroup rust
   " autocmd FileType rust nmap <silent> <Leader>r :Crun<CR>
   autocmd FileType rust nmap <silent> <Leader>x :Ctest<CR>
 augroup END
+
+" easymotion
+
+" Move to line
+map <Leader>l <Plug>(easymotion-bd-jk)
 
 " vim: ts=2 sw=2 et
