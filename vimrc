@@ -60,6 +60,7 @@ if filereadable(expand("~/.vimrc_background"))
   source ~/.vimrc_background
 endif
 
+set hidden
 set noshowmode
 set ignorecase
 set smartcase
@@ -133,11 +134,7 @@ let g:go_highlight_format_strings = 1
 let g:go_highlight_variable_declarations = 1
 let g:go_highlight_variable_assignments = 1
 let g:go_modifytags_transform = 'camelcase'
-let g:go_metalinter_command = 'golangci-lint run'
-  let g:go_fmt_options = {
-    \ 'gofmt': '-s -d -e -l',
-    \ 'goimports': '-local github.com/Azure/genesys',
-    \ }
+let g:go_metalinter_command = 'golangci-lint'
 let g:go_test_timeout = '30s'
 
 " run :GoBuild or :GoTestCompile based on the go file
@@ -162,7 +159,7 @@ augroup go
   " autocmd FileType go nmap <silent> <Leader>x <Plug>(go-doc-vertical)
 
   autocmd FileType go nmap <silent> <Leader>i <Plug>(go-info)
-  " autocmd FileType go nmap <silent> <Leader>l <Plug>(go-metalinter)
+  autocmd FileType go nmap <silent> <Leader>l <Plug>(go-metalinter)
 
   autocmd FileType go nmap <silent> <Leader>b :<C-u>call <SID>build_go_files()<CR>
   autocmd FileType go nmap <silent> <Leader>x <Plug>(go-test)
@@ -177,6 +174,10 @@ augroup go
   autocmd Filetype go command! -bang AV call go#alternate#Switch(<bang>0, 'vsplit')
   autocmd Filetype go command! -bang AS call go#alternate#Switch(<bang>0, 'split')
   autocmd Filetype go command! -bang AT call go#alternate#Switch(<bang>0, 'tabe')
+  autocmd FileType go let b:go_fmt_options = {
+    \ 'goimports': '-local ' .
+      \ trim(system('{cd '. shellescape(expand('%:h')) .' && go list -m;}')),
+    \ }
 augroup END
 
 " ultisnips
@@ -287,6 +288,29 @@ function! s:show_documentation()
   endif
 endfunction
 
+function! s:GotoDefinition() abort
+  let l:current_tag = expand('<cWORD>')
+
+  let l:current_position    = getcurpos()
+  let l:current_position[0] = bufnr()
+
+  let l:current_tag_stack = gettagstack()
+  let l:current_tag_index = l:current_tag_stack['curidx']
+  let l:current_tag_items = l:current_tag_stack['items']
+
+  if CocAction('jumpDefinition')
+    let l:new_tag_index = l:current_tag_index + 1
+    let l:new_tag_item  = [{'tagname': l:current_tag, 'from': l:current_position}]
+    let l:new_tag_items = l:current_tag_items[:]
+    if l:current_tag_index <= len(l:current_tag_items)
+      call remove(l:new_tag_items, l:current_tag_index - 1, -1)
+    endif
+    let l:new_tag_items += l:new_tag_item
+
+    call settagstack(winnr(), {'curidx': l:new_tag_index, 'items': l:new_tag_items}, 'r')
+  endif
+endfunction
+
 " Use K to show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
@@ -310,14 +334,17 @@ let g:rustfmt_autosave = 1
 augroup rust
   autocmd!
 
-  autocmd FileType rust nmap <silent> <Leader>b :Cbuild<CR>
+  autocmd FileType rust nmap <silent> <Leader>b :mak build<CR>
   " autocmd FileType rust nmap <silent> <Leader>r :Crun<CR>
-  autocmd FileType rust nmap <silent> <Leader>x :Ctest<CR>
+  autocmd FileType rust nmap <silent> <Leader>x :mak test<CR>
+
+  autocmd FileType rust nnoremap <buffer><silent> <C-]> :call <SID>GotoDefinition()<CR>
 augroup END
 
 " easymotion
 
 " Move to line
-map <Leader>l <Plug>(easymotion-bd-jk)
+map <Leader>j <Plug>(easymotion-j)
+map <Leader>k <Plug>(easymotion-k)
 
 " vim: ts=2 sw=2 et

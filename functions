@@ -50,3 +50,10 @@ function az_hard_reboot {
   echo "Starting ${vm_name} in ${resource_group}"
   az vm start -g "${resource_group}" -n "${vm_name}"
 }
+
+function fkl {
+  namespace=$(kubectl get namespace -o json | jq -r '.items[].metadata.name' | fzf) && \
+  pod=$(kubectl get po -n ${namespace} -o json | jq -r '.items[].metadata.name' | fzf) && \
+  kubectl logs -n "${namespace}" "${pod}"
+}
+

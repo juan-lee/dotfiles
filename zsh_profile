@@ -69,3 +69,6 @@ if [ -x "$(which brew)" ] && [ -d "/usr/local/opt/coreutils/libexec/gnubin" ]; t
     export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
     alias ls="ls --color=auto -G"
 fi
+
+GPG_TTY=$(tty)
+export GPG_TTY
