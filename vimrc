@@ -101,6 +101,9 @@ map <Leader>w :bp \| bd #<CR>
 map <Leader>a :A<CR>
 map <Leader>6 <C-^>
 
+" netrw
+let g:netrw_fastbrowse = 0
+
 " vim-airline
 let g:airline_theme='base16'
 let g:airline#extensions#tabline#enabled = 1
