@@ -27,7 +27,9 @@ Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'machakann/vim-highlightedyank'
 Plug 'mmarchini/bpftrace.vim'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neovim/nvim-lspconfig'
+Plug 'nvim-lua/completion-nvim'
+Plug 'nvim-lua/diagnostic-nvim'
 Plug 'rust-lang/rust.vim'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-commentary'
@@ -61,13 +63,18 @@ if filereadable(expand("~/.vimrc_background"))
 endif
 
 set hidden
+set noswapfile
 set noshowmode
 set ignorecase
 set smartcase
+set smartindent
 set number
+set showmatch
 
 " search
 set inccommand=nosplit
+nnoremap n nzzzv
+nnoremap N Nzzzv
 
 " tabs
 set tabstop=4
@@ -101,6 +108,20 @@ map <Leader>w :bp \| bd #<CR>
 map <Leader>a :A<CR>
 map <Leader>6 <C-^>
 
+" tabs
+nmap <S-Tab> :tabprev<CR>
+nmap <Tab> :tabnext<CR>
+nmap te :tabe
+
+" windows
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+
+" fast quit
+map <Leader>q :q!<CR>
+
 " netrw
 let g:netrw_fastbrowse = 0
 
@@ -108,7 +129,6 @@ let g:netrw_fastbrowse = 0
 let g:airline_theme='base16'
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#show_tabs = 0
-let g:airline#extensions#bookmark#enabled = 0
 
 " vim-go
 let g:go_fmt_fail_silently = 0
@@ -263,74 +283,6 @@ if &diff
   map <Leader>q :qa<CR>
 endif
 
-" coc.nvim
-set shortmess+=c
-set signcolumn=yes
-
-" You will have bad experience for diagnostic messages when it's default 4000.
-set updatetime=300
-
-" Use `[g` and `]g` to navigate diagnostics
-nmap <silent> [g <Plug>(coc-diagnostic-prev)
-nmap <silent> ]g <Plug>(coc-diagnostic-next)
-
-" Remap keys for gotos
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-
-" Use K to show documentation in preview window
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-function! s:show_documentation()
-  if (index(['vim','help'], &filetype) >= 0)
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
-endfunction
-
-function! s:GotoDefinition() abort
-  let l:current_tag = expand('<cWORD>')
-
-  let l:current_position    = getcurpos()
-  let l:current_position[0] = bufnr()
-
-  let l:current_tag_stack = gettagstack()
-  let l:current_tag_index = l:current_tag_stack['curidx']
-  let l:current_tag_items = l:current_tag_stack['items']
-
-  if CocAction('jumpDefinition')
-    let l:new_tag_index = l:current_tag_index + 1
-    let l:new_tag_item  = [{'tagname': l:current_tag, 'from': l:current_position}]
-    let l:new_tag_items = l:current_tag_items[:]
-    if l:current_tag_index <= len(l:current_tag_items)
-      call remove(l:new_tag_items, l:current_tag_index - 1, -1)
-    endif
-    let l:new_tag_items += l:new_tag_item
-
-    call settagstack(winnr(), {'curidx': l:new_tag_index, 'items': l:new_tag_items}, 'r')
-  endif
-endfunction
-
-" Use K to show documentation in preview window
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-" Remap for rename current word
-" nmap <leader>rn <Plug>(coc-rename)
-
-" Remap for do codeAction of current line
-" nmap <leader>ac  <Plug>(coc-codeaction)
-" Fix autofix problem of current line
-" nmap <leader>qf  <Plug>(coc-fix-current)
-
-" Create mappings for function text object, requires document symbols feature of languageserver.
-xmap if <Plug>(coc-funcobj-i)
-xmap af <Plug>(coc-funcobj-a)
-omap if <Plug>(coc-funcobj-i)
-omap af <Plug>(coc-funcobj-a)
-
 " rust.vim
 let g:rustfmt_autosave = 1
 
@@ -341,7 +293,28 @@ augroup rust
   " autocmd FileType rust nmap <silent> <Leader>r :Crun<CR>
   autocmd FileType rust nmap <silent> <Leader>x :mak test<CR>
 
-  autocmd FileType rust nnoremap <buffer><silent> <C-]> :call <SID>GotoDefinition()<CR>
+  autocmd FileType rust nnoremap <buffer> <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
+  autocmd FileType rust nnoremap <buffer> K     <cmd>lua vim.lsp.buf.hover()<CR>
+  autocmd FileType rust nnoremap <buffer> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
+  autocmd FileType rust nnoremap <buffer> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
+  autocmd FileType rust nnoremap <buffer> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
+  autocmd FileType rust nnoremap <buffer> gr    <cmd>lua vim.lsp.buf.references()<CR>
+  autocmd FileType rust nnoremap <buffer> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
+  autocmd FileType rust nnoremap <buffer> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
+  autocmd FileType rust nnoremap <buffer> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
+  autocmd FileType rust nnoremap <buffer> <leader>e <cmd>lua vim.lsp.util.show_line_diagnostics()<CR>
+
+"     -- Mappings.
+"     local opts = { noremap=true, silent=true }
+"     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+"     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
+"     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
+"     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+"     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+"     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+"     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+"     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+"     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>e', '<cmd>lua vim.lsp.util.show_line_diagnostics()<CR>', opts)
 augroup END
 
 " easymotion
@@ -349,5 +322,50 @@ augroup END
 " Move to line
 map <Leader>j <Plug>(easymotion-j)
 map <Leader>k <Plug>(easymotion-k)
+
+" Set completeopt to have a better completion experience
+set completeopt=menuone,noinsert,noselect
+
+" Avoid showing message extra message when using completion
+set shortmess+=c
+
+:lua << EOF
+  local nvim_lsp = require('nvim_lsp')
+
+  local on_attach = function(_, bufnr)
+    vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+    require'diagnostic'.on_attach()
+    require'completion'.on_attach()
+  end
+
+  nvim_lsp.dockerls.setup{
+    on_attach = on_attach,
+    settings = { }
+  }
+  nvim_lsp.gopls.setup{
+    on_attach = on_attach,
+    settings = {
+      ["gopls"] = {
+        usePlaceholders = false,
+      }
+    }
+  }
+  nvim_lsp.rust_analyzer.setup{
+    on_attach = on_attach,
+    settings = {
+      ["rust-analyzer"] = {
+        completion = {
+          addCallParenthesis = false,
+          addCallArgumentsSnippets = false
+        }
+      }
+    }
+  }
+  nvim_lsp.yamlls.setup{
+    on_attach = on_attach,
+    settings = { }
+  }
+
+EOF
 
 " vim: ts=2 sw=2 et

@@ -12,3 +12,4 @@ alias gsys="$HOME/Code/github.com/Azure/genesys"
 alias capj="$HOME/Code/github.com/juan-lee/capz"
 alias cabpk="$HOME/Code/sigs.k8s.io/cluster-api-bootstrap-provider-kubeadm"
 alias ke="kubectl node-shell"
+alias ka=kca
