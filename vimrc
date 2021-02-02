@@ -330,7 +330,7 @@ set completeopt=menuone,noinsert,noselect
 set shortmess+=c
 
 :lua << EOF
-  local nvim_lsp = require('nvim_lsp')
+  local lspconfig = require('lspconfig')
 
   local on_attach = function(_, bufnr)
     vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
@@ -338,11 +338,11 @@ set shortmess+=c
     require'completion'.on_attach()
   end
 
-  nvim_lsp.dockerls.setup{
+  lspconfig.dockerls.setup{
     on_attach = on_attach,
     settings = { }
   }
-  nvim_lsp.gopls.setup{
+  lspconfig.gopls.setup{
     on_attach = on_attach,
     settings = {
       ["gopls"] = {
@@ -350,7 +350,7 @@ set shortmess+=c
       }
     }
   }
-  nvim_lsp.rust_analyzer.setup{
+  lspconfig.rust_analyzer.setup{
     on_attach = on_attach,
     settings = {
       ["rust-analyzer"] = {
@@ -361,7 +361,7 @@ set shortmess+=c
       }
     }
   }
-  nvim_lsp.yamlls.setup{
+  lspconfig.yamlls.setup{
     on_attach = on_attach,
     settings = { }
   }
