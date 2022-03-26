@@ -16,20 +16,22 @@ else
   call plug#begin('~/.vim/plugged')
 endif
 
-Plug 'HerringtonDarkholme/yats.vim'
-Plug 'SirVer/ultisnips'
 Plug 'airblade/vim-gitgutter'
 Plug 'chriskempson/base16-vim'
 Plug 'easymotion/vim-easymotion'
 Plug 'fatih/vim-go'
-Plug 'honza/vim-snippets'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-vsnip'
+Plug 'hrsh7th/nvim-cmp'
+Plug 'hrsh7th/vim-vsnip'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
-Plug 'machakann/vim-highlightedyank'
 Plug 'mmarchini/bpftrace.vim'
 Plug 'neovim/nvim-lspconfig'
-Plug 'nvim-lua/completion-nvim'
-Plug 'nvim-lua/diagnostic-nvim'
+Plug 'rafamadriz/friendly-snippets'
 Plug 'rust-lang/rust.vim'
 Plug 'tpope/vim-abolish'
 Plug 'tpope/vim-commentary'
@@ -122,6 +124,8 @@ map <C-l> <C-W>l
 " fast quit
 map <Leader>q :q!<CR>
 
+au TextYankPost * silent! lua vim.highlight.on_yank {higroup="IncSearch", timeout=750}
+
 " netrw
 let g:netrw_fastbrowse = 0
 
@@ -132,7 +136,7 @@ let g:airline#extensions#tabline#show_tabs = 0
 
 " vim-go
 let g:go_fmt_fail_silently = 0
-let g:go_fmt_command = "goimports"
+" let g:go_fmt_command = "goimports"
 let g:go_list_type = "quickfix"
 let g:go_def_mode = "gopls"
 let g:go_info_mode = "gopls"
@@ -202,11 +206,6 @@ augroup go
       \ trim(system('{cd '. shellescape(expand('%:h')) .' && go list -m;}')),
     \ }
 augroup END
-
-" ultisnips
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
 " fzf
 let g:fzf_layout = { 'down': '~30%' }
@@ -283,40 +282,6 @@ if &diff
   map <Leader>q :qa<CR>
 endif
 
-" rust.vim
-let g:rustfmt_autosave = 1
-
-augroup rust
-  autocmd!
-
-  autocmd FileType rust nmap <silent> <Leader>b :mak build<CR>
-  " autocmd FileType rust nmap <silent> <Leader>r :Crun<CR>
-  autocmd FileType rust nmap <silent> <Leader>x :mak test<CR>
-
-  autocmd FileType rust nnoremap <buffer> <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
-  autocmd FileType rust nnoremap <buffer> K     <cmd>lua vim.lsp.buf.hover()<CR>
-  autocmd FileType rust nnoremap <buffer> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
-  autocmd FileType rust nnoremap <buffer> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
-  autocmd FileType rust nnoremap <buffer> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
-  autocmd FileType rust nnoremap <buffer> gr    <cmd>lua vim.lsp.buf.references()<CR>
-  autocmd FileType rust nnoremap <buffer> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
-  autocmd FileType rust nnoremap <buffer> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
-  autocmd FileType rust nnoremap <buffer> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
-  autocmd FileType rust nnoremap <buffer> <leader>e <cmd>lua vim.lsp.util.show_line_diagnostics()<CR>
-
-"     -- Mappings.
-"     local opts = { noremap=true, silent=true }
-"     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-"     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-"     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-"     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-"     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-"     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-"     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-"     vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-"     vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>e', '<cmd>lua vim.lsp.util.show_line_diagnostics()<CR>', opts)
-augroup END
-
 " easymotion
 
 " Move to line
@@ -324,48 +289,96 @@ map <Leader>j <Plug>(easymotion-j)
 map <Leader>k <Plug>(easymotion-k)
 
 " Set completeopt to have a better completion experience
-set completeopt=menuone,noinsert,noselect
+set completeopt=menu,menuone,noselect
 
 " Avoid showing message extra message when using completion
 set shortmess+=c
 
-:lua << EOF
-  local lspconfig = require('lspconfig')
-
-  local on_attach = function(_, bufnr)
-    vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-    require'diagnostic'.on_attach()
-    require'completion'.on_attach()
+lua <<EOF
+  local has_words_before = function()
+    local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+    return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
   end
 
-  lspconfig.dockerls.setup{
-    on_attach = on_attach,
-    settings = { }
-  }
-  lspconfig.gopls.setup{
-    on_attach = on_attach,
-    settings = {
-      ["gopls"] = {
-        usePlaceholders = false,
-      }
-    }
-  }
-  lspconfig.rust_analyzer.setup{
-    on_attach = on_attach,
-    settings = {
-      ["rust-analyzer"] = {
-        completion = {
-          addCallParenthesis = false,
-          addCallArgumentsSnippets = false
-        }
-      }
-    }
-  }
-  lspconfig.yamlls.setup{
-    on_attach = on_attach,
-    settings = { }
-  }
+  local feedkey = function(key, mode)
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
+  end
 
+  -- Setup nvim-cmp.
+  local cmp = require'cmp'
+
+  cmp.setup({
+    snippet = {
+      -- REQUIRED - you must specify a snippet engine
+      expand = function(args)
+        vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+        -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+        -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+        -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+      end,
+    },
+    mapping = {
+      ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
+      ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+      ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
+      ['<C-y>'] = cmp.config.disable, -- Specify `cmp.config.disable` if you want to remove the default `<C-y>` mapping.
+      ['<C-e>'] = cmp.mapping({
+        i = cmp.mapping.abort(),
+        c = cmp.mapping.close(),
+      }),
+      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+      ["<Tab>"] = cmp.mapping(function(fallback)
+        if cmp.visible() then
+          cmp.select_next_item()
+        elseif vim.fn["vsnip#available"](1) == 1 then
+          feedkey("<Plug>(vsnip-expand-or-jump)", "")
+        elseif has_words_before() then
+          cmp.complete()
+        else
+          fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
+        end
+      end, { "i", "s" }),
+      ["<S-Tab>"] = cmp.mapping(function()
+        if cmp.visible() then
+          cmp.select_prev_item()
+        elseif vim.fn["vsnip#jumpable"](-1) == 1 then
+          feedkey("<Plug>(vsnip-jump-prev)", "")
+        end
+      end, { "i", "s" }),
+    },
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+      { name = 'vsnip' }, -- For vsnip users.
+      -- { name = 'luasnip' }, -- For luasnip users.
+      -- { name = 'ultisnips' }, -- For ultisnips users.
+      -- { name = 'snippy' }, -- For snippy users.
+    }, {
+      { name = 'buffer' },
+    })
+  })
+
+  -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline('/', {
+    sources = {
+      { name = 'buffer' }
+    }
+  })
+
+  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline(':', {
+    sources = cmp.config.sources({
+      { name = 'path' }
+    }, {
+      { name = 'cmdline' }
+    })
+  })
+
+  -- Setup lspconfig.
+  local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+  -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
+  require('lspconfig')['gopls'].setup {
+    capabilities = capabilities
+  }
 EOF
 
 " vim: ts=2 sw=2 et
