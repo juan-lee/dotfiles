@@ -1,15 +1,12 @@
-# vim
-[ -x "$(which nvim)" ] && alias vi=$(which nvim)
-[ -x "$(which nvim)" ] && alias vim=$(which nvim)
-[ -x "$(which nvim)" ] && alias v=$(which nvim)
-[ -x "$(which nvim)" ] && alias vt="$(which nvim) +terminal"
+#!/bin/bash
 
-alias akse="$HOME/Code/github.com/Azure/aks-engine"
+# vim
+alias vi="$(which vim) -u NONE"
+alias vim=$(which nvim)
+alias v=$(which nvim)
+alias vt="$(which nvim) +terminal"
+
+# kubernetes
 alias k8s="$HOME/Code/k8s.io/kubernetes"
-alias capz="$HOME/Code/sigs.k8s.io/cluster-api-provider-azure"
-alias capi="$HOME/Code/sigs.k8s.io/cluster-api"
-alias gsys="$HOME/Code/github.com/Azure/genesys"
-alias capj="$HOME/Code/github.com/juan-lee/capz"
-alias cabpk="$HOME/Code/sigs.k8s.io/cluster-api-bootstrap-provider-kubeadm"
 alias ke="kubectl node-shell"
 alias ka=kca

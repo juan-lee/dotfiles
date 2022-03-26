@@ -2,13 +2,11 @@ all:
 	[ -f ~/.aliases ] || ln -s $(PWD)/aliases ~/.aliases
 	[ -d ~/.config/nvim ] || mkdir -p ~/.config/nvim
 	[ -f ~/.config/nvim/init.vim ] || ln -s $(PWD)/init.vim ~/.config/nvim/init.vim
-	[ -f ~/.config/nvim/coc-settings.json ] || ln -s $(PWD)/coc-settings.json ~/.config/nvim/coc-settings.json
 	[ -f ~/.exports ] || ln -s $(PWD)/exports ~/.exports
 	[ -f ~/.functions ] || ln -s $(PWD)/functions ~/.functions
 	[ -f ~/.path ] || ln -s $(PWD)/path ~/.path
 	[ -f ~/.tmux.conf ] || ln -s $(PWD)/tmux.conf ~/.tmux.conf
 	[ -f ~/.vimrc ] || ln -s $(PWD)/vimrc ~/.vimrc
-	[ -f ~/.zsh_profile ] || ln -s $(PWD)/zsh_profile ~/.zsh_profile
 	[ -f ~/.zshrc ] || ln -s $(PWD)/zshrc ~/.zshrc
 
 clean:
@@ -19,7 +17,6 @@ clean:
 	[ -h ~/.path ] && rm ~/.path
 	[ -h ~/.tmux.conf ] && rm ~/.tmux.conf
 	[ -h ~/.vimrc ] && rm ~/.vimrc
-	[ -h ~/.zsh_profile ] && rm ~/.zsh_profile
 	[ -h ~/.zshrc ] && rm ~/.zshrc
 
 .PHONY: all
