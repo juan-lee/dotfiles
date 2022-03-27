@@ -46,9 +46,48 @@ function az_hard_reboot {
   az vm start -g "${resource_group}" -n "${vm_name}"
 }
 
-function fkl {
-  namespace=$(kubectl get namespace -o json | jq -r '.items[].metadata.name' | fzf) && \
-  pod=$(kubectl get po -n ${namespace} -o json | jq -r '.items[].metadata.name' | fzf) && \
-  kubectl logs -n "${namespace}" "${pod}"
+function fzfkl {
+  tokens=($(
+    kubectl get pods -A |
+      fzf --info=inline --layout=reverse --header-lines=1 --border \
+          --prompt "$(kubectl config current-context | sed 's/-context$//')> " \
+          --header $'Press CTRL-O to open log in editor\n\n' \
+          --bind ctrl-/:toggle-preview \
+          --bind 'ctrl-o:execute:${EDITOR:-vim} <(kubectl logs --namespace {1} {2}) > /dev/tty' \
+          --preview-window up,follow \
+          --preview 'kubectl logs --follow --tail=100 --namespace {1} {2}' "$@"
+  ))
+  [ ${#tokens} -gt 1 ] &&
+    kubectl logs --namespace "${tokens[1]}" "${tokens[2]}"
 }
 
+function fkl {
+  tokens=($(
+    kubectl get pods -A |
+      fzf --info=inline --header-lines=1 \
+          --prompt "$(kubectl config current-context | sed 's/-context$//')> " \
+          --header $'Press CTRL-O to open log in editor\n\n' \
+          --bind 'ctrl-o:execute:${EDITOR:-vim} <(kubectl logs --all-containers --prefix --namespace {1} {2}) > /dev/tty'
+  ))
+  namespace="${tokens[1]}"
+  pod="${tokens[2]}"
+  [ ${#tokens} -gt 1 ] && tokens=($(
+    kubectl get pods -n "${namespace}" "${pod}" -o=custom-columns='CONTAINER:spec.containers[*].name' |
+      fzf --info=inline --header-lines=1 \
+          --prompt "$(kubectl config current-context | sed 's/-context$//')> " \
+          --header $'Press CTRL-O to open log in editor\n\n' \
+          --bind 'ctrl-o:execute:${EDITOR:-vim} <(kubectl logs --all-containers --prefix --namespace {1} {2}) > /dev/tty'
+  ))
+  [ ${#tokens} -gt 0 ] &&
+    kubectl logs --namespace "${namespace}" "${pod}" -c "${tokens[1]}" "${@}"
+}
+
+function fkdp {
+  kubectl get po -o wide -A | fzf --header-lines=1 | awk '{print $1, $2}' | xargs kubectl describe po -n
+}
+
+function fke {
+  local node
+  node=$(kubectl get no -o wide | fzf --header-lines=1 | awk '{print $1}')
+  kubectl node-shell $node
+}
