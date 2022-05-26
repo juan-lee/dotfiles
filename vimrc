@@ -31,6 +31,8 @@ Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'mmarchini/bpftrace.vim'
 Plug 'neovim/nvim-lspconfig'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
 Plug 'rafamadriz/friendly-snippets'
 Plug 'rust-lang/rust.vim'
 Plug 'tpope/vim-abolish'
@@ -339,14 +341,6 @@ lua <<EOF
     })
   })
 
-  -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
-  cmp.setup.cmdline('/', {
-    mapping = cmp.mapping.preset.cmdline(),
-    sources = {
-      { name = 'buffer' }
-    }
-  })
-
   -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
   cmp.setup.cmdline(':', {
     mapping = cmp.mapping.preset.cmdline(),
@@ -363,5 +357,13 @@ lua <<EOF
     capabilities = capabilities
   }
 EOF
+
+" Find files using Telescope command-line sugar.
+nnoremap <leader>ff <cmd>Telescope find_files<cr>
+nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <leader>lr <cmd>Telescope lsp_references<cr>
+nnoremap <leader>li <cmd>Telescope lsp_implementations<cr>
+nnoremap <leader>ld <cmd>Telescope lsp_definitions<cr>
 
 " vim: ts=2 sw=2 et
