@@ -10,7 +10,7 @@ all:
 
 clean:
 	[ -h ~/.aliases ] && rm ~/.aliases
-	[ -h ~/.config/nvim/init.vim ] && rm ~/.config/nvim/init.vim
+	[ -L ~/.config/nvim ] && unlink ~/.config/nvim
 	[ -h ~/.exports ] && rm ~/.exports
 	[ -h ~/.functions ] && rm ~/.functions
 	[ -h ~/.path ] && rm ~/.path
