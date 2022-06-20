@@ -1,7 +1,6 @@
 all:
 	[ -f ~/.aliases ] || ln -s $(PWD)/aliases ~/.aliases
-	[ -d ~/.config/nvim ] || mkdir -p ~/.config/nvim
-	[ -f ~/.config/nvim/init.vim ] || ln -s $(PWD)/init.vim ~/.config/nvim/init.vim
+	[ -f ~/.config/nvim ] || ln -s $(PWD)/config/nvim ~/.config/nvim
 	[ -f ~/.exports ] || ln -s $(PWD)/exports ~/.exports
 	[ -f ~/.functions ] || ln -s $(PWD)/functions ~/.functions
 	[ -f ~/.path ] || ln -s $(PWD)/path ~/.path
@@ -11,7 +10,7 @@ all:
 
 clean:
 	[ -h ~/.aliases ] && rm ~/.aliases
-	[ -h ~/.config/nvim/init.vim ] && rm ~/.config/nvim/init.vim
+	[ -L ~/.config/nvim ] && unlink ~/.config/nvim
 	[ -h ~/.exports ] && rm ~/.exports
 	[ -h ~/.functions ] && rm ~/.functions
 	[ -h ~/.path ] && rm ~/.path

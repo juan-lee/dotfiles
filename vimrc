@@ -17,7 +17,7 @@ else
 endif
 
 Plug 'airblade/vim-gitgutter'
-Plug 'chriskempson/base16-vim'
+Plug 'base16-project/base16-vim'
 Plug 'easymotion/vim-easymotion'
 Plug 'fatih/vim-go'
 Plug 'hrsh7th/cmp-buffer'
