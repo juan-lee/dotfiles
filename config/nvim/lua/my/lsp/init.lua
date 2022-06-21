@@ -1,22 +1,22 @@
 -- Setup nvim-cmp.
-local cmp = require'cmp'
+local cmp = require"cmp"
 
 cmp.setup({
     mapping = cmp.mapping.preset.insert({
-        ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-        ['<C-f>'] = cmp.mapping.scroll_docs(4),
-        ['<C-Space>'] = cmp.mapping.complete(),
-        ['<C-e>'] = cmp.mapping.abort(),
+        ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+        ["<C-f>"] = cmp.mapping.scroll_docs(4),
+        ["<C-Space>"] = cmp.mapping.complete(),
+        ["<C-e>"] = cmp.mapping.abort(),
         -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-        ['<CR>'] = cmp.mapping.confirm({ select = true }),
+        ["<CR>"] = cmp.mapping.confirm({ select = true }),
     }),
     sources = cmp.config.sources({
-        { name = 'nvim_lua' },
-        { name = 'nvim_lsp' },
-        { name = 'path' },
-        { name = 'vsnip' },
+        { name = "nvim_lua" },
+        { name = "nvim_lsp" },
+        { name = "path" },
+        { name = "vsnip" },
     }, {
-        { name = 'buffer' },
+        { name = "buffer" },
     }),
     snippet = {
         expand = function(args)
@@ -30,8 +30,8 @@ cmp.setup({
 })
 
 -- Setup lspconfig.
-local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
-require('lspconfig')['gopls'].setup {
+local capabilities = require("cmp_nvim_lsp").update_capabilities(vim.lsp.protocol.make_client_capabilities())
+require("lspconfig")["gopls"].setup {
     capabilities = capabilities,
     on_attach = function()
         vim.keymap.set("n", "K", vim.lsp.buf.hover, {buffer=0})
@@ -51,17 +51,17 @@ require('lspconfig')['gopls'].setup {
     end
 }
 
-require'lspconfig'.sumneko_lua.setup {
+require("lspconfig").sumneko_lua.setup {
     capabilities = capabilities,
     settings = {
         Lua = {
             runtime = {
-                -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-                version = 'LuaJIT',
+                -- Tell the language server which version of Lua you"re using (most likely LuaJIT in the case of Neovim)
+                version = "LuaJIT",
             },
             diagnostics = {
                 -- Get the language server to recognize the `vim` global
-                globals = {'vim'},
+                globals = {"vim"},
             },
             workspace = {
                 -- Make the server aware of Neovim runtime files
@@ -76,7 +76,7 @@ require'lspconfig'.sumneko_lua.setup {
 }
 
 -- Setup treesitter
-require'nvim-treesitter.configs'.setup {
+require("nvim-treesitter.configs").setup {
     ensure_installed = { "bash", "dockerfile", "go", "gomod", "json", "lua", "vim", "yaml" },
     sync_install = false,
     highlight = {

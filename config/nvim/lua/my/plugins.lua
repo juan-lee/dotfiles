@@ -1,8 +1,8 @@
 -- bootstrap packer
 local fn = vim.fn
-local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
+local install_path = fn.stdpath("data").."/site/pack/packer/start/packer.nvim"
 if fn.empty(fn.glob(install_path)) > 0 then
-  packer_bootstrap = fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
+  packer_bootstrap = fn.system({"git", "clone", "--depth", "1", "https://github.com/wbthomason/packer.nvim", install_path})
 end
 
 vim.cmd [[packadd packer.nvim]]
@@ -15,43 +15,43 @@ vim.cmd([[
   augroup end
 ]])
 
-return require('packer').startup(function(use)
-    use 'wbthomason/packer.nvim'
+return require("packer").startup(function(use)
+    use "wbthomason/packer.nvim"
 
-    use 'base16-project/base16-vim'
-    use 'easymotion/vim-easymotion'
-    use 'hrsh7th/cmp-buffer'
-    use 'hrsh7th/cmp-cmdline'
-    use 'hrsh7th/cmp-nvim-lsp'
-    use 'hrsh7th/cmp-path'
-    use 'hrsh7th/cmp-vsnip'
-    use 'hrsh7th/cmp-nvim-lua'
-    use 'hrsh7th/nvim-cmp'
-    use 'hrsh7th/vim-vsnip'
-    use 'neovim/nvim-lspconfig'
-    use 'nvim-lua/plenary.nvim'
-    use 'nvim-telescope/telescope.nvim'
-    use 'nvim-telescope/telescope-file-browser.nvim'
-    use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
-    use 'tpope/vim-abolish'
-    use 'tpope/vim-commentary'
-    use 'tpope/vim-dadbod'
-    use 'tpope/vim-dispatch'
-    use 'tpope/vim-eunuch'
-    use 'tpope/vim-fugitive'
-    use 'tpope/vim-jdaddy'
-    use 'tpope/vim-markdown'
-    use 'tpope/vim-repeat'
-    use 'tpope/vim-rhubarb'
-    use 'tpope/vim-sensible'
-    use 'tpope/vim-sleuth'
-    use 'tpope/vim-surround'
-    use 'tpope/vim-unimpaired'
-    use 'tpope/vim-vinegar'
-    use 'vim-airline/vim-airline'
-    use 'vim-airline/vim-airline-themes'
+    use "base16-project/base16-vim"
+    use "easymotion/vim-easymotion"
+    use "hrsh7th/cmp-buffer"
+    use "hrsh7th/cmp-cmdline"
+    use "hrsh7th/cmp-nvim-lsp"
+    use "hrsh7th/cmp-path"
+    use "hrsh7th/cmp-vsnip"
+    use "hrsh7th/cmp-nvim-lua"
+    use "hrsh7th/nvim-cmp"
+    use "hrsh7th/vim-vsnip"
+    use "neovim/nvim-lspconfig"
+    use "nvim-lua/plenary.nvim"
+    use "nvim-telescope/telescope.nvim"
+    use "nvim-telescope/telescope-file-browser.nvim"
+    use { "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" }
+    use "tpope/vim-abolish"
+    use "tpope/vim-commentary"
+    use "tpope/vim-dadbod"
+    use "tpope/vim-dispatch"
+    use "tpope/vim-eunuch"
+    use "tpope/vim-fugitive"
+    use "tpope/vim-jdaddy"
+    use "tpope/vim-markdown"
+    use "tpope/vim-repeat"
+    use "tpope/vim-rhubarb"
+    use "tpope/vim-sensible"
+    use "tpope/vim-sleuth"
+    use "tpope/vim-surround"
+    use "tpope/vim-unimpaired"
+    use "tpope/vim-vinegar"
+    use "vim-airline/vim-airline"
+    use "vim-airline/vim-airline-themes"
 
     if packer_bootstrap then
-        require('packer').sync()
+        require("packer").sync()
     end
 end)

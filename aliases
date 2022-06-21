@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # vim
-alias vi="$(which vim) -u NONE"
+alias vi="$(which vim)"
 alias vim=$(which nvim)
 alias v=$(which nvim)
 alias vt="$(which nvim) +terminal"
