@@ -1,37 +1,57 @@
-local Plug = vim.fn['plug#']
+-- bootstrap packer
+local fn = vim.fn
+local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
+if fn.empty(fn.glob(install_path)) > 0 then
+  packer_bootstrap = fn.system({'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path})
+end
 
-vim.call('plug#begin', '~/.config/nvim/plugged')
+vim.cmd [[packadd packer.nvim]]
 
-Plug 'base16-project/base16-vim'
-Plug 'easymotion/vim-easymotion'
-Plug 'hrsh7th/cmp-buffer'
-Plug 'hrsh7th/cmp-cmdline'
-Plug 'hrsh7th/cmp-nvim-lsp'
-Plug 'hrsh7th/cmp-path'
-Plug 'hrsh7th/cmp-vsnip'
-Plug 'hrsh7th/nvim-cmp'
-Plug 'hrsh7th/vim-vsnip'
-Plug 'neovim/nvim-lspconfig'
-Plug 'nvim-lua/plenary.nvim'
-Plug 'nvim-telescope/telescope.nvim'
-Plug 'nvim-treesitter/nvim-treesitter'
-Plug 'tpope/vim-abolish'
-Plug 'tpope/vim-commentary'
-Plug 'tpope/vim-dadbod'
-Plug 'tpope/vim-dispatch'
-Plug 'tpope/vim-eunuch'
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-jdaddy'
-Plug 'tpope/vim-markdown'
-Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-rhubarb'
-Plug 'tpope/vim-sensible'
-Plug 'tpope/vim-sleuth'
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-unimpaired'
-Plug 'tpope/vim-vinegar'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+-- :PackerCompile whenever this file is updated
+vim.cmd([[
+  augroup packer_user_config
+    autocmd!
+    autocmd BufWritePost plugins.lua source <afile> | PackerCompile
+  augroup end
+]])
 
-vim.call('plug#end')
+return require('packer').startup(function(use)
+    use 'wbthomason/packer.nvim'
 
+    use 'base16-project/base16-vim'
+    use 'easymotion/vim-easymotion'
+    use 'hrsh7th/cmp-buffer'
+    use 'hrsh7th/cmp-cmdline'
+    use 'hrsh7th/cmp-nvim-lsp'
+    use 'hrsh7th/cmp-path'
+    use 'hrsh7th/cmp-vsnip'
+    use 'hrsh7th/cmp-nvim-lua'
+    use 'hrsh7th/nvim-cmp'
+    use 'hrsh7th/vim-vsnip'
+    use 'neovim/nvim-lspconfig'
+    use 'nvim-lua/plenary.nvim'
+    use 'nvim-telescope/telescope.nvim'
+    use 'nvim-telescope/telescope-file-browser.nvim'
+    use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }
+    use 'tpope/vim-abolish'
+    use 'tpope/vim-commentary'
+    use 'tpope/vim-dadbod'
+    use 'tpope/vim-dispatch'
+    use 'tpope/vim-eunuch'
+    use 'tpope/vim-fugitive'
+    use 'tpope/vim-jdaddy'
+    use 'tpope/vim-markdown'
+    use 'tpope/vim-repeat'
+    use 'tpope/vim-rhubarb'
+    use 'tpope/vim-sensible'
+    use 'tpope/vim-sleuth'
+    use 'tpope/vim-surround'
+    use 'tpope/vim-unimpaired'
+    use 'tpope/vim-vinegar'
+    use 'vim-airline/vim-airline'
+    use 'vim-airline/vim-airline-themes'
+
+    if packer_bootstrap then
+        require('packer').sync()
+    end
+end)

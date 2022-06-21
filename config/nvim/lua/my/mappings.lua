@@ -8,6 +8,7 @@ vim.keymap.set('n', '<leader>q', ':q!<CR>')
 -- telescope
 vim.keymap.set('n', '<leader>t', ':Telescope find_files<CR>')
 vim.keymap.set('n', '<leader>g', ':Telescope live_grep<CR>')
+vim.keymap.set('n', '<leader>G', ':Telescope grep_string<CR>')
 vim.keymap.set('n', '<leader>u', ':Telescope buffers<CR>')
 
 -- easymotion

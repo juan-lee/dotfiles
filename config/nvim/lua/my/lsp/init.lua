@@ -3,30 +3,24 @@ local cmp = require'cmp'
 
 cmp.setup({
     mapping = cmp.mapping.preset.insert({
-        -- ['<C-n>'] = cmp.mapping.select_next_item { behavior = cmp.SelectBehavior.Insert },
-        -- ['<C-p>'] = cmp.mapping.select_prev_item { behavior = cmp.SelectBehavior.Insert },
         ['<C-b>'] = cmp.mapping.scroll_docs(-4),
         ['<C-f>'] = cmp.mapping.scroll_docs(4),
         ['<C-Space>'] = cmp.mapping.complete(),
         ['<C-e>'] = cmp.mapping.abort(),
-        ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+        -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+        ['<CR>'] = cmp.mapping.confirm({ select = true }),
     }),
     sources = cmp.config.sources({
+        { name = 'nvim_lua' },
         { name = 'nvim_lsp' },
-        { name = 'vsnip' }, -- For vsnip users.
-        -- { name = 'luasnip' }, -- For luasnip users.
-        -- { name = 'ultisnips' }, -- For ultisnips users.
-        -- { name = 'snippy' }, -- For snippy users.
+        { name = 'path' },
+        { name = 'vsnip' },
     }, {
         { name = 'buffer' },
     }),
     snippet = {
-        -- REQUIRED - you must specify a snippet engine
         expand = function(args)
-            vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-            -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-            -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
-            -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+            vim.fn["vsnip#anonymous"](args.body)
         end,
     },
     window = {
@@ -42,10 +36,12 @@ require('lspconfig')['gopls'].setup {
     on_attach = function()
         vim.keymap.set("n", "K", vim.lsp.buf.hover, {buffer=0})
         vim.keymap.set("n", "<C-]>", vim.lsp.buf.definition, {buffer=0})
+        vim.keymap.set("n", "gd", vim.lsp.buf.definition, {buffer=0})
         vim.keymap.set("n", "gD", vim.lsp.buf.declaration, {buffer=0})
         vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, {buffer=0})
         vim.keymap.set("n", "gi", vim.lsp.buf.implementation, {buffer=0})
         vim.keymap.set("n", "gr", "<cmd>Telescope lsp_references<cr>", {buffer=0})
+        vim.keymap.set("n", "gs", "<cmd>Telescope lsp_document_symbols<cr>", {buffer=0})
         vim.keymap.set("n", "<leader>cr", vim.lsp.buf.rename, {buffer=0})
         vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {buffer=0})
         vim.keymap.set("n", "<leader>i", vim.lsp.buf.signature_help, {buffer=0})

@@ -1,2 +1,2 @@
-# vim-plug
-config/nvim/plugged
+# packer
+config/nvim/plugin/packer_compiled.lua
