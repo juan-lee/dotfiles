@@ -5,6 +5,10 @@ vim.keymap.set("n", "<leader>a", ":A<CR>")
 vim.keymap.set("n", "<leader>w", ":bp | bd #<CR>")
 vim.keymap.set("n", "<leader>q", ":q!<CR>")
 
+if vim.opt.diff:get() then
+    vim.keymap.set("n", "<leader>q", ":qa<CR>")
+end
+
 -- telescope
 vim.keymap.set("n", "<leader>t", ":Telescope find_files<CR>")
 vim.keymap.set("n", "<leader>g", ":Telescope live_grep<CR>")

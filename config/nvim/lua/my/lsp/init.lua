@@ -45,9 +45,9 @@ require("lspconfig")["gopls"].setup {
         vim.keymap.set("n", "<leader>cr", vim.lsp.buf.rename, {buffer=0})
         vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {buffer=0})
         vim.keymap.set("n", "<leader>i", vim.lsp.buf.signature_help, {buffer=0})
-        vim.keymap.set("n", "dn", vim.diagnostic.goto_next, {buffer=0})
-        vim.keymap.set("n", "dp", vim.diagnostic.goto_next, {buffer=0})
-        vim.keymap.set("n", "dl", "<cmd>Telescope diagnostics<cr>", {buffer=0})
+        vim.keymap.set("n", "<leader>d", "<cmd>Telescope diagnostics<cr>", {buffer=0})
+        vim.keymap.set("n", "[d", vim.diagnostic.goto_next, {buffer=0})
+        vim.keymap.set("n", "]d", vim.diagnostic.goto_next, {buffer=0})
     end
 }
 
@@ -89,5 +89,45 @@ require("nvim-treesitter.configs").setup {
     indent = {
         enable = true,
     },
+    refactor = {
+        highlight_definitions = {
+            enable = true,
+            -- Set to false if you have an `updatetime` of ~100.
+            clear_on_cursor_move = true,
+        },
+    },
+    textobjects = {
+        select = {
+            enable = true,
+            lookahead = true,
+            keymaps = {
+                ["af"] = "@function.outer",
+                ["if"] = "@function.inner",
+            },
+        },
+        move = {
+            enable = true,
+            set_jumps = true,
+            goto_next_start = {
+                ["]]"] = "@function.outer",
+            },
+            goto_previous_start = {
+                ["[["] = "@function.outer",
+            },
+        },
+    },
 }
 
+require'treesitter-context'.setup{
+    enable = true,
+    max_lines = 0,
+    trim_scope = 'outer',
+    patterns = {
+        default = {
+            'function',
+        },
+    },
+    exact_patterns = {},
+    zindex = 20,
+    mode = 'cursor',
+}

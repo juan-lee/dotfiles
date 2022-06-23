@@ -17,6 +17,7 @@ vim.opt.smartindent = true
 vim.opt.swapfile = false
 vim.opt.tabstop = 4
 vim.opt.undofile = true
+vim.opt.updatetime = 500
 
 vim.api.nvim_create_autocmd("TextYankPost", {
     pattern = "*",
@@ -24,3 +25,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
         vim.highlight.on_yank {higroup="IncSearch", timeout=500}
     end,
 })
+
+if vim.opt.diff:get() then
+    vim.opt.diffopt:append({context = 1000, vertical = true})
+end

@@ -33,6 +33,9 @@ return require("packer").startup(function(use)
     use "nvim-telescope/telescope.nvim"
     use "nvim-telescope/telescope-file-browser.nvim"
     use { "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" }
+    use "nvim-treesitter/nvim-treesitter-context"
+    use "nvim-treesitter/nvim-treesitter-refactor"
+    use "nvim-treesitter/nvim-treesitter-textobjects"
     use "tpope/vim-abolish"
     use "tpope/vim-commentary"
     use "tpope/vim-dadbod"
