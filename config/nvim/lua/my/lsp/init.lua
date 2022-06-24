@@ -36,16 +36,16 @@ require("lspconfig")["gopls"].setup {
     on_attach = function()
         vim.keymap.set("n", "K", vim.lsp.buf.hover, {buffer=0})
         vim.keymap.set("n", "<C-]>", vim.lsp.buf.definition, {buffer=0})
-        vim.keymap.set("n", "gd", vim.lsp.buf.definition, {buffer=0})
+        vim.keymap.set("n", "gd",  "<Cmd>Telescope lsp_definitions<cr>", {buffer=0})
         vim.keymap.set("n", "gD", vim.lsp.buf.declaration, {buffer=0})
-        vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, {buffer=0})
-        vim.keymap.set("n", "gi", vim.lsp.buf.implementation, {buffer=0})
-        vim.keymap.set("n", "gr", "<cmd>Telescope lsp_references<cr>", {buffer=0})
-        vim.keymap.set("n", "gs", "<cmd>Telescope lsp_document_symbols<cr>", {buffer=0})
+        vim.keymap.set("n", "gt",   "<Cmd>Telescope lsp_type_definitions<cr>", {buffer=0})
+        vim.keymap.set("n", "gi", "<Cmd>Telescope lsp_implementations<cr>", {buffer=0})
+        vim.keymap.set("n", "gr", "<Cmd>Telescope lsp_references<cr>", {buffer=0})
+        vim.keymap.set("n", "gs", "<Cmd>Telescope lsp_document_symbols<cr>", {buffer=0})
         vim.keymap.set("n", "<leader>cr", vim.lsp.buf.rename, {buffer=0})
         vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {buffer=0})
         vim.keymap.set("n", "<leader>i", vim.lsp.buf.signature_help, {buffer=0})
-        vim.keymap.set("n", "<leader>d", "<cmd>Telescope diagnostics<cr>", {buffer=0})
+        vim.keymap.set("n", "<leader>d", "<Cmd>Telescope diagnostics<cr>", {buffer=0})
         vim.keymap.set("n", "[d", vim.diagnostic.goto_next, {buffer=0})
         vim.keymap.set("n", "]d", vim.diagnostic.goto_next, {buffer=0})
     end
@@ -118,7 +118,7 @@ require("nvim-treesitter.configs").setup {
     },
 }
 
-require'treesitter-context'.setup{
+require("treesitter-context").setup{
     enable = true,
     max_lines = 0,
     trim_scope = 'outer',
@@ -131,3 +131,4 @@ require'treesitter-context'.setup{
     zindex = 20,
     mode = 'cursor',
 }
+

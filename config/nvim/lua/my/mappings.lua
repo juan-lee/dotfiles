@@ -1,19 +1,13 @@
 -- builtin
-vim.keymap.set("n", "<leader>n", ":bn<CR>")
-vim.keymap.set("n", "<leader>p", ":bp<CR>")
-vim.keymap.set("n", "<leader>a", ":A<CR>")
-vim.keymap.set("n", "<leader>w", ":bp | bd #<CR>")
-vim.keymap.set("n", "<leader>q", ":q!<CR>")
+vim.keymap.set("n", "<leader>n", "<Cmd>bn<CR>")
+vim.keymap.set("n", "<leader>p", "<Cmd>bp<CR>")
+vim.keymap.set("n", "<leader>a", "<Cmd>A<CR>")
+vim.keymap.set("n", "<leader>w", "<Cmd>bp | bd #<CR>")
+vim.keymap.set("n", "<leader>q", "<Cmd>q!<CR>")
 
 if vim.opt.diff:get() then
-    vim.keymap.set("n", "<leader>q", ":qa<CR>")
+    vim.keymap.set("n", "<leader>q", "<Cmd>qa<CR>")
 end
-
--- telescope
-vim.keymap.set("n", "<leader>t", ":Telescope find_files<CR>")
-vim.keymap.set("n", "<leader>g", ":Telescope live_grep<CR>")
-vim.keymap.set("n", "<leader>G", ":Telescope grep_string<CR>")
-vim.keymap.set("n", "<leader>u", ":Telescope buffers<CR>")
 
 -- easymotion
 vim.keymap.set("n", "<leader>j", "<Plug>(easymotion-j)")
