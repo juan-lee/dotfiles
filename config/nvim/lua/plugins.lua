@@ -18,8 +18,19 @@ vim.cmd([[
 return require("packer").startup(function(use)
   use "wbthomason/packer.nvim"
 
+  -- lua plugins
+  use 'lewis6991/impatient.nvim'
+  use "nvim-lua/plenary.nvim"
+
+  -- theme plugins
   use "base16-project/base16-vim"
+  use "vim-airline/vim-airline"
+  use "vim-airline/vim-airline-themes"
+
+  -- navigation plugins
   use "easymotion/vim-easymotion"
+
+  -- cmp plugins
   use "hrsh7th/cmp-buffer"
   use "hrsh7th/cmp-cmdline"
   use "hrsh7th/cmp-nvim-lsp"
@@ -29,13 +40,18 @@ return require("packer").startup(function(use)
   use "hrsh7th/nvim-cmp"
   use "hrsh7th/vim-vsnip"
   use "neovim/nvim-lspconfig"
-  use "nvim-lua/plenary.nvim"
+
+  -- telescope plugins
   use "nvim-telescope/telescope.nvim"
   use "nvim-telescope/telescope-file-browser.nvim"
+
+  -- treesitter plugins
   use { "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" }
   use "nvim-treesitter/nvim-treesitter-context"
   use "nvim-treesitter/nvim-treesitter-refactor"
   use "nvim-treesitter/nvim-treesitter-textobjects"
+
+  -- tpope plugins
   use "tpope/vim-abolish"
   use "tpope/vim-commentary"
   use "tpope/vim-dadbod"
@@ -51,8 +67,6 @@ return require("packer").startup(function(use)
   use "tpope/vim-surround"
   use "tpope/vim-unimpaired"
   use "tpope/vim-vinegar"
-  use "vim-airline/vim-airline"
-  use "vim-airline/vim-airline-themes"
 
   -- dap plugins
   use "mfussenegger/nvim-dap"
