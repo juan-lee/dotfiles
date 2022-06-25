@@ -1,6 +1,8 @@
 vim.g.mapleader = " "
 vim.g["netrw_fastbrowse"] = 0
 
+vim.o.termguicolors = true
+
 vim.opt.completeopt = {"menu", "menuone", "noselect"}
 vim.opt.expandtab = true
 vim.opt.foldenable = false
