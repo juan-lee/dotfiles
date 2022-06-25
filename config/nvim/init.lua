@@ -1,9 +1,9 @@
-require("my.globals")
+require("globals")
 
-require("my.settings")
-require("my.mappings")
-require("my.plugins")
+require("settings")
+require("mappings")
+require("plugins")
 
-require("my.dap")
-require("my.lsp")
-require("my.telescope")
+require("plugin.dap")
+require("plugin.lsp")
+require("plugin.telescope")
