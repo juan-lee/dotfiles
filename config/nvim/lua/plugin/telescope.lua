@@ -11,8 +11,7 @@ require("telescope").setup{
         file_browser = {
             dir_icon = " ",
             theme = "ivy",
-            -- disables netrw and use telescope-file-browser in its place
-            hijack_netrw = true,
+            hijack_netrw = false,
             mappings = {
                 ["i"] = {
                 },
@@ -30,4 +29,5 @@ vim.keymap.set("n", "<leader>t", "<Cmd>Telescope find_files<CR>")
 vim.keymap.set("n", "<leader>g", "<Cmd>Telescope live_grep<CR>")
 vim.keymap.set("n", "<leader>G", "<Cmd>Telescope grep_string<CR>")
 vim.keymap.set("n", "<leader>u", "<Cmd>Telescope buffers<CR>")
+vim.keymap.set("n", "<leader>-", "<Cmd>Telescope file_browser<CR>")
 

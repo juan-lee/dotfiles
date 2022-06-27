@@ -16,7 +16,7 @@ cmp.setup({
         { name = "path" },
         { name = "vsnip" },
     }, {
-        { name = "buffer" },
+        { name = "buffer", option = { keyword_length = 5} },
     }),
     snippet = {
         expand = function(args)
