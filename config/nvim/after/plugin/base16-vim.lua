@@ -1,7 +1,8 @@
-local Path = require "plenary.path"
+local cmd = vim.cmd
+local g = vim.g
 
-local vimrc_background_path = Path:new { vim.loop.os_homedir(), ".vimrc_background" }
-if vimrc_background_path:exists() then
-    vim.g.base16colorspace = 256
-    vim.cmd "source ~/.vimrc_background"
+local base16_project_theme = os.getenv('BASE16_THEME')
+if base16_project_theme and g.colors_name ~= 'base16-'..base16_project_theme then
+  cmd('let base16colorspace=256')
+  cmd('colorscheme base16-'..base16_project_theme)
 end
