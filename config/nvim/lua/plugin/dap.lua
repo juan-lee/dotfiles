@@ -9,12 +9,6 @@ dap.listeners.before.event_exited["dapui_config"] = function()
   dapui.close()
 end
 
-vim.keymap.set("n", "<F5>", "<Cmd>lua require'dap'.continue()<CR>")
-vim.keymap.set("n", "<F9>", "<Cmd>lua require'dap'.toggle_breakpoint()<CR>")
-vim.keymap.set("n", "<F10>", "<Cmd>lua require'dap'.step_over()<CR>")
-vim.keymap.set("n", "<F11>", "<Cmd>lua require'dap'.step_into()<CR>")
-vim.keymap.set("n", "<F12>", "<Cmd>lua require'dap'.step_out()<CR>")
-
 -- Setup nvim-dap-go
 require("dap-go").setup()
 
@@ -73,3 +67,9 @@ require("dapui").setup({
     }
 })
 
+vim.keymap.set("n", "<F5>", "<Cmd>lua require'dap'.continue()<CR>")
+vim.keymap.set("n", "<F9>", "<Cmd>lua require'dap'.toggle_breakpoint()<CR>")
+vim.keymap.set("n", "<F10>", "<Cmd>lua require'dap'.step_over()<CR>")
+vim.keymap.set("n", "<F11>", "<Cmd>lua require'dap'.step_into()<CR>")
+vim.keymap.set("n", "<F12>", "<Cmd>lua require'dap'.step_out()<CR>")
+vim.keymap.set("n", "<leader>dt", "<Cmd>lua require'dap-go'.debug_test()<CR>")
