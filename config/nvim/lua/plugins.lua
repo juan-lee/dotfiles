@@ -44,6 +44,7 @@ return require("packer").startup(function(use)
   -- telescope plugins
   use "nvim-telescope/telescope.nvim"
   use "nvim-telescope/telescope-file-browser.nvim"
+  use "ryanoasis/vim-devicons"
 
   -- treesitter plugins
   use { "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" }

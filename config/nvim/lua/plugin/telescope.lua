@@ -1,6 +1,6 @@
 require("telescope").setup{
     defaults = {
-        color_devicons = false,
+        color_devicons = true,
     },
     pickers = {
         live_grep = {
@@ -9,7 +9,6 @@ require("telescope").setup{
     },
     extensions = {
         file_browser = {
-            dir_icon = " ",
             theme = "ivy",
             hijack_netrw = false,
             mappings = {
@@ -30,4 +29,3 @@ vim.keymap.set("n", "<leader>g", "<Cmd>Telescope live_grep<CR>")
 vim.keymap.set("n", "<leader>G", "<Cmd>Telescope grep_string<CR>")
 vim.keymap.set("n", "<leader>u", "<Cmd>Telescope buffers<CR>")
 vim.keymap.set("n", "<leader>-", "<Cmd>Telescope file_browser<CR>")
-
