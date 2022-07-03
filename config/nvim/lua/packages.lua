@@ -11,26 +11,25 @@ vim.cmd [[packadd packer.nvim]]
 vim.cmd([[
   augroup packer_user_config
   autocmd!
-  autocmd BufWritePost plugins.lua source <afile> | PackerCompile
+  autocmd BufWritePost packages.lua source <afile> | PackerCompile
   augroup end
 ]])
 
 return require("packer").startup(function(use)
   use "wbthomason/packer.nvim"
 
-  -- lua plugins
-  use 'lewis6991/impatient.nvim'
+  -- lua packages
   use "nvim-lua/plenary.nvim"
 
-  -- theme plugins
+  -- theme packages
   use "base16-project/base16-vim"
   use "vim-airline/vim-airline"
   use "vim-airline/vim-airline-themes"
 
-  -- navigation plugins
+  -- navigation packages
   use "easymotion/vim-easymotion"
 
-  -- cmp plugins
+  -- cmp packages
   use "hrsh7th/cmp-buffer"
   use "hrsh7th/cmp-cmdline"
   use "hrsh7th/cmp-nvim-lsp"
@@ -41,18 +40,18 @@ return require("packer").startup(function(use)
   use "hrsh7th/vim-vsnip"
   use "neovim/nvim-lspconfig"
 
-  -- telescope plugins
+  -- telescope packages
   use "nvim-telescope/telescope.nvim"
   use "nvim-telescope/telescope-file-browser.nvim"
   use "ryanoasis/vim-devicons"
 
-  -- treesitter plugins
+  -- treesitter packages
   use { "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" }
   use "nvim-treesitter/nvim-treesitter-context"
   use "nvim-treesitter/nvim-treesitter-refactor"
   use "nvim-treesitter/nvim-treesitter-textobjects"
 
-  -- tpope plugins
+  -- tpope packages
   use "tpope/vim-abolish"
   use "tpope/vim-commentary"
   use "tpope/vim-dadbod"
@@ -69,15 +68,17 @@ return require("packer").startup(function(use)
   use "tpope/vim-unimpaired"
   use "tpope/vim-vinegar"
 
-  -- dap plugins
+  -- dap packages
   use "mfussenegger/nvim-dap"
   use "leoluz/nvim-dap-go"
   use "nvim-telescope/telescope-dap.nvim"
   use "rcarriga/nvim-dap-ui"
   use "theHamsta/nvim-dap-virtual-text"
 
-  -- terminal plugins
+  -- terminal packages
   use "akinsho/toggleterm.nvim"
+
+  use "ray-x/go.nvim"
 
   if packer_bootstrap then
     require("packer").sync()
