@@ -1,6 +1,13 @@
-require("telescope").setup{
+require("telescope").setup {
     defaults = {
         color_devicons = true,
+        path_display = { "smart" },
+        layout_strategy = "flex",
+        layout_config = {
+            height = 0.95,
+            width = 0.95,
+            flip_columns = 150,
+        },
     },
     pickers = {
         live_grep = {
