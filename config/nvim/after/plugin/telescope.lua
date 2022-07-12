@@ -4,9 +4,11 @@ require("telescope").setup {
         path_display = { "smart" },
         layout_strategy = "flex",
         layout_config = {
-            height = 0.95,
-            width = 0.95,
-            flip_columns = 150,
+            flex = {
+                height = 0.95,
+                width = 0.95,
+                flip_columns = 150,
+            },
         },
     },
     pickers = {
