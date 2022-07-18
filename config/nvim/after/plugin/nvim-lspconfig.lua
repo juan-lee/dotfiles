@@ -68,3 +68,12 @@ lspconfig.sumneko_lua.setup {
         },
     },
 }
+
+lspconfig.marksman.setup {
+    capabilities = capabilities,
+    on_attach = function(client, bufnr)
+        on_attach(client, bufnr)
+        local bufopts = { noremap = true, silent = true, buffer = bufnr }
+        vim.keymap.set("n", "gs", "<Cmd>Telescope lsp_document_symbols<cr>", bufopts)
+    end,
+}
