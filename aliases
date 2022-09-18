@@ -10,4 +10,4 @@ alias vt="$(which nvim) +terminal"
 alias k8s="$HOME/Code/k8s.io/kubernetes"
 alias ke="kubectl node-shell"
 alias ka=kca
-alias notes="${HOME}/Code/dev.azure.com/juan-lee/juannote/juannote.wiki"
+alias notes="${HOME}/Code/github.com/juan-lee/juannote"

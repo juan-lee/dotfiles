@@ -5,11 +5,11 @@ require('go').setup({
   dap_debug_vt = false,
 })
 
-local function my_go_build()
+local function go_build()
   local save_makeprg = vim.opt_local.makeprg
   vim.opt_local.makeprg = 'go build . errors'
   vim.api.nvim_command('make')
   vim.opt_local.makeprg = save_makeprg
 end
 
-vim.api.nvim_create_user_command('MyGoBuild', my_go_build, { nargs = 0 })
+vim.api.nvim_create_user_command('GolangBuild', go_build, { nargs = 0 })
