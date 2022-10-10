@@ -10,6 +10,7 @@ vim.opt.hidden = true
 vim.opt.ignorecase = true
 vim.opt.inccommand = "nosplit"
 vim.opt.number = true
+vim.opt.maxmempattern = 5000
 vim.opt.shiftwidth = 4
 vim.opt.shortmess:append({ c = true })
 vim.opt.showmatch = true

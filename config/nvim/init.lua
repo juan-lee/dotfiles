@@ -14,7 +14,7 @@
 
 ./lua/packages.lua
     Package management using packer.nvim
-    
+
 
 --]]
 require("settings")
