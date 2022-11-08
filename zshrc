@@ -1,7 +1,7 @@
 export ZSH="$HOME/.oh-my-zsh"
 [ -x "/opt/homebrew/bin/brew" ] && eval $(/opt/homebrew/bin/brew shellenv)
 
-ZSH_THEME="sunrise"
+ZSH_THEME="jpang"
 ZSH_TMUX_AUTOSTART="true"
 ZSH_TMUX_AUTOQUIT="false"
 COMPLETION_WAITING_DOTS="true"
