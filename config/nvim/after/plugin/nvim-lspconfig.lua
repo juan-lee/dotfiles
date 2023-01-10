@@ -2,78 +2,63 @@ local opts = { noremap = true, silent = true }
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, opts)
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
-vim.keymap.set("n", "<leader>d", "<Cmd>Telescope diagnostics<cr>", opts)
 
-local on_attach = function(client, bufnr)
+local on_attach = function(_, bufnr)
     -- Enable completion triggered by <c-x><c-o>
     vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
     local bufopts = { noremap = true, silent = true, buffer = bufnr }
     vim.keymap.set("n", "K", vim.lsp.buf.hover, bufopts)
     vim.keymap.set("n", "<C-]>", vim.lsp.buf.definition, bufopts)
-    -- Prefer Telescope versions
-    -- vim.keymap.set("n", "gd", vim.lsp.buf.definition, bufopts)
-    -- vim.keymap.set("n", "gt", vim.lsp.buf.type_definition, bufopts)
-    -- vim.keymap.set("n", "gi", vim.lsp.buf.implementation, bufopts)
-    -- vim.keymap.set("n", "gr", vim.lsp.buf.references, bufopts)
-    vim.keymap.set("n", "gd", "<Cmd>Telescope lsp_definitions<cr>", bufopts)
-    vim.keymap.set("n", "gD", "<Cmd>Telescope lsp_type_definitions<cr>", bufopts)
-    vim.keymap.set("n", "gi", "<Cmd>Telescope lsp_implementations<cr>", bufopts)
-    vim.keymap.set("n", "gr", "<Cmd>Telescope lsp_references<cr>", bufopts)
-    vim.keymap.set("n", "gs", "<Cmd>Telescope lsp_dynamic_workspace_symbols<cr>", bufopts)
-    vim.keymap.set("n", "gS", "<Cmd>Telescope lsp_document_symbols<cr>", bufopts)
+    vim.keymap.set("n", "gd", require('telescope.builtin').lsp_definitions, bufopts)
+    vim.keymap.set("n", "gD", require('telescope.builtin').lsp_type_definitions, bufopts)
+    vim.keymap.set("n", "gi", require('telescope.builtin').lsp_implementations, bufopts)
+    vim.keymap.set("n", "gr", require('telescope.builtin').lsp_references, bufopts)
+    vim.keymap.set("n", "gs", require('telescope.builtin').lsp_dynamic_workspace_symbols, bufopts)
+    vim.keymap.set("n", "gS", require('telescope.builtin').lsp_document_symbols, bufopts)
     vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, bufopts)
     vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, bufopts)
     vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, bufopts)
-    vim.keymap.set("n", "<space>f", vim.lsp.buf.formatting, bufopts)
+    vim.keymap.set("n", "<leader>f", vim.lsp.buf.format, bufopts)
+
+    vim.api.nvim_create_autocmd("BufWritePre", {
+        pattern = "<buffer>",
+        callback = function() vim.lsp.buf.format({async = false}) end,
+    })
 end
 
-local lspconfig = require("lspconfig")
-local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
-lspconfig.gopls.setup {
-    capabilities = capabilities,
-    on_attach = function(client, bufnr)
-        on_attach(client, bufnr)
-        vim.api.nvim_create_autocmd("BufWritePre", {
-            pattern = "<buffer>",
-            callback = vim.lsp.buf.formatting_sync,
-        })
-    end,
-}
-
-lspconfig.sumneko_lua.setup {
-    capabilities = capabilities,
-    on_attach = function(client, bufnr)
-        on_attach(client, bufnr)
-        vim.api.nvim_create_autocmd("BufWritePre", {
-            pattern = "<buffer>",
-            callback = vim.lsp.buf.formatting_sync,
-        })
-    end,
-    settings = {
+local servers = {
+    gopls = {},
+    marksman = {},
+    sumneko_lua = {
         Lua = {
-            runtime = {
-                version = "LuaJIT",
-            },
-            diagnostics = {
-                globals = { "vim" },
-            },
-            workspace = {
-                library = vim.api.nvim_get_runtime_file("", true),
-            },
-            telemetry = {
-                enable = false,
-            },
+            workspace = { checkThirdParty = false },
+            telemetry = { enable = false },
         },
     },
 }
 
-lspconfig.marksman.setup {
-    capabilities = capabilities,
-    on_attach = function(client, bufnr)
-        on_attach(client, bufnr)
-        local bufopts = { noremap = true, silent = true, buffer = bufnr }
-        vim.keymap.set("n", "gs", "<Cmd>Telescope lsp_document_symbols<cr>", bufopts)
+require('neodev').setup()
+
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+
+require('mason').setup()
+
+local mason_lspconfig = require 'mason-lspconfig'
+
+mason_lspconfig.setup {
+    ensure_installed = vim.tbl_keys(servers),
+}
+
+mason_lspconfig.setup_handlers {
+    function(server_name)
+        require('lspconfig')[server_name].setup {
+            capabilities = capabilities,
+            on_attach = on_attach,
+            settings = servers[server_name],
+        }
     end,
 }
+
+require('fidget').setup()

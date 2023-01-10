@@ -1,32 +1,38 @@
 vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 vim.g["netrw_fastbrowse"] = 0
 
-vim.o.termguicolors = true
+vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 
-vim.opt.completeopt = { "menu", "menuone", "noselect" }
-vim.opt.expandtab = true
-vim.opt.foldenable = false
-vim.opt.hidden = true
-vim.opt.ignorecase = true
-vim.opt.inccommand = "nosplit"
-vim.opt.number = true
-vim.opt.maxmempattern = 5000
-vim.opt.shiftwidth = 4
+vim.o.breakindent = true
+vim.o.completeopt = "menuone,noselect"
+vim.o.expandtab = true
+vim.o.foldenable = false
+vim.o.hidden = true
+vim.o.ignorecase = true
+vim.o.inccommand = "nosplit"
+vim.o.maxmempattern = 5000
+vim.o.number = true
 vim.opt.shortmess:append({ c = true })
-vim.opt.showmatch = true
-vim.opt.showmode = false
-vim.opt.smartcase = true
-vim.opt.smartindent = true
-vim.opt.swapfile = false
-vim.opt.tabstop = 4
-vim.opt.undofile = true
-vim.opt.updatetime = 500
+vim.o.relativenumber = true
+vim.o.shiftwidth = 4
+vim.o.showmatch = true
+vim.o.showmode = false
+vim.o.smartcase = true
+vim.o.swapfile = false
+vim.o.tabstop = 4
+vim.o.termguicolors = true
+vim.o.undofile = true
+vim.o.updatetime = 250
+vim.wo.signcolumn = 'yes'
 
-vim.api.nvim_create_autocmd("TextYankPost", {
-    pattern = "*",
-    callback = function()
-        vim.highlight.on_yank { higroup = "IncSearch", timeout = 500 }
-    end,
+local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
+vim.api.nvim_create_autocmd('TextYankPost', {
+  callback = function()
+    vim.highlight.on_yank({ timeout = 500 })
+  end,
+  group = highlight_group,
+  pattern = '*',
 })
 
 if vim.opt.diff:get() then
@@ -39,6 +45,10 @@ vim.api.nvim_create_autocmd("FileType", {
     pattern = "qf",
     group = qf_group,
     callback = function()
-        vim.opt.buflisted = false
+        vim.o.buflisted = false
     end,
+})
+
+vim.diagnostic.config({
+    signs = false,
 })

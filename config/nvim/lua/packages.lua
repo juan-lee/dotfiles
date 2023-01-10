@@ -1,56 +1,71 @@
 -- bootstrap packer
-local fn = vim.fn
-local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
-if fn.empty(fn.glob(install_path)) > 0 then
-  packer_bootstrap = fn.system({ "git", "clone", "--depth", "1", "https://github.com/wbthomason/packer.nvim",
-    install_path })
+local install_path = vim.fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
+local packer_bootstrap = false
+if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
+  packer_bootstrap = true
+  vim.fn.system({ "git", "clone", "--depth", "1", "https://github.com/wbthomason/packer.nvim", install_path })
+  vim.cmd [[packadd packer.nvim]]
 end
 
-vim.cmd [[packadd packer.nvim]]
-
--- :PackerCompile whenever this file is updated
-vim.cmd([[
-  augroup packer_user_config
-  autocmd!
-  autocmd BufWritePost packages.lua source <afile> | PackerCompile
-  augroup end
-]])
-
-return require("packer").startup(function(use)
+require("packer").startup(function(use)
   use "wbthomason/packer.nvim"
-
-  -- lua packages
-  use "nvim-lua/plenary.nvim"
 
   -- theme packages
   use "base16-project/base16-vim"
-  use "vim-airline/vim-airline"
-  use "vim-airline/vim-airline-themes"
+  use {
+    'nvim-lualine/lualine.nvim',
+    requires = {
+      'kyazdani42/nvim-web-devicons',
+      'RRethy/nvim-base16',
+    }
+  }
 
-  -- navigation packages
-  use "easymotion/vim-easymotion"
+  -- lsp packages
+  use {
+    "neovim/nvim-lspconfig",
+    requires = {
+      'williamboman/mason.nvim',
+      'williamboman/mason-lspconfig.nvim',
+      'j-hui/fidget.nvim',
+      'folke/neodev.nvim',
+    }
+  }
 
   -- cmp packages
-  use "hrsh7th/cmp-buffer"
-  use "hrsh7th/cmp-cmdline"
-  use "hrsh7th/cmp-nvim-lsp"
-  use "hrsh7th/cmp-path"
-  use "hrsh7th/cmp-vsnip"
-  use "hrsh7th/cmp-nvim-lua"
-  use "hrsh7th/nvim-cmp"
-  use "hrsh7th/vim-vsnip"
-  use "neovim/nvim-lspconfig"
+  use {
+    "hrsh7th/nvim-cmp",
+    requires = {
+      "hrsh7th/cmp-buffer",
+      "hrsh7th/cmp-cmdline",
+      "hrsh7th/cmp-nvim-lsp",
+      "hrsh7th/cmp-nvim-lua",
+      "hrsh7th/cmp-path",
+      "hrsh7th/cmp-vsnip",
+      "hrsh7th/vim-vsnip",
+    }
+  }
 
   -- telescope packages
-  use "nvim-telescope/telescope.nvim"
+  use {
+    "nvim-telescope/telescope.nvim",
+    requires = {
+      "ryanoasis/vim-devicons",
+      "nvim-lua/plenary.nvim",
+
+    }
+  }
   use "nvim-telescope/telescope-file-browser.nvim"
-  use "ryanoasis/vim-devicons"
 
   -- treesitter packages
-  use { "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" }
-  use "nvim-treesitter/nvim-treesitter-context"
-  use "nvim-treesitter/nvim-treesitter-refactor"
-  use "nvim-treesitter/nvim-treesitter-textobjects"
+  use {
+    'nvim-treesitter/nvim-treesitter',
+    run = function()
+      pcall(require('nvim-treesitter.install').update { with_sync = true })
+    end,
+  }
+  use { "nvim-treesitter/nvim-treesitter-context", after = "nvim-treesitter" }
+  use { "nvim-treesitter/nvim-treesitter-refactor", after = "nvim-treesitter" }
+  use { "nvim-treesitter/nvim-treesitter-textobjects", after = "nvim-treesitter" }
 
   -- tpope packages
   use "tpope/vim-abolish"
@@ -80,8 +95,22 @@ return require("packer").startup(function(use)
   use "akinsho/toggleterm.nvim"
 
   use "ray-x/go.nvim"
+  use {
+    'lewis6991/gitsigns.nvim',
+    config = function()
+      require('gitsigns').setup()
+    end
+  }
 
   if packer_bootstrap then
     require("packer").sync()
   end
 end)
+
+-- :PackerCompile whenever this file is updated
+vim.cmd([[
+  augroup packer_user_config
+  autocmd!
+  autocmd BufWritePost packages.lua source <afile> | PackerCompile
+  augroup end
+]])

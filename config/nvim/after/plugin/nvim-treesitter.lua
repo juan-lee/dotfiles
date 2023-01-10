@@ -1,5 +1,5 @@
 require("nvim-treesitter.configs").setup {
-    ensure_installed = { "bash", "dockerfile", "go", "gomod", "json", "lua", "vim", "yaml" },
+    ensure_installed = { "bash", "dockerfile", "go", "gomod", "json", "lua", "vim", "yaml", "help" },
     sync_install = false,
     highlight = {
         enable = true,
@@ -31,6 +31,8 @@ require("nvim-treesitter.configs").setup {
             enable = true,
             lookahead = true,
             keymaps = {
+                ['aa'] = '@parameter.outer',
+                ['ia'] = '@parameter.inner',
                 ["af"] = "@function.outer",
                 ["if"] = "@function.inner",
                 ["ac"] = "@class.outer",
@@ -45,6 +47,15 @@ require("nvim-treesitter.configs").setup {
             },
             goto_previous_start = {
                 ["[["] = "@function.outer",
+            },
+        },
+        swap = {
+            enable = true,
+            swap_next = {
+                ['<leader>a'] = '@parameter.inner',
+            },
+            swap_previous = {
+                ['<leader>A'] = '@parameter.inner',
             },
         },
     },
