@@ -28,11 +28,11 @@ vim.wo.signcolumn = 'yes'
 
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
-  callback = function()
-    vim.highlight.on_yank({ timeout = 500 })
-  end,
-  group = highlight_group,
-  pattern = '*',
+    callback = function()
+        vim.highlight.on_yank({ timeout = 500 })
+    end,
+    group = highlight_group,
+    pattern = '*',
 })
 
 if vim.opt.diff:get() then
@@ -52,3 +52,22 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.diagnostic.config({
     signs = false,
 })
+
+-- Automatically commit and push my notes repo
+local ok, _ = vim.loop.fs_stat(vim.loop.cwd() .. "/.notes")
+if ok then
+    local function commit_notes()
+        local command = "git add " ..
+            vim.fn.expand('%') ..
+            " && " ..
+            "git commit -m 'Update " ..
+            vim.fn.expand('%') .. " on " .. vim.fn.system("date -u --iso-8601=seconds") .. "' && " .. "git push"
+        vim.fn.system(command)
+    end
+
+    vim.api.nvim_create_autocmd("BufWritePost", {
+        pattern = "**/*.md",
+        callback = commit_notes,
+    })
+    print("Notes detected")
+end

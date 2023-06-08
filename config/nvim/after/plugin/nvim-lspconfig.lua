@@ -23,14 +23,14 @@ local on_attach = function(_, bufnr)
 
     vim.api.nvim_create_autocmd("BufWritePre", {
         pattern = "<buffer>",
-        callback = function() vim.lsp.buf.format({async = false}) end,
+        callback = function() vim.lsp.buf.format({ async = false }) end,
     })
 end
 
 local servers = {
     gopls = {},
     marksman = {},
-    sumneko_lua = {
+    lua_ls = {
         Lua = {
             workspace = { checkThirdParty = false },
             telemetry = { enable = false },
