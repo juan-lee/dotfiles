@@ -1,5 +1,5 @@
 require("nvim-treesitter.configs").setup {
-    ensure_installed = { "bash", "dockerfile", "go", "gomod", "json", "lua", "vim", "yaml", "help" },
+    ensure_installed = { "bash", "dockerfile", "go", "gomod", "json", "lua", "vim", "yaml", "vimdoc" },
     sync_install = false,
     highlight = {
         enable = true,
