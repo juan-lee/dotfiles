@@ -96,13 +96,19 @@ require("packer").startup(function(use)
   use "mfussenegger/nvim-dap"
   use "leoluz/nvim-dap-go"
   use "nvim-telescope/telescope-dap.nvim"
-  use "rcarriga/nvim-dap-ui"
+  use {
+    "rcarriga/nvim-dap-ui",
+    requires = {
+      use { "nvim-neotest/nvim-nio" }
+    }
+  }
   use "theHamsta/nvim-dap-virtual-text"
 
   -- terminal packages
   use "akinsho/toggleterm.nvim"
 
   use "ray-x/go.nvim"
+  use "ray-x/guihua.lua"
   use {
     'lewis6991/gitsigns.nvim',
     config = function()
