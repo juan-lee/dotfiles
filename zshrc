@@ -6,7 +6,7 @@ ZSH_TMUX_AUTOSTART="true"
 ZSH_TMUX_AUTOQUIT="false"
 COMPLETION_WAITING_DOTS="true"
 
-plugins=(base16-shell git tmux vi-mode nmap colored-man-pages golang kubectl kubectx dotenv)
+plugins=(git tmux vi-mode nmap colored-man-pages golang kubectl kubectx dotenv)
 
 source $ZSH/oh-my-zsh.sh
 

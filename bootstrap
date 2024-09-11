@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-GO_VERSION=1.13.3
+GO_VERSION=1.23.1
 KUBECTL_VERSION=v1.16.0
 
 if [ "$(uname)" == "Linux" ]; then
@@ -14,37 +14,39 @@ if [ "$(uname)" == "Linux" ]; then
             lsb-release \
             gnupg \
             build-essential \
-            curl \
-            git-core \
             jq \
             language-pack-en \
-            python-dev \
-            python-pip \
-            python3-dev \
-            python3-pip \
-            silversearcher-ag \
             tmux \
-            nodejs \
-            npm \
-            yarn \
-            highlight \
+            fzf \
             zsh
 
-    if [ ! -f "/etc/apt/sources.list.d/kubernetes.list" ]; then
-        curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-        echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
-    fi
-
-    if [ ! -f "/etc/apt/trusted.gpg.d/microsoft.asc.gpg" ]; then
-        curl -sL https://packages.microsoft.com/keys/microsoft.asc | 
+    if [ ! -f "/etc/apt/keyrings/microsoft.gpg" ]; then
+        curl -sLS https://packages.microsoft.com/keys/microsoft.asc | 
             gpg --dearmor | 
-            sudo tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
+            sudo tee /etc/apt/keyrings/microsoft.gpg > /dev/null
+	    sudo chmod go+r /etc/apt/keyrings/microsoft.gpg
     fi
 
     if [ ! -f "/etc/apt/sources.list.d/azure-cli.list" ]; then
-        AZ_REPO=$(lsb_release -cs)
-        echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | 
-            sudo tee /etc/apt/sources.list.d/azure-cli.list
+            AZ_DIST=$(lsb_release -cs)
+            echo "Types: deb
+URIs: https://packages.microsoft.com/repos/azure-cli/
+Suites: ${AZ_DIST}
+Components: main
+Architectures: $(dpkg --print-architecture)
+Signed-by: /etc/apt/keyrings/microsoft.gpg" | sudo tee /etc/apt/sources.list.d/azure-cli.sources
+    fi
+
+    if [ ! -f "/etc/apt/keyrings/kubernetes-apt-keyring.gpg" ]; then
+        curl -sLS https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | 
+            gpg --dearmor | 
+            sudo tee /etc/apt/keyrings/kubernetes-apt-keyring.gpg > /dev/null
+	    sudo chmod go+r /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+    fi
+
+    if [ ! -f "/etc/apt/sources.list.d/kubernetes.list" ]; then
+        echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+        sudo chmod go+r /etc/apt/sources.list.d/kubernetes.list
     fi
 
     sudo apt-get update && \
@@ -63,23 +65,26 @@ if [ "$(uname)" == "Linux" ]; then
     mkdir -p $HOME/bin
     mkdir -p $HOME/.kube
     mkdir -p $HOME/Code
+    mkdir -p $HOME/.config
 
     # install go
-    curl -L https://storage.googleapis.com/golang/go$GO_VERSION.linux-amd64.tar.gz | sudo tar -C /usr/local -xz
-
-    if [ ! -d "$HOME/Code/github.com/jonmosco" ]; then
-        mkdir -p $HOME/Code/github.com/jonmosco
-        git clone https://github.com/jonmosco/kube-ps1.git $HOME/Code/github.com/jonmosco/kube-ps1
+    if [ ! -d "/usr/local/go" ]; then
+        curl -L https://storage.googleapis.com/golang/go$GO_VERSION.linux-amd64.tar.gz | sudo tar -C /usr/local -xz
     fi
 
-    if [ ! -d "$HOME/Code/github.com/ahmetb" ]; then
-        mkdir -p $HOME/Code/github.com/ahmetb
-        git clone https://github.com/ahmetb/kubectx.git $HOME/Code/github.com/ahmetb/kubectx
-    fi
+#    if [ ! -d "$HOME/Code/github.com/jonmosco" ]; then
+#        mkdir -p $HOME/Code/github.com/jonmosco
+#        git clone https://github.com/jonmosco/kube-ps1.git $HOME/Code/github.com/jonmosco/kube-ps1
+#    fi
+
+#    if [ ! -d "$HOME/Code/github.com/ahmetb" ]; then
+#        mkdir -p $HOME/Code/github.com/ahmetb
+#        git clone https://github.com/ahmetb/kubectx.git $HOME/Code/github.com/ahmetb/kubectx
+#    fi
 fi
 
 # neovim python extensions
-pip install pynvim --upgrade --disable-pip-version-check --no-cache-dir && pip3 install pynvim --upgrade --disable-pip-version-check --no-cache-dir
+#pip install pynvim --upgrade --disable-pip-version-check --no-cache-dir && pip3 install pynvim --upgrade --disable-pip-version-check --no-cache-dir
 
 # pygmentize
 # pip3 install --upgrade --disable-pip-version-check --no-cache-dir pygmentize
@@ -92,15 +97,15 @@ if [ ! -d "$HOME/.oh-my-zsh" ]; then
 fi
 
 # base16 shell themes
-if [ ! -d "$HOME/.config/base16-shell" ]; then
-    git clone https://github.com/base16-project/base16-shell.git "$HOME/.config/base16-shell" #&& \
-        # ln -s "$HOME/.config/base16-shell/scripts/base16_tomorrow-night.sh" "$HOME/.base16_theme"
-fi
+#if [ ! -d "$HOME/.config/base16-shell" ]; then
+#    git clone https://github.com/base16-project/base16-shell.git "$HOME/.config/base16-shell" #&& \
+#        # ln -s "$HOME/.config/base16-shell/scripts/base16_tomorrow-night.sh" "$HOME/.base16_theme"
+#fi
 
 # fzf
-if [ ! -d "$HOME/.fzf" ]; then
-    git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.fzf" && "$HOME/.fzf/install" --no-update-rc
-fi
+#if [ ! -d "$HOME/.fzf" ]; then
+#    git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.fzf" && "$HOME/.fzf/install" --no-update-rc
+#fi
 
 zsh -c make all
 
