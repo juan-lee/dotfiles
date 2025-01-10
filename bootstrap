@@ -18,6 +18,11 @@ if [ "$(uname)" == "Linux" ]; then
             language-pack-en \
             tmux \
             fzf \
+            ripgrep \
+            ninja-build \
+            gettext \
+            cmake \
+            unzip \
             zsh
 
     if [ ! -f "/etc/apt/keyrings/microsoft.gpg" ]; then
