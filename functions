@@ -101,3 +101,5 @@ function fke {
   node=$(kubectl get no -o wide | fzf --header-lines=1 | awk '{print $1}')
   kubectl node-shell $node
 }
+
+#eval "$(gh copilot alias -- zsh)"
