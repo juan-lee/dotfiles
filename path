@@ -5,4 +5,4 @@ export XDG_DATA_DIRS=/usr/local/share/:/usr/share/
 export XDG_CONFIG_DIRS=/etc/xdg
 export XDG_CACHE_HOME="${HOME}/.cache"
 
-export PATH="/usr/local/go/bin:${HOME}/.local/bin:${HOME}/go/bin:${HOME}/.cargo/bin:${PATH}:${HOME}/.krew/bin"
+export PATH="/usr/local/go/bin:${HOME}/.local/bin:${HOME}/go/bin:${HOME}/.cargo/bin:${HOME}/.krew/bin:${HOME}/.npm-global/bin:${PATH}"

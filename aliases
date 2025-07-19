@@ -11,3 +11,4 @@ alias k8s="$HOME/Code/k8s.io/kubernetes"
 alias ke="kubectl node-shell"
 alias ka=kca
 alias notes="${HOME}/Code/github.com/juan-lee/juannote"
+alias claude="~/.claude/local/claude"
