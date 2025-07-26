@@ -11,7 +11,7 @@ require("packer").startup(function(use)
   use "wbthomason/packer.nvim"
 
   -- theme packages
-  use "tinted-theming/base16-vim"
+  use "tinted-theming/tinted-vim"
   use {
     'nvim-lualine/lualine.nvim',
     requires = {
