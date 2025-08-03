@@ -6,8 +6,8 @@ GO_VERSION=1.23.1
 KUBECTL_VERSION=v1.16.0
 
 if [ "$(uname)" == "Linux" ]; then
-    sudo apt-get update && \
-        sudo apt-get install -y software-properties-common \
+    apt-get update && \
+        apt-get install -y software-properties-common \
             ca-certificates \
             curl \
             apt-transport-https \
@@ -18,6 +18,7 @@ if [ "$(uname)" == "Linux" ]; then
             language-pack-en \
             tmux \
             fzf \
+            git \
             ripgrep \
             ninja-build \
             gettext \
@@ -28,8 +29,8 @@ if [ "$(uname)" == "Linux" ]; then
     if [ ! -f "/etc/apt/keyrings/microsoft.gpg" ]; then
         curl -sLS https://packages.microsoft.com/keys/microsoft.asc | 
             gpg --dearmor | 
-            sudo tee /etc/apt/keyrings/microsoft.gpg > /dev/null
-	    sudo chmod go+r /etc/apt/keyrings/microsoft.gpg
+            tee /etc/apt/keyrings/microsoft.gpg > /dev/null
+	    chmod go+r /etc/apt/keyrings/microsoft.gpg
     fi
 
     if [ ! -f "/etc/apt/sources.list.d/azure-cli.list" ]; then
@@ -39,23 +40,23 @@ URIs: https://packages.microsoft.com/repos/azure-cli/
 Suites: ${AZ_DIST}
 Components: main
 Architectures: $(dpkg --print-architecture)
-Signed-by: /etc/apt/keyrings/microsoft.gpg" | sudo tee /etc/apt/sources.list.d/azure-cli.sources
+Signed-by: /etc/apt/keyrings/microsoft.gpg" | tee /etc/apt/sources.list.d/azure-cli.sources
     fi
 
     if [ ! -f "/etc/apt/keyrings/kubernetes-apt-keyring.gpg" ]; then
         curl -sLS https://pkgs.k8s.io/core:/stable:/v1.31/deb/Release.key | 
             gpg --dearmor | 
-            sudo tee /etc/apt/keyrings/kubernetes-apt-keyring.gpg > /dev/null
-	    sudo chmod go+r /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+            tee /etc/apt/keyrings/kubernetes-apt-keyring.gpg > /dev/null
+	    chmod go+r /etc/apt/keyrings/kubernetes-apt-keyring.gpg
     fi
 
     if [ ! -f "/etc/apt/sources.list.d/kubernetes.list" ]; then
-        echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
-        sudo chmod go+r /etc/apt/sources.list.d/kubernetes.list
+        echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.31/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list
+        chmod go+r /etc/apt/sources.list.d/kubernetes.list
     fi
 
-    sudo apt-get update && \
-        sudo apt-get install -y \
+    apt-get update && \
+        apt-get install -y \
             kubectl \
             azure-cli
 fi
@@ -74,7 +75,7 @@ if [ "$(uname)" == "Linux" ]; then
 
     # install go
     if [ ! -d "/usr/local/go" ]; then
-        curl -L https://storage.googleapis.com/golang/go$GO_VERSION.linux-amd64.tar.gz | sudo tar -C /usr/local -xz
+        curl -L https://storage.googleapis.com/golang/go$GO_VERSION.linux-amd64.tar.gz | tar -C /usr/local -xz
     fi
 
 #    if [ ! -d "$HOME/Code/github.com/jonmosco" ]; then
@@ -97,7 +98,7 @@ fi
 # Oh my zsh
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
     curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh | bash
-    sudo usermod -s /bin/zsh "${USER}"
+    # usermod -s /bin/zsh "${USER}"
     rm "$HOME/.zshrc"
 fi
 

@@ -8,7 +8,7 @@ all:
 	[ -L ~/.tmux.conf ] || ln -s $(PWD)/tmux.conf ~/.tmux.conf
 	[ -L ~/.vimrc ] || ln -s $(PWD)/vimrc ~/.vimrc
 	[ -L ~/.zshrc ] || ln -s $(PWD)/zshrc ~/.zshrc
-	[ -L $(ZSH)/custom/themes/jpang.zsh-theme ] || ln -s $(PWD)/jpang.zsh-theme $(ZSH)/custom/themes/jpang.zsh-theme
+	# [ -L $(ZSH)/custom/themes/jpang.zsh-theme ] || ln -s $(PWD)/jpang.zsh-theme $(ZSH)/custom/themes/jpang.zsh-theme
 
 clean:
 	[ -L ~/.aliases ] && unlink ~/.aliases
@@ -20,6 +20,12 @@ clean:
 	[ -L ~/.tmux.conf ] && unlink ~/.tmux.conf
 	[ -L ~/.vimrc ] && unlink ~/.vimrc
 	[ -L ~/.zshrc ] && unlink ~/.zshrc
-	[ -L $(ZSH)/custom/themes/jpang.zsh-theme ] && unlink $(ZSH)/custom/themes/jpang.zsh-theme
+	# [ -L $(ZSH)/custom/themes/jpang.zsh-theme ] && unlink $(ZSH)/custom/themes/jpang.zsh-theme
 
-.PHONY: all
+docker-build:
+	docker build -t dotfiles-test .
+
+docker-run:
+	docker run -it --rm dotfiles-test
+
+.PHONY: all clean docker-build docker-run

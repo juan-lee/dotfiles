@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:24.04
 
 ENV HOME=/root \
          LC_ALL=en_US.UTF-8 \
@@ -13,4 +13,4 @@ RUN ./bootstrap
 
 WORKDIR $HOME
 
-CMD /bin/zsh
+CMD ["/bin/zsh"]
