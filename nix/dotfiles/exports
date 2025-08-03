@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# language
+export LANG="en_US.UTF-8"
+export LC_ALL="en_US.UTF-8"
+
+# default editor
+export EDITOR=nvim
+
+# bash history
+export HISTCONTROL=erasedups
+
+# fzf
+export FZF_CTRL_T_OPTS="--select-1 --exit-0"
+export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden:wrap --bind '?:toggle-preview'"
+
+# git
+export GCM_CREDENTIAL_STORE=cache

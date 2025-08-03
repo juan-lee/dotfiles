@@ -1,0 +1,105 @@
+#!/bin/bash
+
+function reload_kubeconfigs {
+  unset KUBECONFIG
+  for f in $(ls $HOME/.kube/config*); do export KUBECONFIG="$KUBECONFIG:$f"; done
+}
+
+function azrc {
+  resource_group=$1
+  vm_name=$2
+  shift 2
+  command="$@"
+  echo "Running [${command}] on ${vm_name} in ${resource_group}"
+  az vm run-command invoke -g ${resource_group} -n ${vm_name} --command-id RunShellScript --scripts "${command}" | jq -r '.value[0].message'
+}
+
+function vmrc {
+  resource_group=$1
+  vmss_name=$2
+  instance_id=$3
+  shift 3
+  command="$@"
+  echo "Running [${command}] on ${vmss_name} in ${resource_group}"
+  az vmss run-command invoke -g "${resource_group}" -n "${vmss_name}" --instance-id "${instance_id}" --command-id RunShellScript -o json --scripts "${command}" | jq -r '.value[].message'
+}
+
+function vmrc_raw {
+  resource_group=$1
+  vmss_name=$2
+  instance_id=$3
+  shift 3
+  command="$@"
+  echo "Running [${command}] on ${vmss_name} in ${resource_group}"
+  az vmss run-command invoke -g "${resource_group}" -n "${vmss_name}" --instance-id "${instance_id}" --command-id RunShellScript -o json --scripts "${command}"
+}
+
+function azal {
+  accounts=$(az account list -o json) && \
+  account=$(echo $accounts | jq -r '.[].name' | fzf) && \
+  sub_id=$(echo $accounts | jq -c ".[] | select(.name == \"${account}\")" | jq -r '.id') && \
+  az account set -s $sub_id && \
+  echo "${account} (${sub_id})"
+}
+
+function az_hard_reboot {
+  resource_group=${1}
+  vm_name=${2}
+
+  [ -z "${resource_group}" ] && echo "az_hard_reboot <resource_group> <vm_name>" && return 1
+  [ -z "${vm_name}" ] && echo "az_hard_reboot <resource_group> <vm_name>" && return 1
+
+  echo "Stopping ${vm_name} in ${resource_group}"
+  az vm stop -g "${resource_group}" -n "${vm_name}"
+
+  echo "Starting ${vm_name} in ${resource_group}"
+  az vm start -g "${resource_group}" -n "${vm_name}"
+}
+
+function fzfkl {
+  tokens=($(
+    kubectl get pods -A |
+      fzf --info=inline --layout=reverse --header-lines=1 --border \
+          --prompt "$(kubectl config current-context | sed 's/-context$//')> " \
+          --header $'Press CTRL-O to open log in editor\n\n' \
+          --bind ctrl-/:toggle-preview \
+          --bind 'ctrl-o:execute:${EDITOR:-vim} <(kubectl logs --namespace {1} {2}) > /dev/tty' \
+          --preview-window up,follow \
+          --preview 'kubectl logs --follow --tail=100 --namespace {1} {2}' "$@"
+  ))
+  [ ${#tokens} -gt 1 ] &&
+    kubectl logs --namespace "${tokens[1]}" "${tokens[2]}"
+}
+
+function fkl {
+  tokens=($(
+    kubectl get pods -A |
+      fzf --info=inline --header-lines=1 \
+          --prompt "$(kubectl config current-context | sed 's/-context$//')> " \
+          --header $'Press CTRL-O to open log in editor\n\n' \
+          --bind 'ctrl-o:execute:${EDITOR:-vim} <(kubectl logs --all-containers --prefix --namespace {1} {2}) > /dev/tty'
+  ))
+  namespace="${tokens[1]}"
+  pod="${tokens[2]}"
+  [ ${#tokens} -gt 1 ] && tokens=($(
+    kubectl get pods -n "${namespace}" "${pod}" -o=custom-columns='CONTAINER:spec.containers[*].name' |
+      fzf --info=inline --header-lines=1 \
+          --prompt "$(kubectl config current-context | sed 's/-context$//')> " \
+          --header $'Press CTRL-O to open log in editor\n\n' \
+          --bind 'ctrl-o:execute:${EDITOR:-vim} <(kubectl logs --all-containers --prefix --namespace {1} {2}) > /dev/tty'
+  ))
+  [ ${#tokens} -gt 0 ] &&
+    kubectl logs --namespace "${namespace}" "${pod}" -c "${tokens[1]}" "${@}"
+}
+
+function fkdp {
+  kubectl get po -o wide -A | fzf --header-lines=1 | awk '{print $1, $2}' | xargs kubectl describe po -n
+}
+
+function fke {
+  local node
+  node=$(kubectl get no -o wide | fzf --header-lines=1 | awk '{print $1}')
+  kubectl node-shell $node
+}
+
+#eval "$(gh copilot alias -- zsh)"

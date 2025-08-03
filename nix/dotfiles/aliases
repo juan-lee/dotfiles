@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# vim
+alias vi="$(which vim)"
+alias vim=$(which nvim)
+alias v=$(which nvim)
+alias vt="$(which nvim) +terminal"
+
+# kubernetes
+alias k8s="$HOME/Code/k8s.io/kubernetes"
+alias ke="kubectl node-shell"
+alias ka=kca
+alias notes="${HOME}/Code/github.com/juan-lee/juannote"
+alias claude="~/.claude/local/claude"
