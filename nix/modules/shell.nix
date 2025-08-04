@@ -42,7 +42,7 @@
     ".functions".source = ../dotfiles/functions;
     ".includes".source = ../dotfiles/includes;
     ".path".source = ../dotfiles/path;
-    ".zshrc".source = ../dotfiles/zshrc;
+    # Note: .zshrc is managed by Oh My Zsh, not linked manually
     
     # Oh My Zsh custom theme
     ".oh-my-zsh/custom/themes/jpang.zsh-theme".source = ../dotfiles/jpang.zsh-theme;

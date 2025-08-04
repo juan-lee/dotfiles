@@ -30,7 +30,7 @@
   # Set up Go environment
   home.sessionVariables = {
     GOPATH = "$HOME/go";
-    GOROOT = if pkgs.stdenv.isDarwin then "" else "/usr/local/go";
+    # GOROOT is managed by Nix, don't override it
   };
 
   # Additional PATH entries will be handled in shell.nix

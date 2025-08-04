@@ -23,6 +23,9 @@ RUN useradd -m -s /bin/bash -G sudo jpang && \
 USER jpang
 WORKDIR /home/jpang
 
+# Set USER environment variable for home-manager
+ENV USER=jpang
+
 # Install Nix in single-user mode
 RUN curl -L https://nixos.org/nix/install | sh -s -- --no-daemon
 

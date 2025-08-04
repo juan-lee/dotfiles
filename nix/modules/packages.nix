@@ -37,8 +37,7 @@
     
     # For macOS compatibility
   ] ++ lib.optionals pkgs.stdenv.isLinux [
-    # Linux-specific packages
-    language-pack-en
+    # Linux-specific packages - language-pack-en is Ubuntu-specific, not available in Nix
   ];
 
   # Special handling for Go installation path on Linux
