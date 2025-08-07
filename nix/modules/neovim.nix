@@ -7,6 +7,9 @@
     viAlias = true;
     vimAlias = true;
     defaultEditor = true;
+    
+    # Use the latest stable neovim package
+    package = pkgs.neovim-unwrapped;
 
     # Additional packages needed by plugins
     extraPackages = with pkgs; [
