@@ -1,167 +1,330 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Minimal Ubuntu 24.04 bootstrap:
-# - installs base packages
-# - installs asdf (binary)
-# - installs Oh My Zsh without overwriting ~/.zshrc
-# - initializes a bare dotfiles repo at ~/.cfg
-# - writes starter ~/.zshrc, ~/.asdfrc, ~/.tool-versions
-# - makes an initial dotfiles commit
+# Idempotent Ubuntu 24.04 bootstrap for:
+# - base packages
+# - cloning/checking out an existing dotfiles repo via bare-repo pattern
+# - Oh My Zsh installation without clobbering ~/.zshrc
+# - modern asdf installation
+# - automatic `asdf install` before exit
+#
+# Required:
+#   DOTFILES_REPO_URL=git@github.com:you/dotfiles.git ./bootstrap.sh
+# or:
+#   DOTFILES_REPO_URL=https://github.com/you/dotfiles.git ./bootstrap.sh
+#
+# Optional:
+#   ASDF_VERSION=0.18.1 ./bootstrap.sh
 
 ASDF_VERSION="${ASDF_VERSION:-0.18.1}"
-DOTFILES_REPO_URL="${DOTFILES_REPO_URL:-git@github.com:juan-lee/dotfiles.git}"   # optional: git@github.com:you/dotfiles.git
-GIT_USER_NAME="${GIT_USER_NAME:-Juan-Lee Pang}"
-GIT_USER_EMAIL="${GIT_USER_EMAIL:-jpang@coreweave.com}"
+DOTFILES_REPO_URL="${DOTFILES_REPO_URL:-git@github.com:juan-lee/dotfiles.git}"
+DOTFILES_GIT_DIR="${DOTFILES_GIT_DIR:-$HOME/.cfg}"
+DOTFILES_BACKUP_DIR="${DOTFILES_BACKUP_DIR:-$HOME/.config-backup}"
+ASDF_BIN_PATH="${ASDF_BIN_PATH:-/usr/local/bin/asdf}"
 
-need_cmd() {
+log() {
+  printf '\n==> %s\n' "$*"
+}
+
+have() {
   command -v "$1" >/dev/null 2>&1
 }
 
-append_if_missing() {
+require_env() {
+  local name="$1"
+  if [[ -z "${!name:-}" ]]; then
+    echo "ERROR: environment variable $name is required" >&2
+    exit 1
+  fi
+}
+
+ensure_line() {
   local file="$1"
   local line="$2"
   touch "$file"
   grep -Fqx "$line" "$file" || printf '%s\n' "$line" >> "$file"
 }
 
-echo "==> Installing Ubuntu packages"
-sudo apt-get update
-sudo apt-get install -y \
-  bash \
-  ca-certificates \
-  curl \
-  git \
-  gpg \
-  unzip \
-  zsh
+arch_to_asdf_arch() {
+  local arch
+  arch="$(dpkg --print-architecture)"
+  case "$arch" in
+    amd64) echo "amd64" ;;
+    arm64) echo "arm64" ;;
+    *)
+      echo "ERROR: unsupported architecture: $arch" >&2
+      exit 1
+      ;;
+  esac
+}
 
-echo "==> Installing asdf ${ASDF_VERSION}"
-ARCH="$(dpkg --print-architecture)"
-case "$ARCH" in
-  amd64) ASDF_ARCH="amd64" ;;
-  arm64) ASDF_ARCH="arm64" ;;
-  *)
-    echo "Unsupported architecture: $ARCH"
+config_git() {
+  git --git-dir="$DOTFILES_GIT_DIR" --work-tree="$HOME" "$@"
+}
+
+install_base_packages() {
+  log "Installing base packages"
+  sudo apt-get update
+  sudo apt-get install -y \
+    ca-certificates \
+    curl \
+    git \
+    gpg \
+    unzip \
+    zsh
+}
+
+install_asdf_binary() {
+  local want_version="v${ASDF_VERSION}"
+
+  if have asdf; then
+    local current
+    current="$(asdf version 2>/dev/null | awk '{print $1}' || true)"
+    if [[ "$current" == "$want_version" ]]; then
+      log "asdf ${want_version} already installed"
+      return
+    fi
+    log "asdf present but version is ${current:-unknown}; installing ${want_version}"
+  else
+    log "Installing asdf ${want_version}"
+  fi
+
+  local tmpdir asdf_arch tarball url
+  tmpdir="$(mktemp -d)"
+  trap 'rm -rf "$tmpdir"' RETURN
+
+  asdf_arch="$(arch_to_asdf_arch)"
+  tarball="asdf-v${ASDF_VERSION}-linux-${asdf_arch}.tar.gz"
+  url="https://github.com/asdf-vm/asdf/releases/download/v${ASDF_VERSION}/${tarball}"
+
+  curl -fsSL "$url" -o "${tmpdir}/${tarball}"
+  tar -xzf "${tmpdir}/${tarball}" -C "$tmpdir"
+  sudo install -m 0755 "${tmpdir}/asdf" "$ASDF_BIN_PATH"
+}
+
+ensure_asdf_dirs() {
+  log "Ensuring asdf data directories exist"
+  mkdir -p "$HOME/.asdf"/{downloads,installs,plugins,shims}
+}
+
+clone_or_validate_dotfiles_repo() {
+  require_env DOTFILES_REPO_URL
+
+  if [[ -d "$DOTFILES_GIT_DIR" ]]; then
+    log "Dotfiles bare repo already exists at $DOTFILES_GIT_DIR"
+    return
+  fi
+
+  log "Cloning bare dotfiles repo into $DOTFILES_GIT_DIR"
+  git clone --bare "$DOTFILES_REPO_URL" "$DOTFILES_GIT_DIR"
+}
+
+backup_checkout_conflicts() {
+  mkdir -p "$DOTFILES_BACKUP_DIR"
+
+  local checkout_output
+  checkout_output="$(
+    config_git checkout 2>&1 || true
+  )"
+
+  if grep -q "would be overwritten by checkout" <<<"$checkout_output"; then
+    log "Backing up pre-existing files that conflict with dotfiles checkout"
+
+    printf '%s\n' "$checkout_output" \
+      | sed -n '/would be overwritten by checkout/,$p' \
+      | sed '1d' \
+      | sed '/^$/d' \
+      | sed 's/^[[:space:]]*//' \
+      | while read -r path; do
+          [[ -z "$path" ]] && continue
+          mkdir -p "$DOTFILES_BACKUP_DIR/$(dirname "$path")"
+          if [[ -e "$HOME/$path" || -L "$HOME/$path" ]]; then
+            mv "$HOME/$path" "$DOTFILES_BACKUP_DIR/$path"
+          fi
+        done
+    config_git checkout
+  else
+    if ! config_git checkout >/dev/null 2>&1; then
+      echo "$checkout_output" >&2
+      echo "ERROR: failed to checkout dotfiles" >&2
+      exit 1
+    fi
+  fi
+}
+
+checkout_dotfiles() {
+  log "Checking out dotfiles into $HOME"
+
+  if config_git rev-parse --is-bare-repository >/dev/null 2>&1; then
+    backup_checkout_conflicts
+    config_git config --local status.showUntrackedFiles no
+  else
+    echo "ERROR: $DOTFILES_GIT_DIR is not a bare git repository" >&2
     exit 1
-    ;;
-esac
+  fi
+}
 
-TMPDIR="$(mktemp -d)"
-trap 'rm -rf "$TMPDIR"' EXIT
+install_oh_my_zsh() {
+  if [[ -d "$HOME/.oh-my-zsh" ]]; then
+    log "Oh My Zsh already installed"
+    return
+  fi
 
-ASDF_TARBALL="asdf-v${ASDF_VERSION}-linux-${ASDF_ARCH}.tar.gz"
-ASDF_URL="https://github.com/asdf-vm/asdf/releases/download/v${ASDF_VERSION}/${ASDF_TARBALL}"
-
-curl -fsSL "$ASDF_URL" -o "${TMPDIR}/${ASDF_TARBALL}"
-tar -xzf "${TMPDIR}/${ASDF_TARBALL}" -C "${TMPDIR}"
-sudo install -m 0755 "${TMPDIR}/asdf" /usr/local/bin/asdf
-
-echo "==> Preparing ~/.asdf directories"
-mkdir -p "$HOME/.asdf"/{downloads,installs,plugins,shims}
-
-echo "==> Installing Oh My Zsh (do not overwrite ~/.zshrc)"
-if [ ! -d "$HOME/.oh-my-zsh" ]; then
+  log "Installing Oh My Zsh without overwriting ~/.zshrc"
   RUNZSH=no CHSH=no KEEP_ZSHRC=yes \
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended --keep-zshrc
-else
-  echo "Oh My Zsh already installed; skipping"
-fi
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" \
+    --unattended --keep-zshrc
+}
 
-echo "==> Writing ~/.asdfrc"
-cat > "$HOME/.asdfrc" <<'EOF'
-legacy_version_file = yes
-plugin_repository_last_check_duration = 60
-concurrency = auto
-EOF
+ensure_asdfrc() {
+  local file="$HOME/.asdfrc"
+  log "Ensuring $file"
+  touch "$file"
 
-echo "==> Writing starter ~/.tool-versions"
-if [ ! -f "$HOME/.tool-versions" ]; then
-  cat > "$HOME/.tool-versions" <<'EOF'
-# Edit these to the exact versions you want, then run: asdf install
-nodejs 22.14.0
-python 3.12.9
-EOF
-fi
+  if ! grep -Eq '^[[:space:]]*legacy_version_file[[:space:]]*=' "$file"; then
+    printf '%s\n' 'legacy_version_file = yes' >> "$file"
+  fi
+  if ! grep -Eq '^[[:space:]]*plugin_repository_last_check_duration[[:space:]]*=' "$file"; then
+    printf '%s\n' 'plugin_repository_last_check_duration = 60' >> "$file"
+  fi
+  if ! grep -Eq '^[[:space:]]*concurrency[[:space:]]*=' "$file"; then
+    printf '%s\n' 'concurrency = auto' >> "$file"
+  fi
+}
 
-echo "==> Writing ~/.zshrc"
-cat > "$HOME/.zshrc" <<'EOF'
+ensure_zshrc_exists() {
+  if [[ ! -f "$HOME/.zshrc" ]]; then
+    log "Creating minimal ~/.zshrc"
+    cat > "$HOME/.zshrc" <<'EOF'
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="robbyrussell"
 plugins=(git)
 
-# asdf: modern setup uses the binary on PATH plus shims on PATH.
 export ASDF_DATA_DIR="$HOME/.asdf"
 export PATH="$ASDF_DATA_DIR/shims:$PATH"
 
-# Dotfiles bare repo alias
 alias config='git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 
 source "$ZSH/oh-my-zsh.sh"
 EOF
-
-echo "==> Initializing bare dotfiles repo"
-if [ ! -d "$HOME/.cfg" ]; then
-  git init --bare "$HOME/.cfg"
-fi
-
-config() {
-  git --git-dir="$HOME/.cfg/" --work-tree="$HOME" "$@"
+  fi
 }
 
-config config --local status.showUntrackedFiles no
+ensure_zshrc_asdf_block() {
+  local file="$HOME/.zshrc"
+  log "Ensuring ~/.zshrc contains modern asdf PATH setup"
 
-echo "==> Optional git identity"
-if [ -n "$GIT_USER_NAME" ]; then
-  git config --global user.name "$GIT_USER_NAME"
-fi
-if [ -n "$GIT_USER_EMAIL" ]; then
-  git config --global user.email "$GIT_USER_EMAIL"
-fi
+  sed -i '/asdf\.sh/d' "$file"
+  sed -i '/completions\/asdf\.bash/d' "$file"
 
-echo "==> Tracking minimal dotfiles"
-config add .zshrc .asdfrc .tool-versions
-if ! config diff --cached --quiet; then
-  config commit -m "Initial Ubuntu bootstrap: zsh, asdf, dotfiles"
-else
-  echo "Nothing new to commit"
-fi
+  ensure_line "$file" 'export ASDF_DATA_DIR="$HOME/.asdf"'
+  ensure_line "$file" 'export PATH="$ASDF_DATA_DIR/shims:$PATH"'
+}
 
-echo "==> Optional remote"
-if [ -n "$DOTFILES_REPO_URL" ]; then
-  if ! config remote get-url origin >/dev/null 2>&1; then
-    config remote add origin "$DOTFILES_REPO_URL"
+ensure_zshrc_ohmyzsh_block() {
+  local file="$HOME/.zshrc"
+  log "Ensuring ~/.zshrc contains Oh My Zsh bootstrap"
+
+  ensure_line "$file" 'export ZSH="$HOME/.oh-my-zsh"'
+
+  if ! grep -Eq '^ZSH_THEME=' "$file"; then
+    printf '%s\n' 'ZSH_THEME="robbyrussell"' >> "$file"
   fi
-  config branch -M main
-  echo "Remote configured at origin; push with:"
-  echo "  config push -u origin main"
-fi
 
-echo "==> Switching login shell to zsh"
-if [ "${SHELL:-}" != "$(command -v zsh)" ]; then
-  chsh -s "$(command -v zsh)" || true
-fi
+  if ! grep -Eq '^plugins=\(' "$file"; then
+    printf '%s\n' 'plugins=(git)' >> "$file"
+  fi
 
-cat <<'EOF'
+  ensure_line "$file" 'source "$ZSH/oh-my-zsh.sh"'
+}
 
-Done.
+ensure_config_alias() {
+  log "Ensuring config alias is present in ~/.zshrc"
+  ensure_line "$HOME/.zshrc" "alias config='git --git-dir=\$HOME/.cfg/ --work-tree=\$HOME'"
+}
 
-Next steps:
-  1. Start a fresh shell session (or run: exec zsh)
-  2. Verify:
-       asdf version
-       type -a asdf
-  3. Add plugins for the tools you want, for example:
-       asdf plugin add nodejs
-       asdf plugin add python
-  4. Install everything in ~/.tool-versions:
-       cd ~ && asdf install
-  5. Check what is active:
-       asdf current
+set_zsh_as_login_shell() {
+  local zsh_path
+  zsh_path="$(command -v zsh)"
+  if [[ "${SHELL:-}" == "$zsh_path" ]]; then
+    log "Login shell already set to zsh"
+    return
+  fi
 
-Dotfiles usage:
-  config status
-  config add ~/.gitconfig
-  config commit -m "Track gitconfig"
+  log "Setting login shell to zsh"
+  chsh -s "$zsh_path" || true
+}
 
-EOF
+source_asdf_env_for_script() {
+  export ASDF_DATA_DIR="$HOME/.asdf"
+  export PATH="$HOME/.asdf/shims:/usr/local/bin:$PATH"
+}
+
+require_tool_versions() {
+  if [[ ! -f "$HOME/.tool-versions" ]]; then
+    echo "ERROR: ~/.tool-versions not found after dotfiles checkout" >&2
+    exit 1
+  fi
+}
+
+install_from_tool_versions() {
+  require_tool_versions
+  source_asdf_env_for_script
+
+  if ! have asdf; then
+    echo "ERROR: asdf not found on PATH after installation" >&2
+    exit 1
+  fi
+
+  log "Adding missing asdf plugins from ~/.tool-versions"
+  awk '
+    /^[[:space:]]*#/ {next}
+    /^[[:space:]]*$/ {next}
+    {print $1}
+  ' "$HOME/.tool-versions" | while read -r plugin; do
+    [[ -z "$plugin" ]] && continue
+    if asdf plugin list 2>/dev/null | grep -Fxq "$plugin"; then
+      echo "  - plugin already present: $plugin"
+    else
+      echo "  - adding plugin: $plugin"
+      asdf plugin add "$plugin"
+    fi
+  done
+
+  log "Running asdf install from \$HOME"
+  (
+    cd "$HOME"
+    asdf install
+  )
+
+  log "Current asdf versions"
+  (
+    cd "$HOME"
+    asdf current || true
+  )
+}
+
+main() {
+  require_env DOTFILES_REPO_URL
+
+  install_base_packages
+  clone_or_validate_dotfiles_repo
+  checkout_dotfiles
+  install_oh_my_zsh
+  install_asdf_binary
+  ensure_asdf_dirs
+  ensure_asdfrc
+  ensure_zshrc_exists
+  ensure_zshrc_asdf_block
+  ensure_zshrc_ohmyzsh_block
+  ensure_config_alias
+  config_git config --local status.showUntrackedFiles no
+  set_zsh_as_login_shell
+  install_from_tool_versions
+
+  log "Bootstrap complete"
+  echo "Open a new shell or run: exec zsh"
+  echo "Dotfile conflicts, if any, were moved to: $DOTFILES_BACKUP_DIR"
+}
+
+main "$@"
