@@ -19,6 +19,4 @@ RUN userdel -r ubuntu 2>/dev/null || true \
 USER ${USERNAME}
 WORKDIR /home/${USERNAME}
 
-ENV DOTFILES_REPO_URL=https://github.com/juan-lee/dotfiles.git
-
 CMD ["sleep", "infinity"]

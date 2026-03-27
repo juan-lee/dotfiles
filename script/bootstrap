@@ -17,7 +17,7 @@ set -euo pipefail
 #   ASDF_VERSION=0.18.1 ./bootstrap.sh
 
 ASDF_VERSION="${ASDF_VERSION:-0.18.1}"
-DOTFILES_REPO_URL="${DOTFILES_REPO_URL:-git@github.com:juan-lee/dotfiles.git}"
+DOTFILES_REPO_URL="${DOTFILES_REPO_URL:-https://github.com/juan-lee/dotfiles.git}"
 DOTFILES_GIT_DIR="${DOTFILES_GIT_DIR:-$HOME/.cfg}"
 DOTFILES_BACKUP_DIR="${DOTFILES_BACKUP_DIR:-$HOME/.config-backup}"
 ASDF_BIN_PATH="${ASDF_BIN_PATH:-/usr/local/bin/asdf}"
@@ -42,19 +42,19 @@ ensure_line() {
   local file="$1"
   local line="$2"
   touch "$file"
-  grep -Fqx "$line" "$file" || printf '%s\n' "$line" >> "$file"
+  grep -Fqx "$line" "$file" || printf '%s\n' "$line" >>"$file"
 }
 
 arch_to_asdf_arch() {
   local arch
   arch="$(dpkg --print-architecture)"
   case "$arch" in
-    amd64) echo "amd64" ;;
-    arm64) echo "arm64" ;;
-    *)
-      echo "ERROR: unsupported architecture: $arch" >&2
-      exit 1
-      ;;
+  amd64) echo "amd64" ;;
+  arm64) echo "arm64" ;;
+  *)
+    echo "ERROR: unsupported architecture: $arch" >&2
+    exit 1
+    ;;
   esac
 }
 
@@ -130,18 +130,18 @@ backup_checkout_conflicts() {
   if grep -q "would be overwritten by checkout" <<<"$checkout_output"; then
     log "Backing up pre-existing files that conflict with dotfiles checkout"
 
-    printf '%s\n' "$checkout_output" \
-      | sed -n '/would be overwritten by checkout/,$p' \
-      | sed '1d' \
-      | sed '/^$/d' \
-      | sed 's/^[[:space:]]*//' \
-      | while read -r path; do
-          [[ -z "$path" ]] && continue
-          mkdir -p "$DOTFILES_BACKUP_DIR/$(dirname "$path")"
-          if [[ -e "$HOME/$path" || -L "$HOME/$path" ]]; then
-            mv "$HOME/$path" "$DOTFILES_BACKUP_DIR/$path"
-          fi
-        done
+    printf '%s\n' "$checkout_output" |
+      sed -n '/would be overwritten by checkout/,$p' |
+      sed '1d' |
+      sed '/^$/d' |
+      sed 's/^[[:space:]]*//' |
+      while read -r path; do
+        [[ -z "$path" ]] && continue
+        mkdir -p "$DOTFILES_BACKUP_DIR/$(dirname "$path")"
+        if [[ -e "$HOME/$path" || -L "$HOME/$path" ]]; then
+          mv "$HOME/$path" "$DOTFILES_BACKUP_DIR/$path"
+        fi
+      done
     config_git checkout
   else
     if ! config_git checkout >/dev/null 2>&1; then
@@ -182,20 +182,20 @@ ensure_asdfrc() {
   touch "$file"
 
   if ! grep -Eq '^[[:space:]]*legacy_version_file[[:space:]]*=' "$file"; then
-    printf '%s\n' 'legacy_version_file = yes' >> "$file"
+    printf '%s\n' 'legacy_version_file = yes' >>"$file"
   fi
   if ! grep -Eq '^[[:space:]]*plugin_repository_last_check_duration[[:space:]]*=' "$file"; then
-    printf '%s\n' 'plugin_repository_last_check_duration = 60' >> "$file"
+    printf '%s\n' 'plugin_repository_last_check_duration = 60' >>"$file"
   fi
   if ! grep -Eq '^[[:space:]]*concurrency[[:space:]]*=' "$file"; then
-    printf '%s\n' 'concurrency = auto' >> "$file"
+    printf '%s\n' 'concurrency = auto' >>"$file"
   fi
 }
 
 ensure_zshrc_exists() {
   if [[ ! -f "$HOME/.zshrc" ]]; then
     log "Creating minimal ~/.zshrc"
-    cat > "$HOME/.zshrc" <<'EOF'
+    cat >"$HOME/.zshrc" <<'EOF'
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="robbyrussell"
 plugins=(git)
@@ -228,11 +228,11 @@ ensure_zshrc_ohmyzsh_block() {
   ensure_line "$file" 'export ZSH="$HOME/.oh-my-zsh"'
 
   if ! grep -Eq '^ZSH_THEME=' "$file"; then
-    printf '%s\n' 'ZSH_THEME="robbyrussell"' >> "$file"
+    printf '%s\n' 'ZSH_THEME="robbyrussell"' >>"$file"
   fi
 
   if ! grep -Eq '^plugins=\(' "$file"; then
-    printf '%s\n' 'plugins=(git)' >> "$file"
+    printf '%s\n' 'plugins=(git)' >>"$file"
   fi
 
   ensure_line "$file" 'source "$ZSH/oh-my-zsh.sh"'
