@@ -91,7 +91,7 @@ install_asdf_binary() {
 
   local tmpdir asdf_arch tarball url
   tmpdir="$(mktemp -d)"
-  trap 'rm -rf "$tmpdir"' RETURN
+  trap 'rm -rf "${tmpdir:-}"' RETURN
 
   asdf_arch="$(arch_to_asdf_arch)"
   tarball="asdf-v${ASDF_VERSION}-linux-${asdf_arch}.tar.gz"
