@@ -1,2 +1,3 @@
 .cfg
 .asdf
+.config/nvim/lazy-lock.json

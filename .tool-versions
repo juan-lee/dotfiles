@@ -1,2 +1,3 @@
 # Edit these to the exact versions you want, then run: asdf install
+neovim 0.11.7
 nodejs 22.14.0

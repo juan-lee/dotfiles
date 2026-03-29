@@ -9,4 +9,8 @@ export PATH="$ASDF_DATA_DIR/shims:$PATH"
 # Dotfiles bare repo alias
 alias config='git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 
+# Neovim aliases
+alias v='nvim'
+alias n='nvim --listen ./.nvim'
+
 source "$ZSH/oh-my-zsh.sh"

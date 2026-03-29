@@ -94,6 +94,12 @@ check ".tool-versions exists" \
 check "node is installed at expected version" \
     'export ASDF_DATA_DIR=$HOME/.asdf && export PATH=$ASDF_DATA_DIR/shims:$PATH && node --version | grep -q "v22.14.0"'
 
+check "neovim is installed" \
+    'export ASDF_DATA_DIR=$HOME/.asdf && export PATH=$ASDF_DATA_DIR/shims:$PATH && nvim --version | grep -q "NVIM"'
+
+check "neovim config exists" \
+    'test -f $HOME/.config/nvim/init.lua'
+
 # --- Summary ---
 echo ""
 if [[ $FAILURES -eq 0 ]]; then
