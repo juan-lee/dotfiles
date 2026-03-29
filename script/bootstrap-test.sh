@@ -100,6 +100,18 @@ check "neovim is installed" \
 check "neovim config exists" \
     'test -f $HOME/.config/nvim/init.lua'
 
+check "tmux is installed" \
+    'export ASDF_DATA_DIR=$HOME/.asdf && export PATH=$ASDF_DATA_DIR/shims:$PATH && tmux -V'
+
+check "fzf is installed" \
+    'export ASDF_DATA_DIR=$HOME/.asdf && export PATH=$ASDF_DATA_DIR/shims:$PATH && fzf --version'
+
+check "kubecolor is installed" \
+    'export ASDF_DATA_DIR=$HOME/.asdf && export PATH=$ASDF_DATA_DIR/shims:$PATH && kubecolor --kubecolor-version'
+
+check ".tmux.conf exists" \
+    'test -f $HOME/.tmux.conf'
+
 # --- Summary ---
 echo ""
 if [[ $FAILURES -eq 0 ]]; then

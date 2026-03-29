@@ -78,10 +78,15 @@ config_git() {
 install_base_packages_linux() {
   sudo apt-get update
   sudo apt-get install -y \
+    bison \
+    build-essential \
     ca-certificates \
     curl \
     git \
     gpg \
+    libevent-dev \
+    libncurses-dev \
+    pkg-config \
     unzip \
     zsh
 }
@@ -229,7 +234,7 @@ ensure_zshrc_exists() {
     cat >"$HOME/.zshrc" <<'EOF'
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="robbyrussell"
-plugins=(git)
+plugins=(dotenv git kubectl tmux vi-mode)
 
 export ASDF_DATA_DIR="$HOME/.asdf"
 export PATH="$ASDF_DATA_DIR/shims:$PATH"
@@ -263,7 +268,7 @@ ensure_zshrc_ohmyzsh_block() {
   fi
 
   if ! grep -Eq '^plugins=\(' "$file"; then
-    printf '%s\n' 'plugins=(git)' >>"$file"
+    printf '%s\n' 'plugins=(dotenv git kubectl tmux vi-mode)' >>"$file"
   fi
 
   ensure_line "$file" 'source "$ZSH/oh-my-zsh.sh"'
