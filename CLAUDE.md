@@ -8,7 +8,7 @@ This is a **bare-repo dotfiles** repository following the [Atlassian dotfiles tu
 
 ## Bootstrap
 
-Provision a fresh Ubuntu 24.04 machine:
+Provision a fresh macOS (Apple Silicon) or Ubuntu 24.04 machine:
 
 ```bash
 DOTFILES_REPO_URL=git@github.com:juan-lee/dotfiles.git ./script/bootstrap

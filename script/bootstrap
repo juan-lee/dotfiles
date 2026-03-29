@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Idempotent Ubuntu 24.04 bootstrap for:
+# Idempotent bootstrap for macOS (Apple Silicon) and Ubuntu 24.04:
 # - base packages
 # - cloning/checking out an existing dotfiles repo via bare-repo pattern
 # - Oh My Zsh installation without clobbering ~/.zshrc
@@ -21,6 +21,7 @@ DOTFILES_REPO_URL="${DOTFILES_REPO_URL:-https://github.com/juan-lee/dotfiles.git
 DOTFILES_GIT_DIR="${DOTFILES_GIT_DIR:-$HOME/.cfg}"
 DOTFILES_BACKUP_DIR="${DOTFILES_BACKUP_DIR:-$HOME/.config-backup}"
 ASDF_BIN_PATH="${ASDF_BIN_PATH:-/usr/local/bin/asdf}"
+OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
 
 log() {
   printf '\n==> %s\n' "$*"
@@ -45,25 +46,36 @@ ensure_line() {
   grep -Fqx "$line" "$file" || printf '%s\n' "$line" >>"$file"
 }
 
-arch_to_asdf_arch() {
-  local arch
-  arch="$(dpkg --print-architecture)"
-  case "$arch" in
-  amd64) echo "amd64" ;;
-  arm64) echo "arm64" ;;
-  *)
-    echo "ERROR: unsupported architecture: $arch" >&2
-    exit 1
-    ;;
+detect_arch() {
+  local raw
+  case "$OS" in
+    linux)  raw="$(dpkg --print-architecture)" ;;
+    darwin) raw="$(uname -m)" ;;
+    *)      echo "ERROR: unsupported OS: $OS" >&2; exit 1 ;;
   esac
+  case "$raw" in
+    amd64)          echo "amd64" ;;
+    arm64|aarch64)  echo "arm64" ;;
+    *)
+      echo "ERROR: unsupported architecture: $raw" >&2
+      exit 1
+      ;;
+  esac
+}
+
+portable_sed_i() {
+  if [[ "$OS" == "darwin" ]]; then
+    sed -i '' "$@"
+  else
+    sed -i "$@"
+  fi
 }
 
 config_git() {
   git --git-dir="$DOTFILES_GIT_DIR" --work-tree="$HOME" "$@"
 }
 
-install_base_packages() {
-  log "Installing base packages"
+install_base_packages_linux() {
   sudo apt-get update
   sudo apt-get install -y \
     ca-certificates \
@@ -72,6 +84,25 @@ install_base_packages() {
     gpg \
     unzip \
     zsh
+}
+
+install_base_packages_darwin() {
+  if ! have brew; then
+    log "Installing Homebrew"
+    NONINTERACTIVE=1 /bin/bash -c \
+      "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  fi
+  brew install git gnupg unzip zsh
+}
+
+install_base_packages() {
+  log "Installing base packages"
+  case "$OS" in
+    linux)  install_base_packages_linux ;;
+    darwin) install_base_packages_darwin ;;
+    *)      echo "ERROR: unsupported OS: $OS" >&2; exit 1 ;;
+  esac
 }
 
 install_asdf_binary() {
@@ -93,8 +124,8 @@ install_asdf_binary() {
   tmpdir="$(mktemp -d)"
   trap 'rm -rf "${tmpdir:-}"' RETURN
 
-  asdf_arch="$(arch_to_asdf_arch)"
-  tarball="asdf-v${ASDF_VERSION}-linux-${asdf_arch}.tar.gz"
+  asdf_arch="$(detect_arch)"
+  tarball="asdf-v${ASDF_VERSION}-${OS}-${asdf_arch}.tar.gz"
   url="https://github.com/asdf-vm/asdf/releases/download/v${ASDF_VERSION}/${tarball}"
 
   curl -fsSL "$url" -o "${tmpdir}/${tarball}"
@@ -214,8 +245,8 @@ ensure_zshrc_asdf_block() {
   local file="$HOME/.zshrc"
   log "Ensuring ~/.zshrc contains modern asdf PATH setup"
 
-  sed -i '/asdf\.sh/d' "$file"
-  sed -i '/completions\/asdf\.bash/d' "$file"
+  portable_sed_i '/asdf\.sh/d' "$file"
+  portable_sed_i '/completions\/asdf\.bash/d' "$file"
 
   ensure_line "$file" 'export ASDF_DATA_DIR="$HOME/.asdf"'
   ensure_line "$file" 'export PATH="$ASDF_DATA_DIR/shims:$PATH"'
@@ -252,12 +283,19 @@ set_zsh_as_login_shell() {
   fi
 
   log "Setting login shell to zsh"
+  if [[ "$OS" == "darwin" ]] && ! grep -Fxq "$zsh_path" /etc/shells; then
+    log "Adding $zsh_path to /etc/shells"
+    echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
+  fi
   chsh -s "$zsh_path" || true
 }
 
 source_asdf_env_for_script() {
   export ASDF_DATA_DIR="$HOME/.asdf"
   export PATH="$HOME/.asdf/shims:/usr/local/bin:$PATH"
+  if [[ "$OS" == "darwin" && -d /opt/homebrew/bin ]]; then
+    export PATH="/opt/homebrew/bin:$PATH"
+  fi
 }
 
 require_tool_versions() {
