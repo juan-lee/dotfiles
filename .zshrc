@@ -39,6 +39,9 @@ alias config='git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 alias v='nvim'
 alias n='nvim --listen ./.nvim'
 
+# --- Load bare dotfiles CLI and helper functions ---
+[[ -f "$HOME/.functions" ]] && source "$HOME/.functions"
+
 # --- Tool Integrations ---
 
 # fzf

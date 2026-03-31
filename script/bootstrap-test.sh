@@ -46,13 +46,30 @@ log "Configuring git credentials in container"
 docker exec "$CONTAINER_NAME" bash -c "git config --global credential.helper store"
 docker exec "$CONTAINER_NAME" bash -c "echo 'https://x-access-token:${GH_TOKEN}@github.com' > \$HOME/.git-credentials"
 
-# --- Execute bootstrap ---
+# --- Execute bootstrap (bare repo setup only) ---
 log "Running bootstrap inside the container"
 docker exec "$CONTAINER_NAME" /tmp/bootstrap.sh
 BOOTSTRAP_EXIT=$?
 
 if [[ $BOOTSTRAP_EXIT -ne 0 ]]; then
     echo "FAIL: bootstrap exited with code $BOOTSTRAP_EXIT"
+    echo "Container $CONTAINER_NAME is still running for inspection."
+    echo "  docker exec -it $CONTAINER_NAME bash"
+    exit 1
+fi
+
+# --- Copy local .functions over the checked-out version (test local changes) ---
+log "Copying local .functions into container"
+docker cp "$REPO_ROOT/.functions" "$CONTAINER_NAME:/home/testuser/.functions"
+docker exec -u root "$CONTAINER_NAME" chown testuser:testuser /home/testuser/.functions
+
+# --- Run bare update (dependency installation) ---
+log "Running bare update inside the container"
+docker exec "$CONTAINER_NAME" bash -c "source \$HOME/.functions && bare update"
+BARE_UPDATE_EXIT=$?
+
+if [[ $BARE_UPDATE_EXIT -ne 0 ]]; then
+    echo "FAIL: bare update exited with code $BARE_UPDATE_EXIT"
     echo "Container $CONTAINER_NAME is still running for inspection."
     echo "  docker exec -it $CONTAINER_NAME bash"
     exit 1
@@ -75,6 +92,12 @@ check() {
 
 check "bare repo exists at ~/.cfg" \
     'git --git-dir=$HOME/.cfg rev-parse --is-bare-repository'
+
+check ".functions exists" \
+    'test -f $HOME/.functions'
+
+check "bare function is available" \
+    'source $HOME/.functions && type bare'
 
 check "Oh My Zsh installed" \
     'test -d $HOME/.oh-my-zsh'

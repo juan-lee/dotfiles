@@ -12,9 +12,13 @@ Provision a fresh macOS (Apple Silicon) or Ubuntu 24.04 machine:
 
 ```bash
 DOTFILES_REPO_URL=git@github.com:juan-lee/dotfiles.git ./script/bootstrap
+source ~/.functions
+bare update
 ```
 
-The bootstrap script is idempotent and handles: base packages, bare-repo clone + checkout (with conflict backup to `~/.config-backup`), Oh My Zsh, asdf binary install, and `asdf install` from `~/.tool-versions`.
+`script/bootstrap` sets up only the bare dotfiles git repo (clone + checkout with conflict backup to `~/.config-backup`). `bare update` (defined in `.functions`) idempotently installs all dependencies: base packages, Oh My Zsh, asdf binary, tool versions from `.tool-versions`, and sets zsh as login shell.
+
+The `bare` CLI also provides `bare status` to inspect the current state and `bare help` for usage.
 
 ## Key conventions
 

@@ -1,0 +1,331 @@
+# ~/.functions - Bare dotfiles CLI
+# Source this file in your shell: source ~/.functions
+
+# ---------------------------------------------------------------------------
+# Configuration (override by exporting before sourcing)
+# ---------------------------------------------------------------------------
+: "${ASDF_VERSION:=0.18.1}"
+: "${ASDF_BIN_PATH:=/usr/local/bin/asdf}"
+: "${DOTFILES_GIT_DIR:=$HOME/.cfg}"
+
+_BARE_OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
+
+# ---------------------------------------------------------------------------
+# Helpers (prefixed _bare_ to avoid namespace pollution)
+# ---------------------------------------------------------------------------
+
+_bare_log() {
+  printf '\n==> %s\n' "$*"
+}
+
+_bare_have() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+_bare_ensure_line() {
+  local file="$1"
+  local line="$2"
+  touch "$file"
+  grep -Fqx "$line" "$file" || printf '%s\n' "$line" >>"$file"
+}
+
+_bare_detect_arch() {
+  local raw
+  case "$_BARE_OS" in
+    linux)  raw="$(dpkg --print-architecture)" ;;
+    darwin) raw="$(uname -m)" ;;
+    *)      echo "ERROR: unsupported OS: $_BARE_OS" >&2; return 1 ;;
+  esac
+  case "$raw" in
+  amd64)          echo "amd64" ;;
+  arm64|aarch64)  echo "arm64" ;;
+  *)
+    echo "ERROR: unsupported architecture: $raw" >&2
+    return 1
+    ;;
+  esac
+}
+
+_bare_portable_sed_i() {
+  if [[ "$_BARE_OS" == "darwin" ]]; then
+    sed -i '' "$@"
+  else
+    sed -i "$@"
+  fi
+}
+
+# ---------------------------------------------------------------------------
+# Dependency installation functions
+# ---------------------------------------------------------------------------
+
+_bare_install_base_packages_linux() {
+  sudo apt-get update
+  sudo apt-get install -y \
+    bison \
+    build-essential \
+    ca-certificates \
+    curl \
+    git \
+    gpg \
+    libevent-dev \
+    libncurses-dev \
+    pkg-config \
+    unzip \
+    zsh
+}
+
+_bare_install_base_packages_darwin() {
+  if ! _bare_have brew; then
+    _bare_log "Installing Homebrew"
+    NONINTERACTIVE=1 /bin/bash -c \
+      "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  fi
+  brew install git gnupg unzip zsh
+}
+
+_bare_install_base_packages() {
+  _bare_log "Installing base packages"
+  case "$_BARE_OS" in
+    linux)  _bare_install_base_packages_linux ;;
+    darwin) _bare_install_base_packages_darwin ;;
+    *)      echo "ERROR: unsupported OS: $_BARE_OS" >&2; return 1 ;;
+  esac
+}
+
+_bare_install_oh_my_zsh() {
+  if [[ -d "$HOME/.oh-my-zsh" ]]; then
+    _bare_log "Oh My Zsh already installed"
+    return
+  fi
+
+  _bare_log "Installing Oh My Zsh without overwriting ~/.zshrc"
+  RUNZSH=no CHSH=no KEEP_ZSHRC=yes \
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" \
+    --unattended --keep-zshrc
+}
+
+_bare_install_asdf_binary() {
+  local want_version="v${ASDF_VERSION}"
+
+  if _bare_have asdf; then
+    local current
+    current="$(asdf version 2>/dev/null | awk '{print $1}' || true)"
+    if [[ "$current" == "$want_version" ]]; then
+      _bare_log "asdf ${want_version} already installed"
+      return
+    fi
+    _bare_log "asdf present but version is ${current:-unknown}; installing ${want_version}"
+  else
+    _bare_log "Installing asdf ${want_version}"
+  fi
+
+  local tmpdir asdf_arch tarball url
+  tmpdir="$(mktemp -d)"
+  trap 'rm -rf "${tmpdir:-}"' RETURN
+
+  asdf_arch="$(_bare_detect_arch)"
+  tarball="asdf-v${ASDF_VERSION}-${_BARE_OS}-${asdf_arch}.tar.gz"
+  url="https://github.com/asdf-vm/asdf/releases/download/v${ASDF_VERSION}/${tarball}"
+
+  curl -fsSL "$url" -o "${tmpdir}/${tarball}"
+  tar -xzf "${tmpdir}/${tarball}" -C "$tmpdir"
+  sudo install -m 0755 "${tmpdir}/asdf" "$ASDF_BIN_PATH"
+}
+
+_bare_ensure_asdf_dirs() {
+  _bare_log "Ensuring asdf data directories exist"
+  mkdir -p "$HOME/.asdf"/{downloads,installs,plugins,shims}
+}
+
+_bare_ensure_asdfrc() {
+  local file="$HOME/.asdfrc"
+  _bare_log "Ensuring $file"
+  touch "$file"
+
+  if ! grep -Eq '^[[:space:]]*legacy_version_file[[:space:]]*=' "$file"; then
+    printf '%s\n' 'legacy_version_file = yes' >>"$file"
+  fi
+  if ! grep -Eq '^[[:space:]]*plugin_repository_last_check_duration[[:space:]]*=' "$file"; then
+    printf '%s\n' 'plugin_repository_last_check_duration = 60' >>"$file"
+  fi
+  if ! grep -Eq '^[[:space:]]*concurrency[[:space:]]*=' "$file"; then
+    printf '%s\n' 'concurrency = auto' >>"$file"
+  fi
+}
+
+_bare_ensure_zshrc_asdf_block() {
+  local file="$HOME/.zshrc"
+  _bare_log "Ensuring ~/.zshrc contains modern asdf PATH setup"
+
+  _bare_portable_sed_i '/asdf\.sh/d' "$file"
+  _bare_portable_sed_i '/completions\/asdf\.bash/d' "$file"
+
+  _bare_ensure_line "$file" 'export ASDF_DATA_DIR="$HOME/.asdf"'
+  _bare_ensure_line "$file" 'export PATH="$ASDF_DATA_DIR/shims:$PATH"'
+}
+
+_bare_ensure_zshrc_ohmyzsh_block() {
+  local file="$HOME/.zshrc"
+  _bare_log "Ensuring ~/.zshrc contains Oh My Zsh bootstrap"
+
+  _bare_ensure_line "$file" 'export ZSH="$HOME/.oh-my-zsh"'
+
+  if ! grep -Eq '^ZSH_THEME=' "$file"; then
+    printf '%s\n' 'ZSH_THEME="robbyrussell"' >>"$file"
+  fi
+
+  if ! grep -Eq '^plugins=\(' "$file"; then
+    printf '%s\n' 'plugins=(dotenv git kubectl tmux vi-mode)' >>"$file"
+  fi
+
+  _bare_ensure_line "$file" 'source "$ZSH/oh-my-zsh.sh"'
+}
+
+_bare_ensure_config_alias() {
+  _bare_log "Ensuring config alias is present in ~/.zshrc"
+  _bare_ensure_line "$HOME/.zshrc" "alias config='git --git-dir=\$HOME/.cfg/ --work-tree=\$HOME'"
+}
+
+_bare_set_zsh_as_login_shell() {
+  local zsh_path
+  zsh_path="$(command -v zsh)"
+  if [[ "${SHELL:-}" == "$zsh_path" ]]; then
+    _bare_log "Login shell already set to zsh"
+    return
+  fi
+
+  _bare_log "Setting login shell to zsh"
+  if [[ "$_BARE_OS" == "darwin" ]] && ! grep -Fxq "$zsh_path" /etc/shells; then
+    _bare_log "Adding $zsh_path to /etc/shells"
+    echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
+  fi
+  chsh -s "$zsh_path" || true
+}
+
+_bare_source_asdf_env() {
+  export ASDF_DATA_DIR="$HOME/.asdf"
+  export PATH="$HOME/.asdf/shims:/usr/local/bin:$PATH"
+  if [[ "$_BARE_OS" == "darwin" && -d /opt/homebrew/bin ]]; then
+    export PATH="/opt/homebrew/bin:$PATH"
+  fi
+}
+
+_bare_install_from_tool_versions() {
+  if [[ ! -f "$HOME/.tool-versions" ]]; then
+    echo "ERROR: ~/.tool-versions not found after dotfiles checkout" >&2
+    return 1
+  fi
+
+  _bare_source_asdf_env
+
+  if ! _bare_have asdf; then
+    echo "ERROR: asdf not found on PATH after installation" >&2
+    return 1
+  fi
+
+  _bare_log "Adding missing asdf plugins from ~/.tool-versions"
+  awk '
+    /^[[:space:]]*#/ {next}
+    /^[[:space:]]*$/ {next}
+    {print $1}
+  ' "$HOME/.tool-versions" | while read -r plugin; do
+    [[ -z "$plugin" ]] && continue
+    if asdf plugin list 2>/dev/null | grep -Fxq "$plugin"; then
+      echo "  - plugin already present: $plugin"
+    else
+      echo "  - adding plugin: $plugin"
+      asdf plugin add "$plugin"
+    fi
+  done
+
+  _bare_log "Running asdf install from \$HOME"
+  (
+    cd "$HOME"
+    asdf install
+  )
+
+  _bare_log "Current asdf versions"
+  (
+    cd "$HOME"
+    asdf current || true
+  )
+}
+
+# ---------------------------------------------------------------------------
+# Subcommands
+# ---------------------------------------------------------------------------
+
+_bare_update() {
+  (
+    set -euo pipefail
+
+    _bare_install_base_packages
+    _bare_install_oh_my_zsh
+    _bare_install_asdf_binary
+    _bare_ensure_asdf_dirs
+    _bare_ensure_asdfrc
+    _bare_ensure_zshrc_asdf_block
+    _bare_ensure_zshrc_ohmyzsh_block
+    _bare_ensure_config_alias
+    _bare_set_zsh_as_login_shell
+    _bare_install_from_tool_versions
+
+    _bare_log "Update complete"
+    echo "Open a new shell or run: exec zsh"
+  )
+}
+
+_bare_status() {
+  echo "Dotfiles bare repo: $DOTFILES_GIT_DIR"
+  if [[ -d "$DOTFILES_GIT_DIR" ]]; then
+    echo "  Repo:        present"
+  else
+    echo "  Repo:        NOT FOUND"
+  fi
+  echo "  Oh My Zsh:   $([[ -d "$HOME/.oh-my-zsh" ]] && echo "installed" || echo "not installed")"
+  echo "  asdf:        $(_bare_have asdf && asdf version 2>/dev/null || echo "not installed")"
+  echo "  zsh:         $(_bare_have zsh && command -v zsh || echo "not installed")"
+  echo "  Login shell: ${SHELL:-unknown}"
+  if [[ -f "$HOME/.tool-versions" ]]; then
+    echo "  Tool versions:"
+    while IFS= read -r line; do
+      [[ "$line" =~ ^[[:space:]]*# ]] && continue
+      [[ -z "$line" ]] && continue
+      echo "    $line"
+    done < "$HOME/.tool-versions"
+  fi
+}
+
+_bare_help() {
+  cat <<'HELP'
+bare - CLI for the bare dotfiles system
+
+Usage: bare <command>
+
+Commands:
+  update    Idempotently install/update all dependencies
+  status    Show current state of dotfiles and tools
+  help      Show this help message
+HELP
+}
+
+# ---------------------------------------------------------------------------
+# Main dispatcher
+# ---------------------------------------------------------------------------
+
+bare() {
+  local cmd="${1:-help}"
+  shift 2>/dev/null || true
+
+  case "$cmd" in
+    update)         _bare_update "$@" ;;
+    status)         _bare_status "$@" ;;
+    help|--help|-h) _bare_help ;;
+    *)
+      echo "bare: unknown command '$cmd'" >&2
+      _bare_help >&2
+      return 1
+      ;;
+  esac
+}
