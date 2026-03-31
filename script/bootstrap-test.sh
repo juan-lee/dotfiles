@@ -58,10 +58,16 @@ if [[ $BOOTSTRAP_EXIT -ne 0 ]]; then
     exit 1
 fi
 
-# --- Copy local .functions over the checked-out version (test local changes) ---
-log "Copying local .functions into container"
-docker cp "$REPO_ROOT/.functions" "$CONTAINER_NAME:/home/testuser/.functions"
-docker exec -u root "$CONTAINER_NAME" chown testuser:testuser /home/testuser/.functions
+# --- Copy all local tracked files over the checked-out versions (test local changes) ---
+log "Copying local dotfiles into container"
+git -C "$REPO_ROOT" ls-files | while read -r f; do
+    # Skip test infrastructure — not deployed to $HOME
+    case "$f" in script/*|CLAUDE.md|README.md) continue ;; esac
+    docker exec "$CONTAINER_NAME" mkdir -p "/home/testuser/$(dirname "$f")"
+    docker cp "$REPO_ROOT/$f" "$CONTAINER_NAME:/home/testuser/$f"
+done
+docker exec -u root "$CONTAINER_NAME" bash -c \
+    "chown -R testuser:testuser /home/testuser"
 
 # --- Run bare update (dependency installation) ---
 log "Running bare update inside the container"
