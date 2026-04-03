@@ -122,7 +122,6 @@ _bare_install_asdf_binary() {
 
   local tmpdir asdf_arch tarball url
   tmpdir="$(mktemp -d)"
-  trap 'rm -rf "${tmpdir:-}"' RETURN
 
   asdf_arch="$(_bare_detect_arch)"
   tarball="asdf-v${ASDF_VERSION}-${_BARE_OS}-${asdf_arch}.tar.gz"
@@ -131,6 +130,7 @@ _bare_install_asdf_binary() {
   curl -fsSL "$url" -o "${tmpdir}/${tarball}"
   tar -xzf "${tmpdir}/${tarball}" -C "$tmpdir"
   sudo install -m 0755 "${tmpdir}/asdf" "$ASDF_BIN_PATH"
+  rm -rf "$tmpdir"
 }
 
 _bare_ensure_asdf_dirs() {
