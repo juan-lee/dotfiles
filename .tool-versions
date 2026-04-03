@@ -4,3 +4,4 @@ kubecolor 0.5.3
 neovim 0.11.7
 nodejs 22.14.0
 tmux 3.6a
+github-cli 2.89.0
