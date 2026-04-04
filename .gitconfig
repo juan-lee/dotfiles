@@ -1,3 +1,9 @@
 [user]
 	name = Juan-Lee Pang
 	email = jpang@coreweave.com
+[credential "https://github.com"]
+	helper = 
+	helper = !/home/coder/.asdf/installs/github-cli/2.89.0/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/home/coder/.asdf/installs/github-cli/2.89.0/bin/gh auth git-credential
