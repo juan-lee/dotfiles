@@ -1,4 +1,10 @@
-.cfg
 .asdf
+.cache
+.cfg
+.config-backup
 .config/nvim/lazy-lock.json
+.kube
+.local
+.npm
 .tmux/plugins
+Code
