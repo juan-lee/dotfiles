@@ -5,21 +5,18 @@ export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_STATE_HOME="$HOME/.local/state"
 
 # --- Environment Variables ---
-export CARGO_HOME="$XDG_DATA_HOME/cargo"
 export GOBIN="$XDG_DATA_HOME/go/bin"
 export GOPATH="$XDG_DATA_HOME/go"
 export NPM_CONFIG_PREFIX="$XDG_DATA_HOME/npm"
-export PIP_DISABLE_PIP_VERSION_CHECK=1
-export PIP_REQUIRE_VIRTUALENV=1
 
 # --- PATH ---
 export ASDF_DATA_DIR="$HOME/.asdf"
-export PATH="$HOME/.krew/bin:$HOME/node_modules/.bin:$HOME/.local/bin:$XDG_DATA_HOME/cargo/bin:$XDG_DATA_HOME/go/bin:$XDG_DATA_HOME/npm/bin:$ASDF_DATA_DIR/shims:$PATH"
+export PATH="$HOME/.krew/bin:$HOME/node_modules/.bin:$HOME/.local/bin:$XDG_DATA_HOME/go/bin:$XDG_DATA_HOME/npm/bin:$ASDF_DATA_DIR/shims:$PATH"
 
 # --- Oh My Zsh ---
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="robbyrussell"
-plugins=(dotenv git kubectl tmux vi-mode)
+plugins=(direnv dotenv git kubectl tmux vi-mode)
 
 # tmux plugin settings
 export ZSH_TMUX_AUTOSTART="true"

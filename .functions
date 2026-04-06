@@ -5,7 +5,7 @@
 # Configuration (override by exporting before sourcing)
 # ---------------------------------------------------------------------------
 : "${ASDF_VERSION:=0.18.1}"
-: "${ASDF_BIN_PATH:=/usr/local/bin/asdf}"
+: "${ASDF_BIN_PATH:=$HOME/.local/bin/asdf}"
 : "${DOTFILES_GIT_DIR:=$HOME/.cfg}"
 
 _BARE_OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
