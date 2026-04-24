@@ -81,7 +81,7 @@ _bare_install_base_packages_darwin() {
       "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     eval "$(/opt/homebrew/bin/brew shellenv)"
   fi
-  brew install git gnupg unzip zsh
+  brew install git gnupg unzip zsh libevent ncurses pkg-config utf8proc
 }
 
 _bare_install_base_packages() {
