@@ -46,9 +46,15 @@ if command -v fzf >/dev/null 2>&1; then
   eval "$(fzf --zsh)"
 fi
 
+# kubectl
+if command -v kubectl >/dev/null 2>&1; then
+  source <(kubectl completion zsh)
+fi
+
 # kubecolor
 if command -v kubecolor >/dev/null 2>&1; then
   alias kubectl='kubecolor'
+  compdef kubecolor=kubectl
 fi
 
 # Ghostty shell integration
