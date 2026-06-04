@@ -31,6 +31,7 @@ source "$ZSH/oh-my-zsh.sh"
 
 # Dotfiles bare repo alias
 alias config='git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+compdef config=git
 
 # Neovim aliases
 alias v='nvim'
