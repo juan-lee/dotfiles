@@ -7,7 +7,11 @@ config() {
   /usr/bin/git --git-dir="$HOME/.cfg" --work-tree="$HOME" "$@"
 }
 
-git clone --bare "$DOTFILES_REPO_URL" "$HOME/.cfg"
+if [ -d "$HOME/.cfg" ]; then
+  echo "Bare repo already exists at $HOME/.cfg, skipping clone."
+else
+  git clone --bare "$DOTFILES_REPO_URL" "$HOME/.cfg"
+fi
 
 if config checkout; then
   echo "Checked out config."
