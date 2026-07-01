@@ -163,7 +163,6 @@ _bare_ensure_zshrc_asdf_block() {
   _bare_portable_sed_i '/completions\/asdf\.bash/d' "$file"
 
   _bare_ensure_line "$file" 'export ASDF_DATA_DIR="$HOME/.asdf"'
-  _bare_ensure_line "$file" 'export PATH="$ASDF_DATA_DIR/shims:$PATH"'
 }
 
 _bare_ensure_zshrc_ohmyzsh_block() {
