@@ -130,6 +130,7 @@ _bare_install_asdf_binary() {
 
   curl -fsSL "$url" -o "${tmpdir}/${tarball}"
   tar -xzf "${tmpdir}/${tarball}" -C "$tmpdir"
+  sudo install -d -m 0755 "$(dirname "$ASDF_BIN_PATH")"
   sudo install -m 0755 "${tmpdir}/asdf" "$ASDF_BIN_PATH"
   rm -rf "$tmpdir"
 }
