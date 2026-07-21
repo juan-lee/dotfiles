@@ -1,0 +1,20 @@
+#!/bin/bash
+
+export GOBIN="$XDG_DATA_HOME/go/bin"
+export GOPATH="$XDG_DATA_HOME/go"
+export NPM_CONFIG_PREFIX="$XDG_DATA_HOME/npm"
+
+# fzf
+if command -v fzf >/dev/null 2>&1; then
+  eval "$(fzf --zsh)"
+fi
+
+# kubectl
+if command -v kubectl >/dev/null 2>&1; then
+  source <(kubectl completion zsh)
+fi
+
+# ghostty shell integration
+if [ -n "$GHOSTTY_RESOURCES_DIR" ]; then
+  builtin source "$GHOSTTY_RESOURCES_DIR/shell-integration/zsh/ghostty-integration"
+fi

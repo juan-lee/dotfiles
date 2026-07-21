@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# dotfiles bare repo alias
+alias config='git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+compdef config=git
+
+# neovim
+alias v='nvim'
+alias n='nvim --listen ./.nvim'
+
+# kubecolor
+if command -v kubecolor >/dev/null 2>&1; then
+  alias kubectl='kubecolor'
+  compdef kubecolor=kubectl
+fi

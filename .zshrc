@@ -1,64 +1,18 @@
-# --- XDG Base Directories ---
-export XDG_CACHE_HOME="$HOME/.cache"
-export XDG_CONFIG_HOME="$HOME/.config"
-export XDG_DATA_HOME="$HOME/.local/share"
-export XDG_STATE_HOME="$HOME/.local/state"
-
-# --- Environment Variables ---
-export GOBIN="$XDG_DATA_HOME/go/bin"
-export GOPATH="$XDG_DATA_HOME/go"
-export NPM_CONFIG_PREFIX="$XDG_DATA_HOME/npm"
-
-# --- PATH ---
-export ASDF_DATA_DIR="$HOME/.asdf"
-export PATH="$HOME/.krew/bin:$HOME/node_modules/.bin:$HOME/.local/bin:$XDG_DATA_HOME/go/bin:$XDG_DATA_HOME/npm/bin:$ASDF_DATA_DIR/shims:$PATH"
-
-# --- Oh My Zsh ---
 export ZSH="$HOME/.oh-my-zsh"
+
 ZSH_THEME="robbyrussell"
+ZSH_TMUX_AUTOSTART="true"
+ZSH_TMUX_AUTOQUIT="false"
+COMPLETION_WAITING_DOTS="true"
+
+# Load the shell dotfiles, and then some:
+# * ~/.path can be used to extend `$PATH`.
+# * ~/.extra can be used for other settings you don’t want to commit.
+for file in ~/.{includes,aliases,functions,path,extra,exports}; do
+    [ -r "$file" ] && [ -f "$file" ] && source "$file"
+done
+unset file
+
 plugins=(direnv dotenv git kubectl tmux vi-mode)
 
-# tmux plugin settings
-export ZSH_TMUX_AUTOSTART="true"
-export ZSH_TMUX_AUTOQUIT="false"
-
-# completion
-export COMPLETION_WAITING_DOTS="true"
-
 source "$ZSH/oh-my-zsh.sh"
-
-# --- Aliases ---
-
-# Dotfiles bare repo alias
-alias config='git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
-compdef config=git
-
-# Neovim aliases
-alias v='nvim'
-alias n='nvim --listen ./.nvim'
-
-# --- Load bare dotfiles CLI and helper functions ---
-[[ -f "$HOME/.functions" ]] && source "$HOME/.functions"
-
-# --- Tool Integrations ---
-
-# fzf
-if command -v fzf >/dev/null 2>&1; then
-  eval "$(fzf --zsh)"
-fi
-
-# kubectl
-if command -v kubectl >/dev/null 2>&1; then
-  source <(kubectl completion zsh)
-fi
-
-# kubecolor
-if command -v kubecolor >/dev/null 2>&1; then
-  alias kubectl='kubecolor'
-  compdef kubecolor=kubectl
-fi
-
-# Ghostty shell integration
-if [ -n "$GHOSTTY_RESOURCES_DIR" ]; then
-  builtin source "$GHOSTTY_RESOURCES_DIR/shell-integration/zsh/ghostty-integration"
-fi
