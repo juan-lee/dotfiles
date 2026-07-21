@@ -1,20 +1,16 @@
 #!/bin/bash
 
+export ASDF_DATA_DIR="$HOME/.asdf"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_STATE_HOME="$HOME/.local/state"
+
+# oh-my-zsh
+ZSH_TMUX_AUTOSTART="true"
+ZSH_TMUX_AUTOQUIT="false"
+COMPLETION_WAITING_DOTS="true"
+
 export GOBIN="$XDG_DATA_HOME/go/bin"
 export GOPATH="$XDG_DATA_HOME/go"
 export NPM_CONFIG_PREFIX="$XDG_DATA_HOME/npm"
-
-# fzf
-if command -v fzf >/dev/null 2>&1; then
-  eval "$(fzf --zsh)"
-fi
-
-# kubectl
-if command -v kubectl >/dev/null 2>&1; then
-  source <(kubectl completion zsh)
-fi
-
-# ghostty shell integration
-if [ -n "$GHOSTTY_RESOURCES_DIR" ]; then
-  builtin source "$GHOSTTY_RESOURCES_DIR/shell-integration/zsh/ghostty-integration"
-fi

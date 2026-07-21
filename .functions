@@ -163,7 +163,8 @@ _bare_ensure_zshrc_asdf_block() {
   _bare_portable_sed_i '/asdf\.sh/d' "$file"
   _bare_portable_sed_i '/completions\/asdf\.bash/d' "$file"
 
-  _bare_ensure_line "$file" 'export ASDF_DATA_DIR="$HOME/.asdf"'
+  # ASDF_DATA_DIR lives in ~/.exports (sourced before oh-my-zsh so shims land early)
+  _bare_ensure_line "$HOME/.exports" 'export ASDF_DATA_DIR="$HOME/.asdf"'
 }
 
 _bare_ensure_zshrc_ohmyzsh_block() {
@@ -184,8 +185,8 @@ _bare_ensure_zshrc_ohmyzsh_block() {
 }
 
 _bare_ensure_config_alias() {
-  _bare_log "Ensuring config alias is present in ~/.zshrc"
-  _bare_ensure_line "$HOME/.zshrc" "alias config='git --git-dir=\$HOME/.cfg/ --work-tree=\$HOME'"
+  _bare_log "Ensuring config alias is present in ~/.aliases"
+  _bare_ensure_line "$HOME/.aliases" "alias config='git --git-dir=\$HOME/.cfg/ --work-tree=\$HOME'"
 }
 
 _bare_set_zsh_as_login_shell() {

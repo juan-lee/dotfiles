@@ -1,0 +1,26 @@
+#!/bin/bash
+# Completions & shell integrations that require compinit.
+# Sourced from ~/.zshrc AFTER `source "$ZSH/oh-my-zsh.sh"`, which runs compinit
+# and defines `compdef`. Do not move these into the pre-oh-my-zsh dotfiles
+# (.aliases/.exports) — compdef is undefined there and errors on macOS.
+
+# dotfiles bare repo alias -> reuse git completion
+compdef config=git
+
+# kubectl / kubecolor (load kubectl completion before aliasing it to kubecolor)
+if command -v kubectl >/dev/null 2>&1; then
+  source <(kubectl completion zsh)
+fi
+if command -v kubecolor >/dev/null 2>&1; then
+  compdef kubecolor=kubectl
+fi
+
+# fzf
+if command -v fzf >/dev/null 2>&1; then
+  eval "$(fzf --zsh)"
+fi
+
+# ghostty shell integration
+if [ -n "$GHOSTTY_RESOURCES_DIR" ]; then
+  builtin source "$GHOSTTY_RESOURCES_DIR/shell-integration/zsh/ghostty-integration"
+fi
