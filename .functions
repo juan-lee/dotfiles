@@ -4,7 +4,7 @@
 # ---------------------------------------------------------------------------
 # Configuration (override by exporting before sourcing)
 # ---------------------------------------------------------------------------
-: "${ASDF_VERSION:=0.18.1}"
+: "${ASDF_VERSION:=0.20.0}"
 : "${ASDF_BIN_PATH:=$HOME/.local/bin/asdf}"
 : "${DOTFILES_GIT_DIR:=$HOME/.cfg}"
 
