@@ -13,7 +13,7 @@ krew 0.5.0
 kubecolor 0.6.0
 kubectl 1.36.2
 neovim 0.12.4
-nodejs 26.5.0
+nodejs 26.5.1
 ripgrep 15.2.0
 rust 1.97.1
 tilt 0.37.5
