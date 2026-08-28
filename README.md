@@ -1,6 +1,6 @@
 # dotfiles
 
-Personal dotfiles managed using the [bare git repository method](https://www.atlassian.com/git/tutorials/dotfiles). Tool and runtime versions are managed with [asdf](https://asdf-vm.com/).
+Personal dotfiles managed using the [bare git repository method](https://www.atlassian.com/git/tutorials/dotfiles). Tool and runtime versions are managed with [mise](https://mise.jdx.dev/).
 
 ## How it works
 
@@ -34,8 +34,8 @@ This is idempotent and will:
 1. Install base packages (git, curl, zsh, etc.)
 2. Clone the bare dotfiles repo to `~/.cfg` and check out files to `$HOME` (conflicting files are backed up to `~/.config-backup`)
 3. Install [Oh My Zsh](https://ohmyz.sh/) without overwriting `~/.zshrc`
-4. Install the [asdf](https://asdf-vm.com/) version manager binary
-5. Run `asdf install` to install tool versions from `~/.tool-versions`
+4. Install the [mise](https://mise.jdx.dev/) version manager
+5. Run `mise install` to install tool versions from `~/.tool-versions`
 6. Set zsh as the login shell
 
 ### Optional environment variables
@@ -43,7 +43,7 @@ This is idempotent and will:
 | Variable | Default | Description |
 |---|---|---|
 | `DOTFILES_REPO_URL` | `git@github.com:juan-lee/dotfiles.git` | Dotfiles repo URL |
-| `ASDF_VERSION` | `0.18.1` | asdf release to install |
+| `MISE_VERSION` | *(unset)* | mise release to install (empty = latest from the installer) |
 | `DOTFILES_GIT_DIR` | `$HOME/.cfg` | Bare repo location |
 | `DOTFILES_BACKUP_DIR` | `$HOME/.config-backup` | Backup dir for conflicts |
 
@@ -51,8 +51,7 @@ This is idempotent and will:
 
 | File | Purpose |
 |---|---|
-| `.zshrc` | Zsh config with Oh My Zsh, asdf PATH setup, and `config` alias |
+| `.zshrc` | Zsh config with Oh My Zsh, mise activation, and `config` alias |
 | `.gitconfig` | Git user identity |
-| `.tool-versions` | asdf tool versions (currently Node.js 22.14.0) |
-| `.asdfrc` | asdf settings (legacy version files, concurrency) |
+| `.tool-versions` | mise tool versions (currently Node.js 24.20.0) |
 | `script/bootstrap` | Machine provisioning script |

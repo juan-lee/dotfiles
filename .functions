@@ -4,8 +4,8 @@
 # ---------------------------------------------------------------------------
 # Configuration (override by exporting before sourcing)
 # ---------------------------------------------------------------------------
-: "${ASDF_VERSION:=0.20.0}"
-: "${ASDF_BIN_PATH:=$HOME/.local/bin/asdf}"
+: "${MISE_VERSION:=}"                                  # empty = use installer default (latest stable)
+: "${MISE_INSTALL_PATH:=$HOME/.local/bin/mise}"
 : "${DOTFILES_GIT_DIR:=$HOME/.cfg}"
 
 _BARE_OS="$(uname -s | tr '[:upper:]' '[:lower:]')"
@@ -27,23 +27,6 @@ _bare_ensure_line() {
   local line="$2"
   touch "$file"
   grep -Fqx "$line" "$file" || printf '%s\n' "$line" >>"$file"
-}
-
-_bare_detect_arch() {
-  local raw
-  case "$_BARE_OS" in
-    linux)  raw="$(dpkg --print-architecture)" ;;
-    darwin) raw="$(uname -m)" ;;
-    *)      echo "ERROR: unsupported OS: $_BARE_OS" >&2; return 1 ;;
-  esac
-  case "$raw" in
-  amd64)          echo "amd64" ;;
-  arm64|aarch64)  echo "arm64" ;;
-  *)
-    echo "ERROR: unsupported architecture: $raw" >&2
-    return 1
-    ;;
-  esac
 }
 
 _bare_portable_sed_i() {
@@ -106,65 +89,54 @@ _bare_install_oh_my_zsh() {
     --unattended --keep-zshrc
 }
 
-_bare_install_asdf_binary() {
-  local want_version="v${ASDF_VERSION}"
+_bare_install_mise_binary() {
+  local want_version="${MISE_VERSION:-}"
+  local have_version=""
 
-  if _bare_have asdf; then
-    local current
-    current="$(asdf version 2>/dev/null | awk '{print $1}' || true)"
-    if [[ "$current" == "$want_version" ]]; then
-      _bare_log "asdf ${want_version} already installed"
+  if [[ -x "$MISE_INSTALL_PATH" ]]; then
+    have_version="$("$MISE_INSTALL_PATH" --version 2>/dev/null | head -n1 | awk '{print $1}')"
+  elif _bare_have mise; then
+    have_version="$(mise --version 2>/dev/null | head -n1 | awk '{print $1}')"
+  fi
+
+  if [[ -n "$have_version" ]]; then
+    if [[ -z "$want_version" || "$have_version" == "$want_version" ]]; then
+      _bare_log "mise ${have_version} already installed"
       return
     fi
-    _bare_log "asdf present but version is ${current:-unknown}; installing ${want_version}"
+    _bare_log "mise present but version is ${have_version}; installing ${want_version}"
   else
-    _bare_log "Installing asdf ${want_version}"
+    _bare_log "Installing mise ${want_version:-latest}"
   fi
 
-  local tmpdir asdf_arch tarball url
-  tmpdir="$(mktemp -d)"
-
-  asdf_arch="$(_bare_detect_arch)"
-  tarball="asdf-v${ASDF_VERSION}-${_BARE_OS}-${asdf_arch}.tar.gz"
-  url="https://github.com/asdf-vm/asdf/releases/download/v${ASDF_VERSION}/${tarball}"
-
-  curl -fsSL "$url" -o "${tmpdir}/${tarball}"
-  tar -xzf "${tmpdir}/${tarball}" -C "$tmpdir"
-  sudo install -d -m 0755 "$(dirname "$ASDF_BIN_PATH")"
-  sudo install -m 0755 "${tmpdir}/asdf" "$ASDF_BIN_PATH"
-  rm -rf "$tmpdir"
-}
-
-_bare_ensure_asdf_dirs() {
-  _bare_log "Ensuring asdf data directories exist"
-  mkdir -p "$HOME/.asdf"/{downloads,installs,plugins,shims}
-}
-
-_bare_ensure_asdfrc() {
-  local file="$HOME/.asdfrc"
-  _bare_log "Ensuring $file"
-  touch "$file"
-
-  if ! grep -Eq '^[[:space:]]*legacy_version_file[[:space:]]*=' "$file"; then
-    printf '%s\n' 'legacy_version_file = yes' >>"$file"
-  fi
-  if ! grep -Eq '^[[:space:]]*plugin_repository_last_check_duration[[:space:]]*=' "$file"; then
-    printf '%s\n' 'plugin_repository_last_check_duration = 60' >>"$file"
-  fi
-  if ! grep -Eq '^[[:space:]]*concurrency[[:space:]]*=' "$file"; then
-    printf '%s\n' 'concurrency = auto' >>"$file"
+  # The official installer (https://mise.run) detects OS/arch itself, installs
+  # to MISE_INSTALL_PATH, and is idempotent (skips when already at the wanted
+  # version). MISE_VERSION pins a release; empty = installer's default (latest).
+  mkdir -p "$(dirname "$MISE_INSTALL_PATH")"
+  if [[ -n "$want_version" ]]; then
+    curl -fsSL https://mise.run \
+      | MISE_VERSION="$want_version" MISE_INSTALL_PATH="$MISE_INSTALL_PATH" sh
+  else
+    curl -fsSL https://mise.run | MISE_INSTALL_PATH="$MISE_INSTALL_PATH" sh
   fi
 }
 
-_bare_ensure_zshrc_asdf_block() {
-  local file="$HOME/.zshrc"
-  _bare_log "Ensuring ~/.zshrc contains modern asdf PATH setup"
+_bare_ensure_zshrc_mise_block() {
+  local zshrc="$HOME/.zshrc"
+  _bare_log "Ensuring ~/.zshrc contains mise activation"
 
-  _bare_portable_sed_i '/asdf\.sh/d' "$file"
-  _bare_portable_sed_i '/completions\/asdf\.bash/d' "$file"
+  # Drop legacy asdf setup lines left over from the previous asdf-based setup
+  _bare_portable_sed_i '/asdf\.sh/d' "$zshrc"
+  _bare_portable_sed_i '/completions\/asdf\.bash/d' "$zshrc"
+  # Drop absolute/path-based mise activate lines so we can normalize them below
+  _bare_portable_sed_i '/\.local\/bin\/mise activate/d' "$zshrc"
 
-  # ASDF_DATA_DIR lives in ~/.exports (sourced before oh-my-zsh so shims land early)
-  _bare_ensure_line "$HOME/.exports" 'export ASDF_DATA_DIR="$HOME/.asdf"'
+  # Remove the stale ASDF_DATA_DIR export written to ~/.exports by older setups
+  if [[ -f "$HOME/.exports" ]]; then
+    _bare_portable_sed_i '/export ASDF_DATA_DIR=/d' "$HOME/.exports"
+  fi
+
+  _bare_ensure_line "$zshrc" 'command -v mise >/dev/null 2>&1 && eval "$(mise activate zsh)"'
 }
 
 _bare_ensure_zshrc_ohmyzsh_block() {
@@ -205,9 +177,8 @@ _bare_set_zsh_as_login_shell() {
   chsh -s "$zsh_path" || true
 }
 
-_bare_source_asdf_env() {
-  export ASDF_DATA_DIR="$HOME/.asdf"
-  export PATH="$HOME/.asdf/shims:/usr/local/bin:$PATH"
+_bare_source_mise_env() {
+  export PATH="$HOME/.local/bin:$PATH"
   if [[ "$_BARE_OS" == "darwin" && -d /opt/homebrew/bin ]]; then
     export PATH="/opt/homebrew/bin:$PATH"
   fi
@@ -219,38 +190,23 @@ _bare_install_from_tool_versions() {
     return 1
   fi
 
-  _bare_source_asdf_env
+  _bare_source_mise_env
 
-  if ! _bare_have asdf; then
-    echo "ERROR: asdf not found on PATH after installation" >&2
+  if ! _bare_have mise; then
+    echo "ERROR: mise not found on PATH after installation" >&2
     return 1
   fi
 
-  _bare_log "Adding missing asdf plugins from ~/.tool-versions"
-  awk '
-    /^[[:space:]]*#/ {next}
-    /^[[:space:]]*$/ {next}
-    {print $1}
-  ' "$HOME/.tool-versions" | while read -r plugin; do
-    [[ -z "$plugin" ]] && continue
-    if asdf plugin list 2>/dev/null | grep -Fxq "$plugin"; then
-      echo "  - plugin already present: $plugin"
-    else
-      echo "  - adding plugin: $plugin"
-      asdf plugin add "$plugin"
-    fi
-  done
-
-  _bare_log "Running asdf install from \$HOME"
+  _bare_log "Installing tool versions from ~/.tool-versions via mise"
   (
     cd "$HOME"
-    asdf install
+    mise install
   )
 
-  _bare_log "Current asdf versions"
+  _bare_log "Current mise tools"
   (
     cd "$HOME"
-    asdf current || true
+    mise ls 2>/dev/null || true
   )
 }
 
@@ -264,10 +220,8 @@ _bare_update() {
 
     _bare_install_base_packages
     _bare_install_oh_my_zsh
-    _bare_install_asdf_binary
-    _bare_ensure_asdf_dirs
-    _bare_ensure_asdfrc
-    _bare_ensure_zshrc_asdf_block
+    _bare_install_mise_binary
+    _bare_ensure_zshrc_mise_block
     _bare_ensure_zshrc_ohmyzsh_block
     _bare_ensure_config_alias
     _bare_set_zsh_as_login_shell
@@ -286,7 +240,7 @@ _bare_status() {
     echo "  Repo:        NOT FOUND"
   fi
   echo "  Oh My Zsh:   $([[ -d "$HOME/.oh-my-zsh" ]] && echo "installed" || echo "not installed")"
-  echo "  asdf:        $(_bare_have asdf && asdf version 2>/dev/null || echo "not installed")"
+  echo "  mise:        $(_bare_have mise && mise --version 2>/dev/null | head -n1 | awk '{print $1}' || echo "not installed")"
   echo "  zsh:         $(_bare_have zsh && command -v zsh || echo "not installed")"
   echo "  Login shell: ${SHELL:-unknown}"
   if [[ -f "$HOME/.tool-versions" ]]; then

@@ -108,8 +108,8 @@ check "bare function is available" \
 check "Oh My Zsh installed" \
     'test -d $HOME/.oh-my-zsh'
 
-check "asdf binary is on PATH" \
-    'export PATH=/usr/local/bin:$PATH && asdf version'
+check "mise binary is on PATH" \
+    'export PATH=$HOME/.local/bin:$PATH && mise --version'
 
 check ".zshrc exists" \
     'test -f $HOME/.zshrc'
@@ -121,22 +121,22 @@ check ".tool-versions exists" \
     'test -f $HOME/.tool-versions'
 
 check "node is installed at expected version" \
-    'export ASDF_DATA_DIR=$HOME/.asdf && export PATH=$ASDF_DATA_DIR/shims:$PATH && node --version | grep -q "v22.14.0"'
+    'eval "$($HOME/.local/bin/mise activate bash)" && [ "$(node --version)" = "v24.20.0" ]'
 
 check "neovim is installed" \
-    'export ASDF_DATA_DIR=$HOME/.asdf && export PATH=$ASDF_DATA_DIR/shims:$PATH && nvim --version | grep -q "NVIM"'
+    'eval "$($HOME/.local/bin/mise activate bash)" && nvim --version | grep -q "NVIM"'
 
 check "neovim config exists" \
     'test -f $HOME/.config/nvim/init.lua'
 
 check "tmux is installed" \
-    'export ASDF_DATA_DIR=$HOME/.asdf && export PATH=$ASDF_DATA_DIR/shims:$PATH && tmux -V'
+    'eval "$($HOME/.local/bin/mise activate bash)" && tmux -V'
 
 check "fzf is installed" \
-    'export ASDF_DATA_DIR=$HOME/.asdf && export PATH=$ASDF_DATA_DIR/shims:$PATH && fzf --version'
+    'eval "$($HOME/.local/bin/mise activate bash)" && fzf --version'
 
 check "kubecolor is installed" \
-    'export ASDF_DATA_DIR=$HOME/.asdf && export PATH=$ASDF_DATA_DIR/shims:$PATH && kubecolor --kubecolor-version'
+    'eval "$($HOME/.local/bin/mise activate bash)" && kubecolor --kubecolor-version'
 
 check ".tmux.conf exists" \
     'test -f $HOME/.tmux.conf'

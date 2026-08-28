@@ -15,7 +15,9 @@ unset file
 
 plugins=(direnv dotenv git kubectl tmux vi-mode)
 
+command -v mise >/dev/null 2>&1 && eval "$(mise activate zsh)"
 source "$ZSH/oh-my-zsh.sh"
 
 # Completions & shell integrations that need compinit (loaded by oh-my-zsh.sh above)
 [ -r ~/.completions ] && [ -f ~/.completions ] && source ~/.completions
+eval "$(direnv hook zsh)"
