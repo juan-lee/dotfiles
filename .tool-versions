@@ -15,7 +15,7 @@ kubectl    1.37.1
 neovim     0.12.6
 nodejs     26.12.1
 ripgrep    15.2.0
-rust       1.99.1
+rust       stable
 tilt       0.37.8
 tmux       3.7b
 uv         0.13.4
